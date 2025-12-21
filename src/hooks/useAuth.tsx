@@ -31,6 +31,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAdmin(!!data);
   };
 
+  const ensurePatientRecord = async (user: User) => {
+    // Check if patient record already exists
+    const { data: existingPatient } = await supabase
+      .from("patients")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!existingPatient) {
+      // Create patient record for OAuth users
+      const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "Usuario";
+      await supabase.from("patients").insert({
+        user_id: user.id,
+        name,
+        email: user.email!,
+      });
+    }
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -40,6 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (session?.user) {
           setTimeout(() => {
             checkAdminRole(session.user.id);
+            ensurePatientRecord(session.user);
           }, 0);
         } else {
           setIsAdmin(false);

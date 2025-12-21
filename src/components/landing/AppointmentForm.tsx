@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Calendar, Clock, User, Phone, Mail, Baby, CalendarDays } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Clock, User, Phone, Mail, Baby, CalendarDays, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { usePatient } from "@/hooks/usePatient";
 import { supabase } from "@/integrations/supabase/client";
 
 const timeSlots = [
@@ -16,7 +20,11 @@ const timeSlots = [
 
 const AppointmentForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { patient, createOrLinkPatient } = usePatient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wantsAccount, setWantsAccount] = useState(false);
   const [formData, setFormData] = useState({
     parentName: "",
     childName: "",
@@ -41,6 +49,20 @@ const AppointmentForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Create or get patient record
+      let patientId: string | null = null;
+      
+      if (patient) {
+        patientId = patient.id;
+      } else {
+        const newPatient = await createOrLinkPatient({
+          name: formData.parentName,
+          email: formData.email,
+          phone: formData.phone,
+        });
+        patientId = newPatient?.id || null;
+      }
+
       const { error } = await supabase.from("appointments").insert({
         parent_name: formData.parentName,
         child_name: formData.childName,
@@ -51,19 +73,29 @@ const AppointmentForm = () => {
         appointment_time: formData.time,
         reason: formData.reason,
         status: "pending",
+        patient_id: patientId,
       });
 
       if (error) throw error;
 
       toast({
         title: "¡Cita solicitada!",
-        description: "Nos comunicaremos pronto para confirmar su cita.",
+        description: wantsAccount 
+          ? "Crea tu cuenta para ver el estado de tus citas."
+          : "Nos comunicaremos pronto para confirmar su cita.",
       });
 
       setFormData({
         parentName: "", childName: "", childAge: "", phone: "",
         email: "", date: "", time: "", reason: "",
       });
+
+      // If user wants account, redirect to patient auth
+      if (wantsAccount && !user) {
+        setTimeout(() => {
+          navigate("/paciente/auth");
+        }, 1500);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -165,12 +197,58 @@ const AppointmentForm = () => {
                 <Textarea id="reason" name="reason" placeholder="Describa brevemente el motivo" rows={3} value={formData.reason} onChange={handleChange} required className="bg-secondary/50 border-0 resize-none" />
               </div>
 
+              {/* Option to create account */}
+              {!user && (
+                <div className="flex items-start space-x-3 p-4 bg-secondary/30 rounded-lg">
+                  <Checkbox
+                    id="wantsAccount"
+                    checked={wantsAccount}
+                    onCheckedChange={(checked) => setWantsAccount(checked === true)}
+                  />
+                  <div className="space-y-1">
+                    <Label
+                      htmlFor="wantsAccount"
+                      className="flex items-center gap-2 cursor-pointer font-medium"
+                    >
+                      <UserPlus className="w-4 h-4 text-primary" />
+                      Crear cuenta para gestionar mis citas
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Podrás ver el estado de tus citas, historial y recibir recordatorios.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {user && (
+                <div className="p-4 bg-primary/10 rounded-lg">
+                  <p className="text-sm text-primary flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Sesión iniciada. Esta cita se guardará en tu historial.
+                  </p>
+                </div>
+              )}
+
               <Button type="submit" size="lg" className="w-full bg-gradient-hero hover:opacity-90 text-lg" disabled={isSubmitting}>
                 {isSubmitting ? "Enviando..." : "Solicitar Cita"}
               </Button>
             </form>
           </CardContent>
         </Card>
+
+        {/* Link to view appointments */}
+        {!user && (
+          <div className="text-center mt-6">
+            <p className="text-primary-foreground/80 mb-2">¿Ya tienes una cuenta?</p>
+            <Button
+              variant="outline"
+              className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
+              onClick={() => navigate("/paciente/auth")}
+            >
+              Ver mis citas
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

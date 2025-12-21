@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Phone, Menu, X, Calendar } from "lucide-react";
+import { Phone, Menu, X, Calendar, Lock } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,6 +54,11 @@ const Header = () => {
                 <Calendar className="w-4 h-4 mr-2" />
                 Agendar Cita
               </a>
+            </Button>
+            <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Link to="/auth" aria-label="Panel del Doctor">
+                <Lock className="w-4 h-4" />
+              </Link>
             </Button>
           </div>
 

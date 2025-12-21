@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Stethoscope, Calendar, Clock, Phone, Mail, User, Baby, LogOut, RefreshCw, Home } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Stethoscope, Calendar, Clock, Phone, Mail, User, Baby, LogOut, RefreshCw, Home, List, CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import AppointmentsCalendar from "@/components/admin/AppointmentsCalendar";
 
 interface Appointment {
   id: string;
@@ -173,124 +175,144 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Appointments Table */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-heading">Citas Agendadas</CardTitle>
-            <div className="flex items-center gap-2">
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Filtrar" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="pending">Pendientes</SelectItem>
-                  <SelectItem value="confirmed">Confirmadas</SelectItem>
-                  <SelectItem value="completed">Completadas</SelectItem>
-                  <SelectItem value="cancelled">Canceladas</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" size="icon" onClick={fetchAppointments}>
-                <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="text-center py-8">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto text-primary" />
-                <p className="mt-2 text-muted-foreground">Cargando citas...</p>
-              </div>
-            ) : appointments.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No hay citas para mostrar
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Fecha/Hora</TableHead>
-                      <TableHead>Paciente</TableHead>
-                      <TableHead>Contacto</TableHead>
-                      <TableHead>Motivo</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {appointments.map((apt) => (
-                      <TableRow key={apt.id}>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="flex items-center gap-1 font-medium">
-                              <Calendar className="w-3 h-3" />
-                              {format(new Date(apt.appointment_date), "dd MMM yyyy", { locale: es })}
-                            </span>
-                            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                              <Clock className="w-3 h-3" />
-                              {apt.appointment_time}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="flex items-center gap-1">
-                              <Baby className="w-3 h-3 text-primary" />
-                              {apt.child_name} ({apt.child_age})
-                            </span>
-                            <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                              <User className="w-3 h-3" />
-                              {apt.parent_name}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col text-sm">
-                            <span className="flex items-center gap-1">
-                              <Phone className="w-3 h-3" />
-                              {apt.phone}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Mail className="w-3 h-3" />
-                              {apt.email}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="max-w-[200px]">
-                          <span className="text-sm truncate block">
-                            {apt.reason || "-"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={statusColors[apt.status]}>
-                            {statusLabels[apt.status] || apt.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={apt.status}
-                            onValueChange={(value) => updateStatus(apt.id, value)}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pending">Pendiente</SelectItem>
-                              <SelectItem value="confirmed">Confirmar</SelectItem>
-                              <SelectItem value="completed">Completar</SelectItem>
-                              <SelectItem value="cancelled">Cancelar</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Tabs for Calendar and List views */}
+        <Tabs defaultValue="calendar" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <CalendarDays className="w-4 h-4" /> Calendario
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <List className="w-4 h-4" /> Lista
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="calendar">
+            <AppointmentsCalendar 
+              appointments={appointments} 
+              onStatusChange={updateStatus}
+            />
+          </TabsContent>
+
+          <TabsContent value="list">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading">Citas Agendadas</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Filtrar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      <SelectItem value="pending">Pendientes</SelectItem>
+                      <SelectItem value="confirmed">Confirmadas</SelectItem>
+                      <SelectItem value="completed">Completadas</SelectItem>
+                      <SelectItem value="cancelled">Canceladas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="icon" onClick={fetchAppointments}>
+                    <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <RefreshCw className="w-6 h-6 animate-spin mx-auto text-primary" />
+                    <p className="mt-2 text-muted-foreground">Cargando citas...</p>
+                  </div>
+                ) : appointments.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No hay citas para mostrar
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Fecha/Hora</TableHead>
+                          <TableHead>Paciente</TableHead>
+                          <TableHead>Contacto</TableHead>
+                          <TableHead>Motivo</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead>Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {appointments.map((apt) => (
+                          <TableRow key={apt.id}>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className="flex items-center gap-1 font-medium">
+                                  <Calendar className="w-3 h-3" />
+                                  {format(new Date(apt.appointment_date), "dd MMM yyyy", { locale: es })}
+                                </span>
+                                <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                                  <Clock className="w-3 h-3" />
+                                  {apt.appointment_time}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className="flex items-center gap-1">
+                                  <Baby className="w-3 h-3 text-primary" />
+                                  {apt.child_name} ({apt.child_age})
+                                </span>
+                                <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                                  <User className="w-3 h-3" />
+                                  {apt.parent_name}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col text-sm">
+                                <span className="flex items-center gap-1">
+                                  <Phone className="w-3 h-3" />
+                                  {apt.phone}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Mail className="w-3 h-3" />
+                                  {apt.email}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="max-w-[200px]">
+                              <span className="text-sm truncate block">
+                                {apt.reason || "-"}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={statusColors[apt.status]}>
+                                {statusLabels[apt.status] || apt.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={apt.status}
+                                onValueChange={(value) => updateStatus(apt.id, value)}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">Pendiente</SelectItem>
+                                  <SelectItem value="confirmed">Confirmar</SelectItem>
+                                  <SelectItem value="completed">Completar</SelectItem>
+                                  <SelectItem value="cancelled">Cancelar</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

@@ -20,13 +20,13 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md shadow-soft">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md shadow-lg border-b border-primary/5">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#inicio" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-hero rounded-full flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-bold text-xl">JS</span>
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white font-heading font-bold text-xl">JS</span>
             </div>
             <div className="hidden sm:block">
               <p className="font-heading font-bold text-foreground text-lg leading-tight">Dr. Jacinto Salazar</p>
@@ -71,7 +71,7 @@ const Header = () => {
               </Button>
             ) : null}
             
-            <Button asChild className="bg-gradient-hero hover:opacity-90 shadow-soft">
+            <Button asChild className="bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 shadow-lg">
               <a href="#citas">
                 <Calendar className="w-4 h-4 mr-2" />
                 Agendar Cita
@@ -124,7 +124,7 @@ const Header = () => {
                   </Button>
                 )}
                 
-                <Button asChild className="bg-gradient-hero w-full">
+                <Button asChild className="bg-gradient-to-r from-primary to-blue-500 w-full">
                   <a href="#citas" onClick={() => setIsMenuOpen(false)}>
                     <Calendar className="w-4 h-4 mr-2" />
                     Agendar Cita

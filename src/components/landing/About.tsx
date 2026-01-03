@@ -1,5 +1,7 @@
 import { Award, GraduationCap, Heart, Users, CheckCircle } from "lucide-react";
-import doctorImage from "@/assets/doctor-hero.png";
+import doctorWithBabyImage from "@/assets/doctor-with-baby.webp";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const achievements = [
   { icon: Award, label: "+30 años de experiencia", value: "Experiencia" },
@@ -20,28 +22,32 @@ const specialties = [
 const About = () => {
   return (
     <section id="sobre-mi" className="py-20 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-4">
+      {/* Decorative elements */}
+      <BlobBackground variant="section" />
+      <MedicalCrosses variant="minimal" />
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Image Side */}
           <div className="relative animate-fade-in">
             <div className="relative mx-auto max-w-md">
               {/* Background decorative shapes */}
-              <div className="absolute -top-4 -left-4 w-full h-full bg-primary/10 rounded-3xl" />
-              <div className="absolute -bottom-4 -right-4 w-full h-full bg-accent/10 rounded-3xl" />
+              <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-to-br from-primary/20 to-blue-400/10 rounded-3xl animate-blob-move" />
+              <div className="absolute -bottom-6 -right-6 w-full h-full bg-gradient-to-tr from-blue-400/15 to-primary/10 rounded-3xl" />
               
               {/* Main image */}
-              <div className="relative bg-gradient-hero rounded-3xl overflow-hidden shadow-card">
+              <div className="relative bg-gradient-to-br from-primary to-blue-500 rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src={doctorImage}
-                  alt="Dr. Jacinto Salazar"
+                  src={doctorWithBabyImage}
+                  alt="Dr. Jacinto Salazar con paciente"
                   className="w-full h-auto object-cover"
                 />
               </div>
 
               {/* Experience badge */}
-              <div className="absolute -bottom-6 -right-6 bg-card shadow-card rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-hero rounded-full flex items-center justify-center">
-                  <span className="text-primary-foreground font-heading font-bold text-lg">30+</span>
+              <div className="absolute -bottom-6 -right-6 bg-card shadow-xl rounded-2xl p-4 flex items-center gap-3 border border-primary/10">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-heading font-bold text-lg">30+</span>
                 </div>
                 <div>
                   <p className="font-heading font-bold text-foreground">Años</p>
@@ -94,7 +100,7 @@ const About = () => {
               {achievements.map((item) => (
                 <div 
                   key={item.value}
-                  className="text-center p-4 bg-secondary rounded-2xl"
+                  className="text-center p-4 bg-gradient-to-br from-secondary to-primary/5 rounded-2xl border border-primary/10"
                 >
                   <item.icon className="w-6 h-6 text-primary mx-auto mb-2" />
                   <p className="font-heading font-bold text-foreground text-sm">{item.value}</p>

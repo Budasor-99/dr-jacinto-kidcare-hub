@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import BlobBackground from "@/components/decorative/BlobBackground";
 
 const testimonials = [
   {
@@ -67,8 +68,9 @@ const Testimonials = () => {
   };
 
   return (
-    <section id="testimonios" className="py-20 bg-secondary/50 relative overflow-hidden">
+    <section id="testimonios" className="py-20 bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden">
       {/* Decorative elements */}
+      <BlobBackground variant="subtle" />
       <div className="absolute top-20 left-10 opacity-10">
         <Quote className="w-32 h-32 text-primary" />
       </div>
@@ -99,7 +101,7 @@ const Testimonials = () => {
             {visibleTestimonials().map((testimonial, index) => (
               <Card 
                 key={`${testimonial.id}-${currentIndex}`}
-                className="bg-card border-0 shadow-card animate-fade-in"
+                className="bg-card/80 backdrop-blur-sm border border-primary/5 shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in hover:-translate-y-1"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardContent className="p-6">
@@ -117,8 +119,8 @@ const Testimonials = () => {
 
                   {/* Author */}
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-hero rounded-full flex items-center justify-center">
-                      <span className="text-primary-foreground font-bold">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">
                         {testimonial.avatar}
                       </span>
                     </div>
@@ -142,7 +144,7 @@ const Testimonials = () => {
               variant="outline"
               size="icon"
               onClick={prevTestimonial}
-              className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              className="rounded-full border-primary text-primary hover:bg-primary hover:text-white"
             >
               <ChevronLeft className="w-5 h-5" />
             </Button>
@@ -161,7 +163,7 @@ const Testimonials = () => {
               variant="outline"
               size="icon"
               onClick={nextTestimonial}
-              className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              className="rounded-full border-primary text-primary hover:bg-primary hover:text-white"
             >
               <ChevronRight className="w-5 h-5" />
             </Button>

@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { usePatient } from "@/hooks/usePatient";
 import { supabase } from "@/integrations/supabase/client";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
+import DotPattern from "@/components/decorative/DotPattern";
 
 const timeSlots = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
@@ -113,24 +115,30 @@ const AppointmentForm = () => {
   const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
-    <section id="citas" className="py-20 bg-gradient-hero relative overflow-hidden">
-      <div className="absolute inset-0 bg-white/5 opacity-50" />
+    <section id="citas" className="py-20 bg-gradient-to-r from-primary via-primary/95 to-blue-500 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute inset-0">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+      </div>
+      <MedicalCrosses variant="scattered" className="opacity-30" />
+      <DotPattern className="opacity-20" dotSize={2} gap={40} opacity={0.15} />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-primary-foreground/20 text-primary-foreground px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-4">
             <CalendarDays className="w-4 h-4" />
             <span className="text-sm font-semibold">Agendar Cita</span>
           </div>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
+          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             Reserve su cita hoy
           </h2>
-          <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Complete el formulario y nos comunicaremos para confirmar su cita.
           </p>
         </div>
 
-        <Card className="max-w-3xl mx-auto border-0 shadow-card">
+        <Card className="max-w-3xl mx-auto border-0 shadow-2xl">
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
@@ -139,32 +147,32 @@ const AppointmentForm = () => {
                     <User className="w-4 h-4 text-primary" />
                     Nombre del padre/madre
                   </Label>
-                  <Input id="parentName" name="parentName" placeholder="Su nombre completo" value={formData.parentName} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="parentName" name="parentName" placeholder="Su nombre completo" value={formData.parentName} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="childName" className="flex items-center gap-2">
                     <Baby className="w-4 h-4 text-primary" /> Nombre del niño/a
                   </Label>
-                  <Input id="childName" name="childName" placeholder="Nombre del paciente" value={formData.childName} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="childName" name="childName" placeholder="Nombre del paciente" value={formData.childName} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="childAge">Edad del niño/a</Label>
-                  <Input id="childAge" name="childAge" placeholder="Ej: 3 años" value={formData.childAge} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="childAge" name="childAge" placeholder="Ej: 3 años" value={formData.childAge} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-primary" /> Teléfono
                   </Label>
-                  <Input id="phone" name="phone" type="tel" placeholder="099 123 4567" value={formData.phone} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="phone" name="phone" type="tel" placeholder="099 123 4567" value={formData.phone} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-primary" /> Email
                   </Label>
-                  <Input id="email" name="email" type="email" placeholder="su@email.com" value={formData.email} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="email" name="email" type="email" placeholder="su@email.com" value={formData.email} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
               </div>
 
@@ -173,14 +181,14 @@ const AppointmentForm = () => {
                   <Label htmlFor="date" className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-primary" /> Fecha preferida
                   </Label>
-                  <Input id="date" name="date" type="date" min={minDate} value={formData.date} onChange={handleChange} required className="bg-secondary/50 border-0" />
+                  <Input id="date" name="date" type="date" min={minDate} value={formData.date} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-primary" /> Hora preferida
                   </Label>
                   <Select value={formData.time} onValueChange={(value) => handleSelectChange("time", value)} required>
-                    <SelectTrigger className="bg-secondary/50 border-0">
+                    <SelectTrigger className="bg-secondary/50 border-primary/10">
                       <SelectValue placeholder="Seleccione hora" />
                     </SelectTrigger>
                     <SelectContent>
@@ -194,12 +202,12 @@ const AppointmentForm = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="reason">Motivo de la consulta</Label>
-                <Textarea id="reason" name="reason" placeholder="Describa brevemente el motivo" rows={3} value={formData.reason} onChange={handleChange} required className="bg-secondary/50 border-0 resize-none" />
+                <Textarea id="reason" name="reason" placeholder="Describa brevemente el motivo" rows={3} value={formData.reason} onChange={handleChange} required className="bg-secondary/50 border-primary/10 resize-none" />
               </div>
 
               {/* Option to create account */}
               {!user && (
-                <div className="flex items-start space-x-3 p-4 bg-secondary/30 rounded-lg">
+                <div className="flex items-start space-x-3 p-4 bg-gradient-to-r from-primary/5 to-blue-400/5 rounded-xl border border-primary/10">
                   <Checkbox
                     id="wantsAccount"
                     checked={wantsAccount}
@@ -221,7 +229,7 @@ const AppointmentForm = () => {
               )}
 
               {user && (
-                <div className="p-4 bg-primary/10 rounded-lg">
+                <div className="p-4 bg-gradient-to-r from-primary/10 to-blue-400/10 rounded-xl border border-primary/10">
                   <p className="text-sm text-primary flex items-center gap-2">
                     <User className="w-4 h-4" />
                     Sesión iniciada. Esta cita se guardará en tu historial.
@@ -229,7 +237,7 @@ const AppointmentForm = () => {
                 </div>
               )}
 
-              <Button type="submit" size="lg" className="w-full bg-gradient-hero hover:opacity-90 text-lg" disabled={isSubmitting}>
+              <Button type="submit" size="lg" className="w-full bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 text-lg shadow-lg" disabled={isSubmitting}>
                 {isSubmitting ? "Enviando..." : "Solicitar Cita"}
               </Button>
             </form>
@@ -239,10 +247,10 @@ const AppointmentForm = () => {
         {/* Link to view appointments */}
         {!user && (
           <div className="text-center mt-6">
-            <p className="text-primary-foreground/80 mb-2">¿Ya tienes una cuenta?</p>
+            <p className="text-white/70 mb-2">¿Ya tienes una cuenta?</p>
             <Button
               variant="outline"
-              className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
               onClick={() => navigate("/paciente/auth")}
             >
               Ver mis citas

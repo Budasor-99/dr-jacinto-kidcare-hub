@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const contactInfo = [
   {
@@ -69,7 +71,11 @@ const Contact = () => {
 
   return (
     <section id="contacto" className="py-20 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-4">
+      {/* Decorative elements */}
+      <BlobBackground variant="section" />
+      <MedicalCrosses variant="minimal" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
@@ -93,11 +99,11 @@ const Contact = () => {
               {contactInfo.map((item) => (
                 <Card 
                   key={item.title} 
-                  className="border-0 shadow-soft hover:shadow-card transition-shadow"
+                  className="border border-primary/5 bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-blue-400/10 rounded-xl flex items-center justify-center flex-shrink-0">
                         <item.icon className="w-6 h-6 text-primary" />
                       </div>
                       <div>
@@ -132,7 +138,7 @@ const Contact = () => {
             <Button 
               asChild 
               size="lg" 
-              className="w-full bg-emerald-500 hover:bg-emerald-600 text-lg"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-lg shadow-lg"
             >
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="w-5 h-5 mr-2" />
@@ -141,7 +147,7 @@ const Contact = () => {
             </Button>
 
             {/* Map */}
-            <div className="rounded-2xl overflow-hidden shadow-card h-64">
+            <div className="rounded-2xl overflow-hidden shadow-xl h-64 border border-primary/10">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7960547559073!2d-78.47659!3d-0.0876095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d58f39ba1b512f%3A0xeb91b03c774a09e9!2sRodrigo%20Mu%C3%B1oz%20N81-46%2C%20Quito%20170302!5e0!3m2!1ses!2sec!4v1"
                 width="100%"
@@ -156,7 +162,7 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <Card className="border-0 shadow-card">
+          <Card className="border border-primary/5 bg-card/80 backdrop-blur-sm shadow-xl">
             <CardContent className="p-8">
               <h3 className="font-heading text-2xl font-bold text-foreground mb-6">
                 Envíenos un mensaje
@@ -172,7 +178,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="bg-secondary/50 border-0"
+                      className="bg-secondary/50 border-primary/10"
                     />
                   </div>
                   <div className="space-y-2">
@@ -185,7 +191,7 @@ const Contact = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="bg-secondary/50 border-0"
+                      className="bg-secondary/50 border-primary/10"
                     />
                   </div>
                 </div>
@@ -199,7 +205,7 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="bg-secondary/50 border-0"
+                    className="bg-secondary/50 border-primary/10"
                   />
                 </div>
                 <div className="space-y-2">
@@ -212,13 +218,13 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    className="bg-secondary/50 border-0 resize-none"
+                    className="bg-secondary/50 border-primary/10 resize-none"
                   />
                 </div>
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full bg-gradient-hero hover:opacity-90"
+                  className="w-full bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 shadow-lg"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

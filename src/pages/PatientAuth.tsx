@@ -120,14 +120,19 @@ const PatientAuth = () => {
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/mis-citas`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
 
       if (error) throw error;
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Google sign-in error:", error);
       toast({
         title: "Error",
-        description: "No se pudo iniciar sesión con Google",
+        description: error?.message || "No se pudo iniciar sesión con Google",
         variant: "destructive",
       });
     }

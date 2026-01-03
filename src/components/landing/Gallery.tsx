@@ -1,4 +1,6 @@
 import { Camera, Baby, Heart } from "lucide-react";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 // Placeholder images - user will upload real ones later
 const galleryImages = [
@@ -26,8 +28,12 @@ const galleryImages = [
 
 const Gallery = () => {
   return (
-    <section id="galeria" className="py-20 bg-secondary/50 relative overflow-hidden">
-      <div className="container mx-auto px-4">
+    <section id="galeria" className="py-20 bg-gradient-to-b from-background to-secondary/30 relative overflow-hidden">
+      {/* Decorative elements */}
+      <BlobBackground variant="subtle" />
+      <MedicalCrosses variant="minimal" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
@@ -48,12 +54,12 @@ const Gallery = () => {
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
-              className="group relative aspect-square rounded-2xl overflow-hidden shadow-soft animate-fade-in-up cursor-pointer"
+              className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg animate-fade-in-up cursor-pointer hover:-translate-y-1 transition-transform duration-300"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Placeholder */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary flex flex-col items-center justify-center">
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-3">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-400/15 to-primary/10 flex flex-col items-center justify-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/30 to-blue-400/20 rounded-full flex items-center justify-center mb-3">
                   {index % 2 === 0 ? (
                     <Baby className="w-8 h-8 text-primary" />
                   ) : (
@@ -64,8 +70,8 @@ const Gallery = () => {
               </div>
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="text-primary-foreground font-heading font-semibold">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <p className="text-white font-heading font-semibold">
                   {image.title}
                 </p>
               </div>
@@ -75,7 +81,7 @@ const Gallery = () => {
 
         {/* Note for user */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-card rounded-full px-6 py-3 shadow-soft">
+          <div className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-primary/10">
             <Camera className="w-5 h-5 text-primary" />
             <p className="text-muted-foreground text-sm">
               Las fotos del consultorio serán agregadas próximamente

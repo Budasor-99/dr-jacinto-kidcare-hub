@@ -5,59 +5,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
 /* Design System for Dr. Jacinto Salazar - Pediatric Landing Page */
+/* Inspired by vibrant blue gradient style with organic blob shapes */
 
 @layer base {
   :root {
-    /* Primary Blue - Professional Pediatric Blue from reference */
-    --primary: 215 70% 55%;
+    /* Primary Blue - Vibrant Medical Blue */
+    --primary: 220 85% 55%;
     --primary-foreground: 0 0% 100%;
     
-    /* Background colors */
-    --background: 210 50% 98%;
-    --foreground: 215 30% 20%;
+    /* Background colors - Clean white base */
+    --background: 210 40% 98%;
+    --foreground: 220 30% 20%;
 
     /* Card styles */
     --card: 0 0% 100%;
-    --card-foreground: 215 30% 20%;
+    --card-foreground: 220 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 20%;
+    --popover-foreground: 220 30% 20%;
 
     /* Secondary - Soft blue for accents */
-    --secondary: 210 60% 95%;
-    --secondary-foreground: 215 70% 45%;
+    --secondary: 215 70% 95%;
+    --secondary-foreground: 220 85% 45%;
 
     /* Muted tones */
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 20% 50%;
+    --muted: 215 50% 94%;
+    --muted-foreground: 220 20% 50%;
 
-    /* Accent - Warm coral for CTAs */
-    --accent: 350 80% 60%;
+    /* Accent - Vibrant blue for CTAs (matching the gradient) */
+    --accent: 220 90% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 210 30% 88%;
-    --input: 210 30% 88%;
-    --ring: 215 70% 55%;
+    --border: 215 40% 88%;
+    --input: 215 40% 88%;
+    --ring: 220 85% 55%;
 
     --radius: 0.75rem;
 
     /* Custom pediatric colors */
-    --pediatric-light-blue: 200 80% 92%;
+    --pediatric-light-blue: 210 90% 94%;
     --pediatric-soft-pink: 340 60% 95%;
     --pediatric-mint: 160 50% 92%;
     --pediatric-yellow: 45 90% 90%;
     
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(215 70% 55%) 0%, hsl(200 80% 60%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(210 50% 98%) 0%, hsl(210 60% 95%) 100%);
+    /* Blob colors for the organic shapes */
+    --blob-primary: 220 85% 55%;
+    --blob-secondary: 210 80% 60%;
+    --blob-tertiary: 200 75% 65%;
+    
+    /* Gradients - Vibrant blue gradient matching the images */
+    --gradient-hero: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(200 80% 60%) 50%, hsl(190 75% 65%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(215 70% 97%) 0%, hsl(210 60% 95%) 100%);
+    --gradient-blob: linear-gradient(135deg, hsl(220 85% 55% / 0.3) 0%, hsl(200 80% 60% / 0.2) 100%);
 
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(215 70% 55% / 0.15);
-    --shadow-card: 0 8px 30px -8px hsl(215 70% 55% / 0.12);
-    --shadow-glow: 0 0 40px hsl(215 70% 55% / 0.2);
+    /* Shadows - Enhanced for depth */
+    --shadow-soft: 0 4px 20px -4px hsl(220 85% 55% / 0.2);
+    --shadow-card: 0 8px 30px -8px hsl(220 85% 55% / 0.15);
+    --shadow-glow: 0 0 50px hsl(220 85% 55% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -70,33 +77,37 @@
   }
 
   .dark {
-    --background: 215 40% 8%;
+    --background: 220 40% 8%;
     --foreground: 210 40% 95%;
 
-    --card: 215 35% 12%;
+    --card: 220 35% 12%;
     --card-foreground: 210 40% 95%;
 
-    --popover: 215 35% 12%;
+    --popover: 220 35% 12%;
     --popover-foreground: 210 40% 95%;
 
-    --primary: 215 70% 60%;
+    --primary: 220 85% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 30% 18%;
+    --secondary: 220 30% 18%;
     --secondary-foreground: 210 40% 90%;
 
-    --muted: 215 30% 18%;
-    --muted-foreground: 215 20% 60%;
+    --muted: 220 30% 18%;
+    --muted-foreground: 220 20% 60%;
 
-    --accent: 350 75% 55%;
+    --accent: 220 85% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 215 30% 20%;
-    --input: 215 30% 20%;
-    --ring: 215 70% 60%;
+    --border: 220 30% 20%;
+    --input: 220 30% 20%;
+    --ring: 220 85% 60%;
+    
+    --blob-primary: 220 85% 45%;
+    --blob-secondary: 210 80% 50%;
+    --blob-tertiary: 200 75% 55%;
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;

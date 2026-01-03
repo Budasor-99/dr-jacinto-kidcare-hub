@@ -9,58 +9,60 @@ import {
   Clock
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const services = [
   {
     icon: Baby,
     title: "Control del Niño Sano",
     description: "Evaluaciones periódicas para asegurar el desarrollo óptimo de su hijo desde el nacimiento.",
-    color: "bg-pediatric-light-blue",
+    color: "bg-gradient-to-br from-primary/10 to-blue-400/10",
     iconColor: "text-primary",
   },
   {
     icon: Syringe,
     title: "Vacunación",
     description: "Programa completo de vacunación según el esquema nacional e internacional.",
-    color: "bg-pediatric-mint",
+    color: "bg-gradient-to-br from-emerald-100 to-emerald-50",
     iconColor: "text-emerald-600",
   },
   {
     icon: Stethoscope,
     title: "Consulta General",
     description: "Atención médica integral para todas las afecciones pediátricas comunes.",
-    color: "bg-pediatric-soft-pink",
-    iconColor: "text-accent",
+    color: "bg-gradient-to-br from-primary/10 to-blue-300/10",
+    iconColor: "text-primary",
   },
   {
     icon: Activity,
     title: "Seguimiento del Desarrollo",
     description: "Monitoreo continuo del crecimiento físico, cognitivo y emocional.",
-    color: "bg-pediatric-yellow",
+    color: "bg-gradient-to-br from-amber-100 to-amber-50",
     iconColor: "text-amber-600",
   },
   {
     icon: HeartPulse,
     title: "Urgencias Pediátricas",
     description: "Atención prioritaria para situaciones que requieren cuidado inmediato.",
-    color: "bg-red-50",
+    color: "bg-gradient-to-br from-red-100 to-red-50",
     iconColor: "text-red-500",
   },
   {
     icon: ClipboardList,
     title: "Certificados Médicos",
     description: "Documentación para escuelas, deportes y otras actividades.",
-    color: "bg-purple-50",
+    color: "bg-gradient-to-br from-purple-100 to-purple-50",
     iconColor: "text-purple-600",
   },
 ];
 
 const Services = () => {
   return (
-    <section id="servicios" className="py-20 bg-secondary/50 relative overflow-hidden">
+    <section id="servicios" className="py-20 bg-secondary/30 relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/5 rounded-full blur-3xl" />
+      <BlobBackground variant="subtle" />
+      <MedicalCrosses variant="minimal" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
@@ -84,7 +86,7 @@ const Services = () => {
           {services.map((service, index) => (
             <Card 
               key={service.title}
-              className="group hover:shadow-card transition-all duration-300 border-0 bg-card animate-fade-in-up"
+              className="group hover:shadow-xl transition-all duration-300 border border-primary/5 bg-card/80 backdrop-blur-sm animate-fade-in-up hover:-translate-y-1"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardContent className="p-6">
@@ -103,19 +105,25 @@ const Services = () => {
         </div>
 
         {/* Schedule Info */}
-        <div className="mt-12 bg-gradient-hero rounded-3xl p-8 md:p-12 text-center shadow-glow">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Clock className="w-8 h-8 text-primary-foreground" />
-            <h3 className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground">
-              Horario de Atención
-            </h3>
+        <div className="mt-12 bg-gradient-to-r from-primary via-primary/95 to-blue-500 rounded-3xl p-8 md:p-12 text-center shadow-xl relative overflow-hidden">
+          {/* Decorative blob inside */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Clock className="w-8 h-8 text-white" />
+              <h3 className="font-heading text-2xl md:text-3xl font-bold text-white">
+                Horario de Atención
+              </h3>
+            </div>
+            <p className="text-white/90 text-lg mb-2">
+              Lunes a Viernes: 9:00 AM - 1:00 PM | 3:00 PM - 7:00 PM
+            </p>
+            <p className="text-white/90 text-lg">
+              Sábados: 9:00 AM - 1:00 PM
+            </p>
           </div>
-          <p className="text-primary-foreground/90 text-lg mb-2">
-            Lunes a Viernes: 9:00 AM - 1:00 PM | 3:00 PM - 7:00 PM
-          </p>
-          <p className="text-primary-foreground/90 text-lg">
-            Sábados: 9:00 AM - 1:00 PM
-          </p>
         </div>
       </div>
     </section>

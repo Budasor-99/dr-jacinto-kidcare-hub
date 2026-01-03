@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import BlobBackground from "@/components/decorative/BlobBackground";
 
 const faqs = [
   {
@@ -43,8 +44,11 @@ const faqs = [
 
 const FAQ = () => {
   return (
-    <section id="faq" className="py-20 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-4">
+    <section id="faq" className="py-20 bg-secondary/20 relative overflow-hidden">
+      {/* Decorative elements */}
+      <BlobBackground variant="subtle" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
@@ -67,7 +71,7 @@ const FAQ = () => {
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="bg-card rounded-2xl border-0 shadow-soft px-6 data-[state=open]:shadow-card transition-shadow"
+                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-primary/5 shadow-lg px-6 data-[state=open]:shadow-xl transition-all"
               >
                 <AccordionTrigger className="text-left font-heading font-semibold text-foreground hover:no-underline py-6">
                   {faq.question}

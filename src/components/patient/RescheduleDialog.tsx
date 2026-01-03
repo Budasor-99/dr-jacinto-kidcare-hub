@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -57,6 +57,46 @@ export const RescheduleDialog = ({
   const [newDate, setNewDate] = useState<Date | undefined>(undefined);
   const [newTime, setNewTime] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // Fetch occupied slots when date changes
+  useEffect(() => {
+    const fetchOccupiedSlots = async () => {
+      if (!newDate || !appointment) {
+        setOccupiedSlots([]);
+        return;
+      }
+
+      setLoadingSlots(true);
+      try {
+        const formattedDate = format(newDate, "yyyy-MM-dd");
+        const { data, error } = await supabase
+          .from("appointments")
+          .select("appointment_time")
+          .eq("appointment_date", formattedDate)
+          .neq("id", appointment.id)
+          .in("status", ["pending", "confirmed"]);
+
+        if (error) throw error;
+
+        setOccupiedSlots(data?.map(apt => apt.appointment_time) || []);
+      } catch (error) {
+        console.error("Error fetching occupied slots:", error);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    fetchOccupiedSlots();
+  }, [newDate, appointment]);
+
+  // Reset time if selected slot becomes occupied
+  useEffect(() => {
+    if (newTime && occupiedSlots.includes(newTime)) {
+      setNewTime("");
+    }
+  }, [occupiedSlots, newTime]);
 
   const handleReschedule = async () => {
     if (!appointment || !newDate || !newTime) {
@@ -129,6 +169,7 @@ export const RescheduleDialog = ({
   const handleClose = () => {
     setNewDate(undefined);
     setNewTime("");
+    setOccupiedSlots([]);
     onOpenChange(false);
   };
 
@@ -192,19 +233,38 @@ export const RescheduleDialog = ({
           {/* New time picker */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Nueva hora</label>
-            <Select value={newTime} onValueChange={setNewTime}>
+            <Select value={newTime} onValueChange={setNewTime} disabled={!newDate || loadingSlots}>
               <SelectTrigger className="w-full">
-                <Clock className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Seleccionar hora" />
+                {loadingSlots ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Clock className="mr-2 h-4 w-4" />
+                )}
+                <SelectValue placeholder={loadingSlots ? "Cargando horarios..." : "Seleccionar hora"} />
               </SelectTrigger>
-              <SelectContent>
-                {timeSlots.map((time) => (
-                  <SelectItem key={time} value={time}>
-                    {time}
-                  </SelectItem>
-                ))}
+              <SelectContent className="bg-background">
+                {timeSlots.map((time) => {
+                  const isOccupied = occupiedSlots.includes(time);
+                  return (
+                    <SelectItem
+                      key={time}
+                      value={time}
+                      disabled={isOccupied}
+                      className={cn(
+                        isOccupied && "text-muted-foreground line-through opacity-50"
+                      )}
+                    >
+                      {time} {isOccupied && "(Ocupado)"}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
+            {newDate && !loadingSlots && occupiedSlots.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Los horarios tachados ya están ocupados
+              </p>
+            )}
           </div>
         </div>
 

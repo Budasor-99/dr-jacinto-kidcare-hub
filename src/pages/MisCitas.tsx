@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Clock, User, Phone, Mail, ArrowLeft, Baby, LogOut } from "lucide-react";
+import { Calendar, Clock, User, Phone, Mail, ArrowLeft, Baby, LogOut, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePatient } from "@/hooks/usePatient";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { RescheduleDialog } from "@/components/patient/RescheduleDialog";
 
 interface Appointment {
   id: string;
@@ -37,6 +38,8 @@ const MisCitas = () => {
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
+  const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -103,6 +106,21 @@ const MisCitas = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleOpenReschedule = (appointment: Appointment) => {
+    setAppointmentToReschedule(appointment);
+    setRescheduleDialogOpen(true);
+  };
+
+  const handleRescheduleSuccess = (appointmentId: string, newDate: string, newTime: string) => {
+    setAppointments(prev =>
+      prev.map(apt =>
+        apt.id === appointmentId
+          ? { ...apt, appointment_date: newDate, appointment_time: newTime }
+          : apt
+      )
+    );
   };
 
   const handleSignOut = async () => {
@@ -253,7 +271,15 @@ const MisCitas = () => {
                       )}
 
                       {canCancel && (
-                        <div className="pt-2">
+                        <div className="pt-2 flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenReschedule(appointment)}
+                          >
+                            <CalendarClock className="w-4 h-4 mr-1" />
+                            Reagendar
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
@@ -271,6 +297,13 @@ const MisCitas = () => {
             </div>
           </div>
         )}
+
+        <RescheduleDialog
+          appointment={appointmentToReschedule}
+          open={rescheduleDialogOpen}
+          onOpenChange={setRescheduleDialogOpen}
+          onSuccess={handleRescheduleSuccess}
+        />
       </main>
     </div>
   );

@@ -73,6 +73,27 @@ export const RescheduleDialog = ({
     try {
       const formattedDate = format(newDate, "yyyy-MM-dd");
 
+      // Check availability first
+      const { data: existingAppointments, error: checkError } = await supabase
+        .from("appointments")
+        .select("id")
+        .eq("appointment_date", formattedDate)
+        .eq("appointment_time", newTime)
+        .neq("id", appointment.id)
+        .in("status", ["pending", "confirmed"]);
+
+      if (checkError) throw checkError;
+
+      if (existingAppointments && existingAppointments.length > 0) {
+        toast({
+          title: "Horario no disponible",
+          description: "Ya existe una cita programada para esa fecha y hora. Por favor selecciona otro horario.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase
         .from("appointments")
         .update({
@@ -90,7 +111,6 @@ export const RescheduleDialog = ({
         description: "Su cita ha sido reagendada exitosamente",
       });
 
-      // Reset state
       setNewDate(undefined);
       setNewTime("");
       onOpenChange(false);

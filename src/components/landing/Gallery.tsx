@@ -1,28 +1,26 @@
-import { Camera, Baby, Heart } from "lucide-react";
+import { Camera } from "lucide-react";
 import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
-// Placeholder images - user will upload real ones later
+import galleryConsultorio from "@/assets/gallery-consultorio.png";
+import gallerySalaEspera from "@/assets/gallery-sala-espera.png";
+import galleryDoctorBebe from "@/assets/gallery-doctor-bebe.png";
+
 const galleryImages = [
   {
     id: 1,
-    title: "Sala de Espera",
-    placeholder: true,
+    title: "Consultorio",
+    image: galleryConsultorio,
   },
   {
     id: 2,
-    title: "Consultorio",
-    placeholder: true,
+    title: "Sala de Espera",
+    image: gallerySalaEspera,
   },
   {
     id: 3,
-    title: "Área de Vacunación",
-    placeholder: true,
-  },
-  {
-    id: 4,
-    title: "Zona Infantil",
-    placeholder: true,
+    title: "Atención Personalizada",
+    image: galleryDoctorBebe,
   },
 ];
 
@@ -49,44 +47,29 @@ const Gallery = () => {
           </p>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Gallery Grid - 3 images */}
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
-              className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg animate-fade-in-up cursor-pointer hover:-translate-y-1 transition-transform duration-300"
+              className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg animate-fade-in-up cursor-pointer hover:-translate-y-2 transition-all duration-300"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Placeholder */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-blue-400/15 to-primary/10 flex flex-col items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/30 to-blue-400/20 rounded-full flex items-center justify-center mb-3">
-                  {index % 2 === 0 ? (
-                    <Baby className="w-8 h-8 text-primary" />
-                  ) : (
-                    <Heart className="w-8 h-8 text-primary" />
-                  )}
-                </div>
-                <p className="text-primary font-medium text-sm">Próximamente</p>
-              </div>
+              {/* Image */}
+              <img
+                src={image.image}
+                alt={image.title}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="text-white font-heading font-semibold">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                <p className="text-white font-heading font-semibold text-lg">
                   {image.title}
                 </p>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Note for user */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-card/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-primary/10">
-            <Camera className="w-5 h-5 text-primary" />
-            <p className="text-muted-foreground text-sm">
-              Las fotos del consultorio serán agregadas próximamente
-            </p>
-          </div>
         </div>
       </div>
     </section>

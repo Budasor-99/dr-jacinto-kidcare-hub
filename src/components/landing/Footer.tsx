@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, Heart, Facebook, Instagram } from "lucide-react";
+import logoImage from "@/assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -14,9 +15,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center">
-                <span className="font-heading font-bold text-lg text-white">JS</span>
-              </div>
+              <img src={logoImage} alt="Centro Médico Salazar Vargas" className="w-12 h-12 object-contain" />
               <div>
                 <p className="font-heading font-bold text-lg">Dr. Jacinto Salazar</p>
                 <p className="text-white/60 text-sm">Médico Pediatra</p>

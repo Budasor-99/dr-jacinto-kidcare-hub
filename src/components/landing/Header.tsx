@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Phone, Menu, X, Calendar, Lock, User, CalendarDays } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logoImage from "@/assets/logo.png";
 import { usePatient } from "@/hooks/usePatient";
 
 const Header = () => {
@@ -25,9 +26,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#inicio" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-heading font-bold text-xl">JS</span>
-            </div>
+            <img src={logoImage} alt="Centro Médico Salazar Vargas" className="w-12 h-12 object-contain" />
             <div className="hidden sm:block">
               <p className="font-heading font-bold text-foreground text-lg leading-tight">Dr. Jacinto Salazar</p>
               <p className="text-muted-foreground text-sm">Médico Pediatra</p>

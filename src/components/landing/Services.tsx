@@ -118,10 +118,10 @@ const Services = () => {
               </h3>
             </div>
             <p className="text-white/90 text-lg mb-2">
-              Lunes a Viernes: 9:00 AM - 1:00 PM | 3:00 PM - 7:00 PM
+              Lunes a Viernes: 8:00 AM - 12:00 PM | 3:00 PM - 8:00 PM
             </p>
             <p className="text-white/90 text-lg">
-              Sábados: 9:00 AM - 1:00 PM
+              Sábados: 8:00 AM - 12:00 PM
             </p>
           </div>
         </div>

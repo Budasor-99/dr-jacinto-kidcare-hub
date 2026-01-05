@@ -15,10 +15,18 @@ import { supabase } from "@/integrations/supabase/client";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 import DotPattern from "@/components/decorative/DotPattern";
 
-const timeSlots = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
-];
+const morningSlots = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"];
+const afternoonSlots = ["15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"];
+
+const getTimeSlotsForDate = (dateString: string): string[] => {
+  if (!dateString) return [...morningSlots, ...afternoonSlots];
+  const date = new Date(dateString + "T12:00:00");
+  const dayOfWeek = date.getDay();
+  // Saturday (6) = morning only, Sunday (0) = none
+  if (dayOfWeek === 6) return morningSlots;
+  if (dayOfWeek === 0) return [];
+  return [...morningSlots, ...afternoonSlots];
+};
 
 const AppointmentForm = () => {
   const { toast } = useToast();
@@ -181,7 +189,23 @@ const AppointmentForm = () => {
                   <Label htmlFor="date" className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-primary" /> Fecha preferida
                   </Label>
-                  <Input id="date" name="date" type="date" min={minDate} value={formData.date} onChange={handleChange} required className="bg-secondary/50 border-primary/10" />
+                  <Input 
+                    id="date" 
+                    name="date" 
+                    type="date" 
+                    min={minDate} 
+                    value={formData.date} 
+                    onChange={(e) => {
+                      handleChange(e);
+                      // Reset time if date changes and current time is not available
+                      const newSlots = getTimeSlotsForDate(e.target.value);
+                      if (!newSlots.includes(formData.time)) {
+                        setFormData(prev => ({ ...prev, time: "" }));
+                      }
+                    }} 
+                    required 
+                    className="bg-secondary/50 border-primary/10" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
@@ -192,9 +216,13 @@ const AppointmentForm = () => {
                       <SelectValue placeholder="Seleccione hora" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timeSlots.map((slot) => (
-                        <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                      ))}
+                      {getTimeSlotsForDate(formData.date).length === 0 ? (
+                        <SelectItem value="no-available" disabled>No hay horarios disponibles (Domingo)</SelectItem>
+                      ) : (
+                        getTimeSlotsForDate(formData.date).map((slot) => (
+                          <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

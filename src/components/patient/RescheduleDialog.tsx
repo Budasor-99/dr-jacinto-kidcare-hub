@@ -42,10 +42,16 @@ interface RescheduleDialogProps {
   onSuccess: (appointmentId: string, newDate: string, newTime: string) => void;
 }
 
-const timeSlots = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
-];
+const morningSlots = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"];
+const afternoonSlots = ["15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"];
+
+const getTimeSlotsForDate = (date: Date | undefined): string[] => {
+  if (!date) return [...morningSlots, ...afternoonSlots];
+  const dayOfWeek = date.getDay();
+  // Saturday (6) = morning only, Sunday (0) = none (already blocked)
+  if (dayOfWeek === 6) return morningSlots;
+  return [...morningSlots, ...afternoonSlots];
+};
 
 export const RescheduleDialog = ({
   appointment,
@@ -91,12 +97,13 @@ export const RescheduleDialog = ({
     fetchOccupiedSlots();
   }, [newDate, appointment]);
 
-  // Reset time if selected slot becomes occupied
+  // Reset time if selected slot becomes occupied or unavailable for the day
   useEffect(() => {
-    if (newTime && occupiedSlots.includes(newTime)) {
+    const availableSlots = getTimeSlotsForDate(newDate);
+    if (newTime && (occupiedSlots.includes(newTime) || !availableSlots.includes(newTime))) {
       setNewTime("");
     }
-  }, [occupiedSlots, newTime]);
+  }, [occupiedSlots, newTime, newDate]);
 
   const handleReschedule = async () => {
     if (!appointment || !newDate || !newTime) {
@@ -243,7 +250,7 @@ export const RescheduleDialog = ({
                 <SelectValue placeholder={loadingSlots ? "Cargando horarios..." : "Seleccionar hora"} />
               </SelectTrigger>
               <SelectContent className="bg-background">
-                {timeSlots.map((time) => {
+                {getTimeSlotsForDate(newDate).map((time) => {
                   const isOccupied = occupiedSlots.includes(time);
                   return (
                     <SelectItem

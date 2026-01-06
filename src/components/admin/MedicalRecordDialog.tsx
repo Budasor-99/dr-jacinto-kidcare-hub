@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, Save } from "lucide-react";
+import { Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { PatientDataForm } from "./PatientDataForm";
 import { MedicalRecordForm } from "./MedicalRecordForm";
 import { MedicalControlsTab } from "./MedicalControlsTab";
 import { VaccinationsTab } from "./VaccinationsTab";
+import { EvolutionNotesTab } from "./EvolutionNotesTab";
 import { generateMedicalRecordPDF } from "@/lib/pdfGenerator";
 
 interface MedicalRecordDialogProps {
@@ -21,32 +23,79 @@ interface Patient {
   name: string;
   email: string;
   phone: string | null;
+  paternal_surname: string | null;
+  maternal_surname: string | null;
+  first_names: string | null;
+  birth_date: string | null;
+  birth_place: string | null;
+  sex: string | null;
+  address: string | null;
+  residence_place: string | null;
+  origin_place: string | null;
+  first_consultation_date: string | null;
+  history_number: string | null;
+  father_name: string | null;
+  father_age: string | null;
+  father_education: string | null;
+  father_occupation: string | null;
+  mother_name: string | null;
+  mother_age: string | null;
+  mother_education: string | null;
+  mother_occupation: string | null;
+  information_source: string | null;
 }
 
 interface MedicalRecord {
   id: string;
   patient_id: string;
+  // Datos del nacimiento
   birth_weight: string | null;
   birth_length: string | null;
   head_circumference: string | null;
   gestational_weeks: string | null;
   delivery_type: string | null;
   apgar_score: string | null;
+  birth_place_type: string | null;
+  professional_attention: string | null;
+  birth_order: string | null;
+  // Antecedentes familiares
   family_history: string | null;
   mother_health: string | null;
   father_health: string | null;
   siblings_health: string | null;
+  pathological_family_history: string | null;
+  // Antecedentes personales
   allergies: string | null;
   previous_diseases: string | null;
   previous_surgeries: string | null;
   current_medications: string | null;
+  // Periodos
+  prenatal_history: string | null;
+  postnatal_observations: string | null;
+  // Alimentación
   breastfeeding_duration: string | null;
   formula_feeding: string | null;
   complementary_feeding: string | null;
   current_diet: string | null;
+  // Desarrollo
   motor_development: string | null;
   language_development: string | null;
   social_development: string | null;
+  vaccines_received: string | null;
+  personality: string | null;
+  habits: string | null;
+  // Motivo de consulta
+  consultation_reason: string | null;
+  current_illness: string | null;
+  // Interrogatorio por aparatos
+  sense_organs: string | null;
+  cardiorespiratory: string | null;
+  gastrointestinal: string | null;
+  genitourinary: string | null;
+  neuromusculoskeletal: string | null;
+  psychological: string | null;
+  // Examen físico
+  initial_physical_exam: string | null;
   notes: string | null;
 }
 
@@ -54,7 +103,8 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
   const [patient, setPatient] = useState<Patient | null>(null);
   const [medicalRecord, setMedicalRecord] = useState<MedicalRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [savingRecord, setSavingRecord] = useState(false);
+  const [savingPatient, setSavingPatient] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -110,10 +160,39 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
     }
   };
 
-  const handleSave = async (data: Partial<MedicalRecord>) => {
+  const handleSavePatient = async (data: Partial<Patient>) => {
+    if (!patient) return;
+
+    setSavingPatient(true);
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .update(data)
+        .eq("id", patient.id);
+
+      if (error) throw error;
+
+      setPatient({ ...patient, ...data });
+      toast({
+        title: "Guardado",
+        description: "Los datos del paciente han sido actualizados.",
+      });
+    } catch (error: any) {
+      console.error("Error saving patient:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la información del paciente.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingPatient(false);
+    }
+  };
+
+  const handleSaveRecord = async (data: Partial<MedicalRecord>) => {
     if (!medicalRecord) return;
 
-    setSaving(true);
+    setSavingRecord(true);
     try {
       const { error } = await supabase
         .from("medical_records")
@@ -135,7 +214,7 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
         variant: "destructive",
       });
     } finally {
-      setSaving(false);
+      setSavingRecord(false);
     }
   };
 
@@ -178,14 +257,29 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
     }
   };
 
+  const getPatientDisplayName = () => {
+    if (!patient) return "Cargando...";
+    if (patient.paternal_surname || patient.first_names) {
+      return `${patient.paternal_surname || ""} ${patient.maternal_surname || ""} ${patient.first_names || ""}`.trim();
+    }
+    return patient.name;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <DialogTitle>
-              Historia Clínica - {patient?.name || "Cargando..."}
-            </DialogTitle>
+            <div>
+              <DialogTitle className="text-xl">
+                Historia Clínica - {getPatientDisplayName()}
+              </DialogTitle>
+              {patient?.history_number && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  N° Historia: {patient.history_number}
+                </p>
+              )}
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -203,19 +297,31 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
             Cargando historia clínica...
           </div>
         ) : (
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="general">Datos Generales</TabsTrigger>
-              <TabsTrigger value="controls">Controles</TabsTrigger>
-              <TabsTrigger value="vaccinations">Vacunas</TabsTrigger>
+          <Tabs defaultValue="patient" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="patient" className="text-xs sm:text-sm">Paciente</TabsTrigger>
+              <TabsTrigger value="anamnesis" className="text-xs sm:text-sm">Anamnesis</TabsTrigger>
+              <TabsTrigger value="controls" className="text-xs sm:text-sm">Controles</TabsTrigger>
+              <TabsTrigger value="evolution" className="text-xs sm:text-sm">Evolución</TabsTrigger>
+              <TabsTrigger value="vaccinations" className="text-xs sm:text-sm">Vacunas</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general" className="mt-4">
+            <TabsContent value="patient" className="mt-4">
+              {patient && (
+                <PatientDataForm
+                  patient={patient}
+                  onSave={handleSavePatient}
+                  saving={savingPatient}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="anamnesis" className="mt-4">
               {medicalRecord && (
                 <MedicalRecordForm
                   record={medicalRecord}
-                  onSave={handleSave}
-                  saving={saving}
+                  onSave={handleSaveRecord}
+                  saving={savingRecord}
                 />
               )}
             </TabsContent>
@@ -223,6 +329,12 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
             <TabsContent value="controls" className="mt-4">
               {medicalRecord && (
                 <MedicalControlsTab medicalRecordId={medicalRecord.id} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="evolution" className="mt-4">
+              {medicalRecord && (
+                <EvolutionNotesTab medicalRecordId={medicalRecord.id} />
               )}
             </TabsContent>
 

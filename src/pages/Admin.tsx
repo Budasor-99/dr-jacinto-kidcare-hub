@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Stethoscope, Calendar, Clock, Phone, Mail, User, Baby, LogOut, RefreshCw, Home, List, CalendarDays } from "lucide-react";
+import { Stethoscope, Calendar, Clock, Phone, Mail, User, Baby, LogOut, RefreshCw, Home, List, CalendarDays, Users } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import AppointmentsCalendar from "@/components/admin/AppointmentsCalendar";
+import { PatientsList } from "@/components/admin/PatientsList";
 
 interface Appointment {
   id: string;
@@ -184,6 +185,9 @@ const Admin = () => {
             <TabsTrigger value="list" className="flex items-center gap-2">
               <List className="w-4 h-4" /> Lista
             </TabsTrigger>
+            <TabsTrigger value="patients" className="flex items-center gap-2">
+              <Users className="w-4 h-4" /> Pacientes
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="calendar">
@@ -311,6 +315,10 @@ const Admin = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="patients">
+            <PatientsList />
           </TabsContent>
         </Tabs>
       </main>

@@ -70,6 +70,211 @@ export type Database = {
           },
         ]
       }
+      medical_controls: {
+        Row: {
+          abdomen_exam: string | null
+          age_at_control: string | null
+          blood_pressure: string | null
+          bmi: string | null
+          chest_exam: string | null
+          control_date: string
+          created_at: string
+          diagnosis: string | null
+          ears_exam: string | null
+          extremities_exam: string | null
+          eyes_exam: string | null
+          general_appearance: string | null
+          genitourinary_exam: string | null
+          head_circumference: string | null
+          head_exam: string | null
+          heart_exam: string | null
+          heart_rate: string | null
+          height: string | null
+          id: string
+          medical_record_id: string
+          neck_exam: string | null
+          neurological_exam: string | null
+          next_appointment: string | null
+          nose_throat_exam: string | null
+          recommendations: string | null
+          respiratory_rate: string | null
+          skin_exam: string | null
+          temperature: string | null
+          treatment: string | null
+          updated_at: string
+          weight: string | null
+        }
+        Insert: {
+          abdomen_exam?: string | null
+          age_at_control?: string | null
+          blood_pressure?: string | null
+          bmi?: string | null
+          chest_exam?: string | null
+          control_date?: string
+          created_at?: string
+          diagnosis?: string | null
+          ears_exam?: string | null
+          extremities_exam?: string | null
+          eyes_exam?: string | null
+          general_appearance?: string | null
+          genitourinary_exam?: string | null
+          head_circumference?: string | null
+          head_exam?: string | null
+          heart_exam?: string | null
+          heart_rate?: string | null
+          height?: string | null
+          id?: string
+          medical_record_id: string
+          neck_exam?: string | null
+          neurological_exam?: string | null
+          next_appointment?: string | null
+          nose_throat_exam?: string | null
+          recommendations?: string | null
+          respiratory_rate?: string | null
+          skin_exam?: string | null
+          temperature?: string | null
+          treatment?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Update: {
+          abdomen_exam?: string | null
+          age_at_control?: string | null
+          blood_pressure?: string | null
+          bmi?: string | null
+          chest_exam?: string | null
+          control_date?: string
+          created_at?: string
+          diagnosis?: string | null
+          ears_exam?: string | null
+          extremities_exam?: string | null
+          eyes_exam?: string | null
+          general_appearance?: string | null
+          genitourinary_exam?: string | null
+          head_circumference?: string | null
+          head_exam?: string | null
+          heart_exam?: string | null
+          heart_rate?: string | null
+          height?: string | null
+          id?: string
+          medical_record_id?: string
+          neck_exam?: string | null
+          neurological_exam?: string | null
+          next_appointment?: string | null
+          nose_throat_exam?: string | null
+          recommendations?: string | null
+          respiratory_rate?: string | null
+          skin_exam?: string | null
+          temperature?: string | null
+          treatment?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_controls_medical_record_id_fkey"
+            columns: ["medical_record_id"]
+            isOneToOne: false
+            referencedRelation: "medical_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_records: {
+        Row: {
+          allergies: string | null
+          apgar_score: string | null
+          birth_length: string | null
+          birth_weight: string | null
+          breastfeeding_duration: string | null
+          complementary_feeding: string | null
+          created_at: string
+          current_diet: string | null
+          current_medications: string | null
+          delivery_type: string | null
+          family_history: string | null
+          father_health: string | null
+          formula_feeding: string | null
+          gestational_weeks: string | null
+          head_circumference: string | null
+          id: string
+          language_development: string | null
+          mother_health: string | null
+          motor_development: string | null
+          notes: string | null
+          patient_id: string
+          previous_diseases: string | null
+          previous_surgeries: string | null
+          siblings_health: string | null
+          social_development: string | null
+          updated_at: string
+        }
+        Insert: {
+          allergies?: string | null
+          apgar_score?: string | null
+          birth_length?: string | null
+          birth_weight?: string | null
+          breastfeeding_duration?: string | null
+          complementary_feeding?: string | null
+          created_at?: string
+          current_diet?: string | null
+          current_medications?: string | null
+          delivery_type?: string | null
+          family_history?: string | null
+          father_health?: string | null
+          formula_feeding?: string | null
+          gestational_weeks?: string | null
+          head_circumference?: string | null
+          id?: string
+          language_development?: string | null
+          mother_health?: string | null
+          motor_development?: string | null
+          notes?: string | null
+          patient_id: string
+          previous_diseases?: string | null
+          previous_surgeries?: string | null
+          siblings_health?: string | null
+          social_development?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allergies?: string | null
+          apgar_score?: string | null
+          birth_length?: string | null
+          birth_weight?: string | null
+          breastfeeding_duration?: string | null
+          complementary_feeding?: string | null
+          created_at?: string
+          current_diet?: string | null
+          current_medications?: string | null
+          delivery_type?: string | null
+          family_history?: string | null
+          father_health?: string | null
+          formula_feeding?: string | null
+          gestational_weeks?: string | null
+          head_circumference?: string | null
+          id?: string
+          language_development?: string | null
+          mother_health?: string | null
+          motor_development?: string | null
+          notes?: string | null
+          patient_id?: string
+          previous_diseases?: string | null
+          previous_surgeries?: string | null
+          siblings_health?: string | null
+          social_development?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patients: {
         Row: {
           created_at: string
@@ -120,6 +325,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vaccinations: {
+        Row: {
+          administered_by: string | null
+          application_date: string
+          created_at: string
+          dose_number: string | null
+          id: string
+          lot_number: string | null
+          medical_record_id: string
+          notes: string | null
+          site: string | null
+          updated_at: string
+          vaccine_name: string
+        }
+        Insert: {
+          administered_by?: string | null
+          application_date: string
+          created_at?: string
+          dose_number?: string | null
+          id?: string
+          lot_number?: string | null
+          medical_record_id: string
+          notes?: string | null
+          site?: string | null
+          updated_at?: string
+          vaccine_name: string
+        }
+        Update: {
+          administered_by?: string | null
+          application_date?: string
+          created_at?: string
+          dose_number?: string | null
+          id?: string
+          lot_number?: string | null
+          medical_record_id?: string
+          notes?: string | null
+          site?: string | null
+          updated_at?: string
+          vaccine_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vaccinations_medical_record_id_fkey"
+            columns: ["medical_record_id"]
+            isOneToOne: false
+            referencedRelation: "medical_records"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

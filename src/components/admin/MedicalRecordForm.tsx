@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save } from "lucide-react";
+import { PhysicalExamField } from "./PhysicalExamField";
 
 interface MedicalRecord {
   id: string;
@@ -55,7 +56,22 @@ interface MedicalRecord {
   genitourinary: string | null;
   neuromusculoskeletal: string | null;
   psychological: string | null;
-  // Examen físico inicial
+  // Examen físico inicial - 15 campos individuales
+  exam_skin: string | null;
+  exam_head: string | null;
+  exam_face_eyes_nose_ears: string | null;
+  exam_mouth: string | null;
+  exam_pharynx: string | null;
+  exam_neck_thyroid: string | null;
+  exam_thorax_lungs: string | null;
+  exam_heart: string | null;
+  exam_abdomen: string | null;
+  exam_genitals: string | null;
+  exam_rectum: string | null;
+  exam_spine: string | null;
+  exam_extremities: string | null;
+  exam_lymph_nodes: string | null;
+  exam_neurological: string | null;
   initial_physical_exam: string | null;
   notes: string | null;
 }
@@ -109,6 +125,22 @@ export const MedicalRecordForm = ({ record, onSave, saving }: MedicalRecordFormP
       genitourinary: record.genitourinary || "",
       neuromusculoskeletal: record.neuromusculoskeletal || "",
       psychological: record.psychological || "",
+      // 15 campos de examen físico
+      exam_skin: record.exam_skin || "",
+      exam_head: record.exam_head || "",
+      exam_face_eyes_nose_ears: record.exam_face_eyes_nose_ears || "",
+      exam_mouth: record.exam_mouth || "",
+      exam_pharynx: record.exam_pharynx || "",
+      exam_neck_thyroid: record.exam_neck_thyroid || "",
+      exam_thorax_lungs: record.exam_thorax_lungs || "",
+      exam_heart: record.exam_heart || "",
+      exam_abdomen: record.exam_abdomen || "",
+      exam_genitals: record.exam_genitals || "",
+      exam_rectum: record.exam_rectum || "",
+      exam_spine: record.exam_spine || "",
+      exam_extremities: record.exam_extremities || "",
+      exam_lymph_nodes: record.exam_lymph_nodes || "",
+      exam_neurological: record.exam_neurological || "",
       initial_physical_exam: record.initial_physical_exam || "",
       notes: record.notes || "",
     });
@@ -512,24 +544,117 @@ export const MedicalRecordForm = ({ record, onSave, saving }: MedicalRecordFormP
         </CardContent>
       </Card>
 
-      {/* Examen físico general inicial */}
+      {/* Examen físico general inicial - 15 campos con selector Normal/Otro */}
       <Card>
         <CardHeader className="bg-muted/50">
           <CardTitle className="text-lg">Examen Físico General Inicial</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="space-y-2">
-            <Label htmlFor="initial_physical_exam">
-              (1. Piel, 2. Cabeza, 3. Cara/ojos/nariz/oídos, 4. Boca, 5. Faringe, 6. Cuello/tiroides, 
-              7. Tórax/pulmones, 8. Corazón, 9. Abdomen, 10. Genitales, 11. Recto/ano, 
-              12. Columna vertebral, 13. Extremidades/caderas, 14. Ganglios Linfáticos, 15. Examen neurológico)
-            </Label>
-            <Textarea
-              id="initial_physical_exam"
-              value={formData.initial_physical_exam || ""}
-              onChange={(e) => handleChange("initial_physical_exam", e.target.value)}
-              placeholder="Describir hallazgos del examen físico inicial..."
-              rows={6}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <PhysicalExamField
+              number={1}
+              label="Piel"
+              fieldName="exam_skin"
+              value={formData.exam_skin || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={2}
+              label="Cabeza"
+              fieldName="exam_head"
+              value={formData.exam_head || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={3}
+              label="Cara/ojos/nariz/oídos"
+              fieldName="exam_face_eyes_nose_ears"
+              value={formData.exam_face_eyes_nose_ears || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={4}
+              label="Boca"
+              fieldName="exam_mouth"
+              value={formData.exam_mouth || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={5}
+              label="Faringe"
+              fieldName="exam_pharynx"
+              value={formData.exam_pharynx || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={6}
+              label="Cuello/tiroides"
+              fieldName="exam_neck_thyroid"
+              value={formData.exam_neck_thyroid || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={7}
+              label="Tórax/pulmones"
+              fieldName="exam_thorax_lungs"
+              value={formData.exam_thorax_lungs || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={8}
+              label="Corazón"
+              fieldName="exam_heart"
+              value={formData.exam_heart || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={9}
+              label="Abdomen"
+              fieldName="exam_abdomen"
+              value={formData.exam_abdomen || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={10}
+              label="Genitales"
+              fieldName="exam_genitals"
+              value={formData.exam_genitals || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={11}
+              label="Recto/ano"
+              fieldName="exam_rectum"
+              value={formData.exam_rectum || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={12}
+              label="Columna vertebral"
+              fieldName="exam_spine"
+              value={formData.exam_spine || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={13}
+              label="Extremidades/caderas"
+              fieldName="exam_extremities"
+              value={formData.exam_extremities || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={14}
+              label="Ganglios Linfáticos"
+              fieldName="exam_lymph_nodes"
+              value={formData.exam_lymph_nodes || ""}
+              onChange={handleChange}
+            />
+            <PhysicalExamField
+              number={15}
+              label="Examen neurológico"
+              fieldName="exam_neurological"
+              value={formData.exam_neurological || ""}
+              onChange={handleChange}
             />
           </div>
         </CardContent>

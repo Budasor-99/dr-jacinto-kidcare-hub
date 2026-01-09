@@ -227,6 +227,21 @@ export type Database = {
           current_illness: string | null
           current_medications: string | null
           delivery_type: string | null
+          exam_abdomen: string | null
+          exam_extremities: string | null
+          exam_face_eyes_nose_ears: string | null
+          exam_genitals: string | null
+          exam_head: string | null
+          exam_heart: string | null
+          exam_lymph_nodes: string | null
+          exam_mouth: string | null
+          exam_neck_thyroid: string | null
+          exam_neurological: string | null
+          exam_pharynx: string | null
+          exam_rectum: string | null
+          exam_skin: string | null
+          exam_spine: string | null
+          exam_thorax_lungs: string | null
           family_history: string | null
           father_health: string | null
           formula_feeding: string | null
@@ -273,6 +288,21 @@ export type Database = {
           current_illness?: string | null
           current_medications?: string | null
           delivery_type?: string | null
+          exam_abdomen?: string | null
+          exam_extremities?: string | null
+          exam_face_eyes_nose_ears?: string | null
+          exam_genitals?: string | null
+          exam_head?: string | null
+          exam_heart?: string | null
+          exam_lymph_nodes?: string | null
+          exam_mouth?: string | null
+          exam_neck_thyroid?: string | null
+          exam_neurological?: string | null
+          exam_pharynx?: string | null
+          exam_rectum?: string | null
+          exam_skin?: string | null
+          exam_spine?: string | null
+          exam_thorax_lungs?: string | null
           family_history?: string | null
           father_health?: string | null
           formula_feeding?: string | null
@@ -319,6 +349,21 @@ export type Database = {
           current_illness?: string | null
           current_medications?: string | null
           delivery_type?: string | null
+          exam_abdomen?: string | null
+          exam_extremities?: string | null
+          exam_face_eyes_nose_ears?: string | null
+          exam_genitals?: string | null
+          exam_head?: string | null
+          exam_heart?: string | null
+          exam_lymph_nodes?: string | null
+          exam_mouth?: string | null
+          exam_neck_thyroid?: string | null
+          exam_neurological?: string | null
+          exam_pharynx?: string | null
+          exam_rectum?: string | null
+          exam_skin?: string | null
+          exam_spine?: string | null
+          exam_thorax_lungs?: string | null
           family_history?: string | null
           father_health?: string | null
           formula_feeding?: string | null

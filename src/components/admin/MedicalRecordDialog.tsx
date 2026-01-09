@@ -94,7 +94,22 @@ interface MedicalRecord {
   genitourinary: string | null;
   neuromusculoskeletal: string | null;
   psychological: string | null;
-  // Examen físico
+  // Examen físico - 15 campos individuales
+  exam_skin: string | null;
+  exam_head: string | null;
+  exam_face_eyes_nose_ears: string | null;
+  exam_mouth: string | null;
+  exam_pharynx: string | null;
+  exam_neck_thyroid: string | null;
+  exam_thorax_lungs: string | null;
+  exam_heart: string | null;
+  exam_abdomen: string | null;
+  exam_genitals: string | null;
+  exam_rectum: string | null;
+  exam_spine: string | null;
+  exam_extremities: string | null;
+  exam_lymph_nodes: string | null;
+  exam_neurological: string | null;
   initial_physical_exam: string | null;
   notes: string | null;
 }

@@ -65,6 +65,22 @@ interface MedicalRecord {
   genitourinary?: string | null;
   neuromusculoskeletal?: string | null;
   psychological?: string | null;
+  // 15 campos de examen físico
+  exam_skin?: string | null;
+  exam_head?: string | null;
+  exam_face_eyes_nose_ears?: string | null;
+  exam_mouth?: string | null;
+  exam_pharynx?: string | null;
+  exam_neck_thyroid?: string | null;
+  exam_thorax_lungs?: string | null;
+  exam_heart?: string | null;
+  exam_abdomen?: string | null;
+  exam_genitals?: string | null;
+  exam_rectum?: string | null;
+  exam_spine?: string | null;
+  exam_extremities?: string | null;
+  exam_lymph_nodes?: string | null;
+  exam_neurological?: string | null;
   initial_physical_exam?: string | null;
   notes: string | null;
 }
@@ -454,14 +470,73 @@ export const generateMedicalRecordPDF = (
     </div>
   </div>
 
-  ${record.initial_physical_exam ? `
   <div class="section">
     <div class="section-title">Examen Físico General Inicial</div>
     <div class="section-content">
-      <div class="field-value" style="white-space: pre-wrap;">${record.initial_physical_exam}</div>
+      <div class="two-cols">
+        <div class="field">
+          <div class="field-label">1.- Piel:</div>
+          <div class="field-value">${record.exam_skin || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">2.- Cabeza:</div>
+          <div class="field-value">${record.exam_head || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">3.- Cara/ojos/nariz/oídos:</div>
+          <div class="field-value">${record.exam_face_eyes_nose_ears || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">4.- Boca:</div>
+          <div class="field-value">${record.exam_mouth || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">5.- Faringe:</div>
+          <div class="field-value">${record.exam_pharynx || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">6.- Cuello/tiroides:</div>
+          <div class="field-value">${record.exam_neck_thyroid || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">7.- Tórax/pulmones:</div>
+          <div class="field-value">${record.exam_thorax_lungs || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">8.- Corazón:</div>
+          <div class="field-value">${record.exam_heart || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">9.- Abdomen:</div>
+          <div class="field-value">${record.exam_abdomen || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">10.- Genitales:</div>
+          <div class="field-value">${record.exam_genitals || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">11.- Recto/ano:</div>
+          <div class="field-value">${record.exam_rectum || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">12.- Columna vertebral:</div>
+          <div class="field-value">${record.exam_spine || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">13.- Extremidades/caderas:</div>
+          <div class="field-value">${record.exam_extremities || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">14.- Ganglios Linfáticos:</div>
+          <div class="field-value">${record.exam_lymph_nodes || "normal"}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">15.- Examen neurológico:</div>
+          <div class="field-value">${record.exam_neurological || "normal"}</div>
+        </div>
+      </div>
     </div>
   </div>
-  ` : ""}
 
   ${controls.length > 0 ? `
   <div class="section">

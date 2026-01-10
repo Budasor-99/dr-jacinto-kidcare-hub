@@ -191,61 +191,49 @@ export const MedicalRecordForm = ({ record, onSave, saving }: MedicalRecordFormP
         <CardHeader className="bg-muted/50">
           <CardTitle className="text-lg">Interrogatorio por Aparatos y Sistemas</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="sense_organs">1. Órganos de los sentidos</Label>
-            <Textarea
-              id="sense_organs"
-              value={formData.sense_organs || ""}
-              onChange={(e) => handleChange("sense_organs", e.target.value)}
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="cardiorespiratory">2. Cardiorespiratorio</Label>
-            <Textarea
-              id="cardiorespiratory"
-              value={formData.cardiorespiratory || ""}
-              onChange={(e) => handleChange("cardiorespiratory", e.target.value)}
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="gastrointestinal">3. Gastrointestinal</Label>
-            <Textarea
-              id="gastrointestinal"
-              value={formData.gastrointestinal || ""}
-              onChange={(e) => handleChange("gastrointestinal", e.target.value)}
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="genitourinary">4. Genitourinario</Label>
-            <Textarea
-              id="genitourinary"
-              value={formData.genitourinary || ""}
-              onChange={(e) => handleChange("genitourinary", e.target.value)}
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="neuromusculoskeletal">5. Neuromusculoesquelético</Label>
-            <Textarea
-              id="neuromusculoskeletal"
-              value={formData.neuromusculoskeletal || ""}
-              onChange={(e) => handleChange("neuromusculoskeletal", e.target.value)}
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="psychological">6. Psicológico</Label>
-            <Textarea
-              id="psychological"
-              value={formData.psychological || ""}
-              onChange={(e) => handleChange("psychological", e.target.value)}
-              rows={2}
-            />
-          </div>
+        <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <PhysicalExamField
+            number={1}
+            label="Órganos de los sentidos"
+            fieldName="sense_organs"
+            value={formData.sense_organs || ""}
+            onChange={handleChange}
+          />
+          <PhysicalExamField
+            number={2}
+            label="Cardiorespiratorio"
+            fieldName="cardiorespiratory"
+            value={formData.cardiorespiratory || ""}
+            onChange={handleChange}
+          />
+          <PhysicalExamField
+            number={3}
+            label="Gastrointestinal"
+            fieldName="gastrointestinal"
+            value={formData.gastrointestinal || ""}
+            onChange={handleChange}
+          />
+          <PhysicalExamField
+            number={4}
+            label="Genitourinario"
+            fieldName="genitourinary"
+            value={formData.genitourinary || ""}
+            onChange={handleChange}
+          />
+          <PhysicalExamField
+            number={5}
+            label="Neuromusculoesquelético"
+            fieldName="neuromusculoskeletal"
+            value={formData.neuromusculoskeletal || ""}
+            onChange={handleChange}
+          />
+          <PhysicalExamField
+            number={6}
+            label="Psicológico"
+            fieldName="psychological"
+            value={formData.psychological || ""}
+            onChange={handleChange}
+          />
         </CardContent>
       </Card>
 

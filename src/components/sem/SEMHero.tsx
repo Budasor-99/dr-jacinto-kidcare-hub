@@ -72,9 +72,8 @@ const SEMHero = () => {
                 asChild
                 size="lg"
                 className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-base h-14 px-8 shadow-lg hover:shadow-xl transition-all"
-                onClick={trackWhatsAppClick}
               >
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Agendar por WhatsApp
                 </a>
@@ -84,9 +83,8 @@ const SEMHero = () => {
                 variant="outline"
                 size="lg"
                 className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold text-base h-14 px-8 transition-all"
-                onClick={trackCallClick}
               >
-                <a href={phoneUrl}>
+                <a href={phoneUrl} onClick={trackCallClick}>
                   <Phone className="w-5 h-5 mr-2" />
                   Llamar Ahora
                 </a>

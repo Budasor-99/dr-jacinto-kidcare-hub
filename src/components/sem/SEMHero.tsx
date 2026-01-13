@@ -102,11 +102,6 @@ const SEMHero = () => {
               <span className="text-xs font-bold text-foreground">Verificado</span>
             </div>
 
-            {/* Patients count - Floating - Only on xl screens to avoid overlap */}
-            <div className="absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl px-3 py-2 border border-primary/5 hidden xl:flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              <span className="text-xs font-bold text-foreground">+10k pacientes</span>
-            </div>
           </div>
 
           {/* Text Content - Enhanced hierarchy */}

@@ -28,11 +28,11 @@ const FloatingCTA = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border p-3 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border shadow-lg p-3 md:hidden">
       <div className="flex gap-3 max-w-md mx-auto">
         <Button
           asChild
-          className="flex-1 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold h-12 text-base shadow-lg"
+          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 text-base shadow-soft"
         >
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
             <MessageCircle className="w-5 h-5 mr-2" />
@@ -42,7 +42,7 @@ const FloatingCTA = () => {
         <Button
           asChild
           variant="outline"
-          className="flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold h-12 text-base"
+          className="flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold h-12 text-base"
         >
           <a href={phoneUrl} onClick={trackCallClick}>
             <Phone className="w-5 h-5 mr-2" />

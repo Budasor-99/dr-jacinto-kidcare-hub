@@ -28,27 +28,32 @@ const FloatingCTA = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border shadow-lg p-3 md:hidden">
-      <div className="flex gap-3 max-w-md mx-auto">
-        <Button
-          asChild
-          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 text-base shadow-soft"
-        >
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
-            <MessageCircle className="w-5 h-5 mr-2" />
-            WhatsApp
-          </a>
-        </Button>
-        <Button
-          asChild
-          variant="outline"
-          className="flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold h-12 text-base"
-        >
-          <a href={phoneUrl} onClick={trackCallClick}>
-            <Phone className="w-5 h-5 mr-2" />
-            Llamar
-          </a>
-        </Button>
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      {/* Gradient fade effect */}
+      <div className="absolute -top-6 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent" />
+      
+      <div className="bg-card/98 backdrop-blur-xl border-t border-border/50 shadow-[0_-4px_30px_-10px_rgba(0,0,0,0.2)] p-4">
+        <div className="flex gap-3 max-w-md mx-auto">
+          <Button
+            asChild
+            className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-bold h-14 text-base shadow-lg rounded-2xl transition-all duration-300 hover:scale-[1.02]"
+          >
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
+              <MessageCircle className="w-5 h-5 mr-2" />
+              WhatsApp
+            </a>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold h-14 text-base rounded-2xl transition-all duration-300 hover:scale-[1.02]"
+          >
+            <a href={phoneUrl} onClick={trackCallClick}>
+              <Phone className="w-5 h-5 mr-2" />
+              Llamar
+            </a>
+          </Button>
+        </div>
       </div>
     </div>
   );

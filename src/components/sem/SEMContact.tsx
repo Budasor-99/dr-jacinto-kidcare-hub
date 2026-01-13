@@ -7,7 +7,7 @@ const SEMContact = () => {
 
   return (
     <section className="py-10 px-4 bg-background relative">
-      <div className="container mx-auto max-w-lg relative z-10">
+      <div className="container mx-auto max-w-lg md:max-w-xl lg:max-w-lg relative z-10">
         {/* Compact header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground font-heading">

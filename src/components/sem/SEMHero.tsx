@@ -69,15 +69,15 @@ const SEMHero = () => {
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-10 container mx-auto px-4 pb-20 pt-6 md:pt-10">
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-5xl mx-auto">
+      <div className="relative z-10 container mx-auto px-4 pb-20 pt-6 lg:pt-10">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-5xl mx-auto">
           {/* Doctor Image - Enhanced with floating elements */}
           <div className="relative flex-shrink-0 animate-fade-in">
             {/* Animated glow rings */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-accent/40 rounded-full scale-[1.35] blur-3xl animate-pulse" style={{ animationDuration: "3s" }} />
             <div className="absolute inset-0 bg-white/15 rounded-full scale-[1.15] blur-xl" />
             
-            <div className="relative w-44 h-44 md:w-60 md:h-60 rounded-full overflow-hidden ring-4 ring-white/25 ring-offset-4 ring-offset-primary/30 shadow-[0_25px_80px_-12px_rgba(0,0,0,0.35)]">
+            <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden ring-4 ring-white/25 ring-offset-4 ring-offset-primary/30 shadow-[0_25px_80px_-12px_rgba(0,0,0,0.35)]">
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
@@ -105,7 +105,7 @@ const SEMHero = () => {
           </div>
 
           {/* Text Content - Enhanced hierarchy */}
-          <div className="text-center md:text-left flex-1 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="text-center lg:text-left flex-1 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             {/* Trust badge with sparkle */}
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md text-white px-5 py-2.5 rounded-full mb-5 border border-white/25 shadow-lg">
               <Sparkles className="w-4 h-4 text-yellow-300" />
@@ -117,7 +117,7 @@ const SEMHero = () => {
               </div>
             </div>
             
-            <h1 className="font-heading text-3xl md:text-5xl lg:text-[3.5rem] font-bold text-white mb-5 leading-[1.08] tracking-tight">
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl xl:text-[3.5rem] font-bold text-white mb-5 leading-[1.08] tracking-tight">
               Tu Hijo Merece al{" "}
               <span className="relative inline-block">
                 <span className="bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">
@@ -129,12 +129,12 @@ const SEMHero = () => {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-lg leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-lg mx-auto lg:mx-0 leading-relaxed">
               <span className="font-bold text-white">Dr. Jacinto Salazar Vargas</span> — Más de 30 años brindando atención pediátrica de excelencia en Carcelén.
             </p>
 
             {/* Value propositions - Quick scan */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-7 text-sm">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-7 text-sm">
               {["Diagnóstico preciso", "Atención personalizada", "Horarios flexibles"].map((item, i) => (
                 <div key={i} className="flex items-center gap-1.5 text-white/95">
                   <CheckCircle2 className="w-4 h-4 text-green-300" />
@@ -144,7 +144,7 @@ const SEMHero = () => {
             </div>
 
             {/* CTAs - Premium conversion-focused design */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
               <Button
                 asChild
                 size="lg"
@@ -170,7 +170,7 @@ const SEMHero = () => {
             </div>
 
             {/* Micro-conversion hint */}
-            <p className="text-white/70 text-sm flex items-center justify-center md:justify-start gap-2">
+            <p className="text-white/70 text-sm flex items-center justify-center lg:justify-start gap-2">
               <Clock className="w-4 h-4" />
               <span>Responde en menos de 5 min • Atención personalizada</span>
             </p>

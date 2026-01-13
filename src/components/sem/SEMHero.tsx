@@ -148,12 +148,12 @@ const SEMHero = () => {
               <Button
                 asChild
                 size="lg"
-                className="group relative bg-white text-primary hover:bg-white font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(255,255,255,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(255,255,255,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
+                className="group relative bg-[#25D366] text-white hover:bg-[#1da851] font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(37,211,102,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
               >
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
-                  <span className="absolute inset-0 bg-gradient-to-r from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <MessageCircle className="w-5 h-5 mr-2.5 relative z-10" />
-                  <span className="relative z-10">Agendar Cita Ahora</span>
+                  <span className="relative z-10">Agendar por WhatsApp</span>
                 </a>
               </Button>
               <Button
@@ -172,7 +172,7 @@ const SEMHero = () => {
             {/* Micro-conversion hint */}
             <p className="text-white/70 text-sm flex items-center justify-center md:justify-start gap-2">
               <Clock className="w-4 h-4" />
-              <span>Respuesta inmediata • Sin costo de consulta telefónica</span>
+              <span>Responde en menos de 5 min • Atención personalizada</span>
             </p>
           </div>
         </div>

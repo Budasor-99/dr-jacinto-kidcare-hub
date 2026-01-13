@@ -45,11 +45,11 @@ const FloatingCTA = () => {
         <div className="flex gap-2.5 max-w-sm mx-auto">
           <Button
             asChild
-            className="flex-[1.2] bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 text-sm shadow-md rounded-xl transition-all duration-200 active:scale-[0.98]"
+            className="flex-[1.2] bg-[#25D366] hover:bg-[#1da851] text-white font-bold h-12 text-sm shadow-[0_4px_15px_-3px_rgba(37,211,102,0.4)] rounded-xl transition-all duration-200 active:scale-[0.98]"
           >
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
               <MessageCircle className="w-4.5 h-4.5 mr-2" />
-              Agendar Cita
+              WhatsApp
             </a>
           </Button>
           <Button

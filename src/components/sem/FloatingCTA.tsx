@@ -29,27 +29,36 @@ const FloatingCTA = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      {/* Gradient fade effect */}
-      <div className="absolute -top-6 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent" />
+      {/* Premium gradient fade */}
+      <div className="absolute -top-8 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/80 to-transparent" />
       
-      <div className="bg-card/98 backdrop-blur-xl border-t border-border/50 shadow-[0_-4px_30px_-10px_rgba(0,0,0,0.2)] p-4">
-        <div className="flex gap-3 max-w-md mx-auto">
+      <div className="bg-background/98 backdrop-blur-xl border-t border-border/30 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.15)] px-4 py-3 safe-area-pb">
+        {/* Urgency text */}
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </span>
+          <span className="text-xs font-medium text-muted-foreground">Disponible ahora • Respuesta inmediata</span>
+        </div>
+        
+        <div className="flex gap-2.5 max-w-sm mx-auto">
           <Button
             asChild
-            className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-bold h-14 text-base shadow-lg rounded-2xl transition-all duration-300 hover:scale-[1.02]"
+            className="flex-[1.2] bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 text-sm shadow-md rounded-xl transition-all duration-200 active:scale-[0.98]"
           >
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
-              <MessageCircle className="w-5 h-5 mr-2" />
-              WhatsApp
+              <MessageCircle className="w-4.5 h-4.5 mr-2" />
+              Agendar Cita
             </a>
           </Button>
           <Button
             asChild
             variant="outline"
-            className="flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold h-14 text-base rounded-2xl transition-all duration-300 hover:scale-[1.02]"
+            className="flex-1 border-2 border-primary/30 text-primary hover:bg-primary/5 font-semibold h-12 text-sm rounded-xl transition-all duration-200 active:scale-[0.98]"
           >
             <a href={phoneUrl} onClick={trackCallClick}>
-              <Phone className="w-5 h-5 mr-2" />
+              <Phone className="w-4.5 h-4.5 mr-1.5" />
               Llamar
             </a>
           </Button>

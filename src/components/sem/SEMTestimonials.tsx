@@ -31,7 +31,7 @@ const testimonials = [
 const SEMTestimonials = () => {
   return (
     <section className="py-12 px-4 bg-muted/30 relative overflow-hidden">
-      <div className="container mx-auto max-w-2xl relative z-10">
+      <div className="container mx-auto max-w-2xl md:max-w-3xl lg:max-w-2xl relative z-10">
         {/* Header with social proof */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-1 mb-3">

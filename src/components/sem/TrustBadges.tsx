@@ -29,7 +29,7 @@ const TrustBadges = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         {/* Main badges */}
-        <div className="grid grid-cols-3 gap-3 md:gap-6 max-w-xl mx-auto mb-6">
+        <div className="grid grid-cols-3 gap-3 md:gap-5 max-w-xl md:max-w-2xl lg:max-w-xl mx-auto mb-6">
           {badges.map((badge, index) => (
             <div
               key={index}

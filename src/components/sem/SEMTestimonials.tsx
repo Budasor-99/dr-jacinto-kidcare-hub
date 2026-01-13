@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const testimonials = [
@@ -21,29 +21,51 @@ const testimonials = [
 
 const SEMTestimonials = () => {
   return (
-    <section className="py-10 px-4">
+    <section className="py-12 px-4 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto max-w-3xl">
-        <h2 className="text-xl md:text-2xl font-bold text-center text-foreground mb-6">
-          Lo que dicen las familias
-        </h2>
+        <div className="text-center mb-8">
+          <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-3">
+            <Star className="w-4 h-4 fill-current" />
+            Testimonios Reales
+          </span>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground font-heading">
+            Lo que dicen las familias
+          </h2>
+        </div>
+        
         <div className="space-y-4">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-card border-border">
-              <CardContent className="p-4">
-                <div className="flex gap-0.5 mb-2">
+            <Card 
+              key={index} 
+              className="bg-card border-border/50 shadow-soft hover:shadow-card transition-all overflow-hidden"
+            >
+              <CardContent className="p-5 relative">
+                {/* Quote decoration */}
+                <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" />
+                
+                <div className="flex gap-0.5 mb-3">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star
                       key={i}
-                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                      className="w-4 h-4 fill-primary text-primary"
                     />
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground mb-2 italic">
+                
+                <p className="text-base text-foreground mb-3 leading-relaxed">
                   "{testimonial.text}"
                 </p>
-                <p className="text-sm font-semibold text-foreground">
-                  {testimonial.name}
-                </p>
+                
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-bold text-sm">
+                      {testimonial.name.charAt(0)}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-foreground">
+                    {testimonial.name}
+                  </p>
+                </div>
               </CardContent>
             </Card>
           ))}

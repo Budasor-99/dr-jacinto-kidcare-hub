@@ -1,7 +1,9 @@
-import { Phone, MessageCircle, Award } from "lucide-react";
+import { Phone, MessageCircle, Award, Star, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 import doctorImage from "@/assets/doctor-profile.png";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const WHATSAPP_NUMBER = "593998396186";
 const PHONE_NUMBER = "0998396186";
@@ -30,48 +32,65 @@ const SEMHero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-primary/5 via-background to-pediatric-light/20 overflow-hidden">
-      {/* Minimal Header - Logo only */}
-      <div className="container mx-auto px-4 py-4">
-        <img src={logo} alt="Centro Médico Salazar Vargas" className="h-12 md:h-14" />
+    <section className="relative min-h-[85vh] bg-gradient-to-br from-primary via-primary/90 to-accent overflow-hidden">
+      {/* Decorative Elements */}
+      <BlobBackground variant="hero" />
+      <MedicalCrosses variant="scattered" />
+      
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+
+      {/* Header with Logo */}
+      <div className="relative z-20 container mx-auto px-4 py-4">
+        <img src={logo} alt="Centro Médico Salazar Vargas" className="h-10 md:h-12 brightness-0 invert" />
       </div>
 
       {/* Hero Content */}
-      <div className="container mx-auto px-4 pb-10 pt-4">
+      <div className="relative z-10 container mx-auto px-4 pb-12 pt-6">
         <div className="flex flex-col md:flex-row items-center gap-8 max-w-4xl mx-auto">
           {/* Doctor Image */}
-          <div className="relative flex-shrink-0">
-            <div className="w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden border-4 border-primary/20 shadow-xl">
+          <div className="relative flex-shrink-0 animate-fade-in">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-white/20 rounded-full scale-110 blur-2xl" />
+            
+            <div className="relative w-44 h-44 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
                 className="w-full h-full object-cover"
               />
             </div>
+            
             {/* Experience Badge */}
-            <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-              <Award className="w-4 h-4" />
-              <span className="text-xs font-bold">+30 años</span>
+            <div className="absolute -bottom-3 -right-3 bg-white shadow-xl rounded-full px-4 py-2 flex items-center gap-2">
+              <Award className="w-5 h-5 text-primary" />
+              <span className="text-sm font-bold text-foreground">+30 años</span>
             </div>
           </div>
 
           {/* Text Content */}
-          <div className="text-center md:text-left flex-1">
-            <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 leading-tight">
+          <div className="text-center md:text-left flex-1 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-4">
+              <Star className="w-4 h-4 fill-current" />
+              <span className="text-sm font-semibold">Pediatra de confianza en Quito</span>
+            </div>
+            
+            <h1 className="font-heading text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
               Agenda tu Cita con el{" "}
-              <span className="text-primary">Pediatra de Confianza</span> en Quito
+              <span className="text-white/90 block">Pediatra #1 en Carcelén</span>
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-6">
-              Dr. Jacinto Salazar Vargas — Más de 30 años cuidando la salud de los niños en Carcelén.
+            
+            <p className="text-base md:text-lg text-white/80 mb-6 max-w-lg">
+              Dr. Jacinto Salazar Vargas — Más de 30 años cuidando la salud de los niños.
               Atención personalizada y diagnóstico preciso.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-6" style={{ animationDelay: "0.2s" }}>
               <Button
                 asChild
                 size="lg"
-                className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-base h-14 px-8 shadow-lg hover:shadow-xl transition-all"
+                className="bg-white text-primary hover:bg-white/90 font-bold text-base h-14 px-8 shadow-xl hover:shadow-2xl transition-all"
               >
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
                   <MessageCircle className="w-5 h-5 mr-2" />
@@ -82,7 +101,7 @@ const SEMHero = () => {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold text-base h-14 px-8 transition-all"
+                className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-base h-14 px-8 bg-transparent transition-all"
               >
                 <a href={phoneUrl} onClick={trackCallClick}>
                   <Phone className="w-5 h-5 mr-2" />
@@ -92,9 +111,12 @@ const SEMHero = () => {
             </div>
 
             {/* Quick Info */}
-            <p className="text-sm text-muted-foreground mt-4">
-              📍 Rodrigo Muñoz N81-46, Carcelén • ⏰ Lun-Vie 9AM-7PM
-            </p>
+            <div className="flex items-center justify-center md:justify-start gap-2 text-white/70 text-sm">
+              <MapPin className="w-4 h-4" />
+              <span>Rodrigo Muñoz N81-46, Carcelén</span>
+              <span className="mx-2">•</span>
+              <span>Lun-Vie 9AM-7PM</span>
+            </div>
           </div>
         </div>
       </div>

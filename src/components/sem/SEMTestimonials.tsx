@@ -1,88 +1,106 @@
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, CheckCircle2, ThumbsUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const testimonials = [
   {
     name: "María García",
-    text: "Excelente pediatra, muy atento y cariñoso con los niños. Lo recomiendo 100%.",
+    text: "Excelente pediatra, muy atento y cariñoso con los niños. Mi hijo ya no le tiene miedo al doctor.",
     rating: 5,
     initials: "MG",
-    color: "from-primary to-primary/70",
+    yearsAsPatient: "8 años",
+    highlight: "Atención cariñosa",
   },
   {
     name: "Carlos Mendoza",
-    text: "El Dr. Salazar salvó a mi hijo cuando tenía bronquitis severa. Eternamente agradecido.",
+    text: "El Dr. Salazar salvó a mi hijo cuando tenía bronquitis severa. Su diagnóstico fue preciso y el tratamiento efectivo.",
     rating: 5,
     initials: "CM",
-    color: "from-accent to-accent/70",
+    yearsAsPatient: "5 años",
+    highlight: "Diagnóstico preciso",
   },
   {
     name: "Ana López",
-    text: "Más de 15 años llevando a mis hijos con él. Confianza total en su diagnóstico.",
+    text: "Más de 15 años llevando a mis 3 hijos con él. Confianza total. Siempre disponible cuando lo necesitamos.",
     rating: 5,
     initials: "AL",
-    color: "from-primary to-accent",
+    yearsAsPatient: "15 años",
+    highlight: "Siempre disponible",
   },
 ];
 
 const SEMTestimonials = () => {
   return (
-    <section className="py-14 px-4 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-40 h-40 bg-accent/5 rounded-full blur-3xl" />
-      
-      <div className="container mx-auto max-w-3xl relative z-10">
-        <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary px-5 py-2.5 rounded-full text-sm font-semibold mb-4 border border-primary/10">
-            <Star className="w-4 h-4 fill-current" />
-            Testimonios Reales
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground font-heading">
-            Lo que dicen las familias
+    <section className="py-12 px-4 bg-muted/30 relative overflow-hidden">
+      <div className="container mx-auto max-w-2xl relative z-10">
+        {/* Header with social proof */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-1 mb-3">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+            ))}
+            <span className="ml-2 text-lg font-bold text-foreground">5.0</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground font-heading mb-2">
+            Familias que Confían en Nosotros
           </h2>
+          <p className="text-muted-foreground text-sm">
+            +10,000 pacientes satisfechos en más de 30 años
+          </p>
         </div>
         
-        <div className="space-y-5">
+        <div className="space-y-4">
           {testimonials.map((testimonial, index) => (
             <Card 
               key={index} 
-              className="bg-card/80 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group hover:border-primary/20"
+              className="bg-card border-border/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
             >
-              <CardContent className="p-6 relative">
-                {/* Quote decoration */}
-                <Quote className="absolute top-4 right-4 w-10 h-10 text-primary/5 group-hover:text-primary/10 transition-colors" />
-                
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
+              <CardContent className="p-5">
+                {/* Top row: Rating + Highlight */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex gap-0.5">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                    {testimonial.highlight}
+                  </span>
                 </div>
                 
-                <p className="text-base md:text-lg text-foreground mb-5 leading-relaxed">
+                {/* Testimonial text */}
+                <p className="text-foreground mb-4 leading-relaxed">
                   "{testimonial.text}"
                 </p>
                 
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${testimonial.color} flex items-center justify-center shadow-md`}>
-                    <span className="text-white font-bold text-sm">
-                      {testimonial.initials}
-                    </span>
+                {/* Author info */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">
+                        {testimonial.initials}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-semibold text-foreground text-sm">
+                          {testimonial.name}
+                        </p>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                      </div>
+                      <p className="text-xs text-muted-foreground">Paciente por {testimonial.yearsAsPatient}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-foreground">
-                      {testimonial.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">Paciente verificado</p>
-                  </div>
+                  <ThumbsUp className="w-4 h-4 text-muted-foreground/50" />
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {/* Bottom CTA hint */}
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Únete a las miles de familias que confían en el Dr. Salazar
+        </p>
       </div>
     </section>
   );

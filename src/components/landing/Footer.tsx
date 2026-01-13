@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, Heart, Facebook, Instagram } from "lucide-react";
+import { Link } from "react-router-dom";
 import logoImage from "@/assets/logo.png";
 
 const Footer = () => {
@@ -120,9 +121,17 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/50 text-sm text-center md:text-left">
-              © {currentYear} Dr. Jacinto Salazar. Todos los derechos reservados.
-            </p>
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+              <p className="text-white/50 text-sm text-center md:text-left">
+                © {currentYear} Dr. Jacinto Salazar. Todos los derechos reservados.
+              </p>
+              <Link 
+                to="/privacidad" 
+                className="text-white/50 text-sm hover:text-primary transition-colors"
+              >
+                Política de Privacidad
+              </Link>
+            </div>
             <p className="text-white/50 text-sm flex items-center gap-1">
               Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para el bienestar infantil
             </p>

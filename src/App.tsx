@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import MisCitas from "./pages/MisCitas";
 import PatientAuth from "./pages/PatientAuth";
 import LandingSEM from "./pages/LandingSEM";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/mis-citas" element={<MisCitas />} />
               <Route path="/paciente/auth" element={<PatientAuth />} />
               <Route path="/lp" element={<LandingSEM />} />
+              <Route path="/privacidad" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

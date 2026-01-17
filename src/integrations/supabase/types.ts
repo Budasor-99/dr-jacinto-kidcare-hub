@@ -419,6 +419,7 @@ export type Database = {
           first_names: string | null
           history_number: string | null
           id: string
+          identification_number: string | null
           information_source: string | null
           maternal_surname: string | null
           mother_age: string | null
@@ -448,6 +449,7 @@ export type Database = {
           first_names?: string | null
           history_number?: string | null
           id?: string
+          identification_number?: string | null
           information_source?: string | null
           maternal_surname?: string | null
           mother_age?: string | null
@@ -477,6 +479,7 @@ export type Database = {
           first_names?: string | null
           history_number?: string | null
           id?: string
+          identification_number?: string | null
           information_source?: string | null
           maternal_surname?: string | null
           mother_age?: string | null

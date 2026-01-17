@@ -22,6 +22,7 @@ interface Patient {
   origin_place: string | null;
   first_consultation_date: string | null;
   history_number: string | null;
+  identification_number: string | null;
   father_name: string | null;
   father_age: string | null;
   father_education: string | null;
@@ -55,6 +56,7 @@ export const PatientDataForm = ({ patient, onSave, saving }: PatientDataFormProp
       origin_place: patient.origin_place || "",
       first_consultation_date: patient.first_consultation_date || "",
       history_number: patient.history_number || "",
+      identification_number: patient.identification_number || "",
       phone: patient.phone || "",
       email: patient.email || "",
       father_name: patient.father_name || "",
@@ -120,6 +122,15 @@ export const PatientDataForm = ({ patient, onSave, saving }: PatientDataFormProp
               value={formData.history_number || ""}
               onChange={(e) => handleChange("history_number", e.target.value)}
               placeholder="Número de historia"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="identification_number">CI (Cédula de Identificación)</Label>
+            <Input
+              id="identification_number"
+              value={formData.identification_number || ""}
+              onChange={(e) => handleChange("identification_number", e.target.value)}
+              placeholder="Ej: 1712345678"
             />
           </div>
         </CardContent>

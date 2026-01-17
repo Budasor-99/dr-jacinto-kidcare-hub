@@ -34,6 +34,7 @@ interface Patient {
   origin_place: string | null;
   first_consultation_date: string | null;
   history_number: string | null;
+  identification_number: string | null;
   father_name: string | null;
   father_age: string | null;
   father_education: string | null;

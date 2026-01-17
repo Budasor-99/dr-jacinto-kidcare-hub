@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Patient {
   id: string;
@@ -42,6 +43,8 @@ interface PatientDataFormProps {
 
 export const PatientDataForm = ({ patient, onSave, saving }: PatientDataFormProps) => {
   const [formData, setFormData] = useState<Partial<Patient>>({});
+  const [ciError, setCiError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     setFormData({
@@ -73,10 +76,30 @@ export const PatientDataForm = ({ patient, onSave, saving }: PatientDataFormProp
 
   const handleChange = (field: keyof Patient, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "identification_number") {
+      setCiError(null);
+    }
+  };
+
+  const validateCI = (ci: string): boolean => {
+    const cleanCI = ci.replace(/\D/g, "");
+    return cleanCI.length === 10;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const ci = formData.identification_number || "";
+    if (!validateCI(ci)) {
+      setCiError("La cédula debe tener exactamente 10 dígitos");
+      toast({
+        title: "Error de validación",
+        description: "La cédula de identificación debe tener exactamente 10 dígitos.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     onSave(formData);
   };
 
@@ -125,13 +148,18 @@ export const PatientDataForm = ({ patient, onSave, saving }: PatientDataFormProp
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="identification_number">CI (Cédula de Identificación)</Label>
+            <Label htmlFor="identification_number">CI (Cédula de Identificación) *</Label>
             <Input
               id="identification_number"
               value={formData.identification_number || ""}
-              onChange={(e) => handleChange("identification_number", e.target.value)}
+              onChange={(e) => handleChange("identification_number", e.target.value.replace(/\D/g, "").slice(0, 10))}
               placeholder="Ej: 1712345678"
+              maxLength={10}
+              className={ciError ? "border-destructive" : ""}
             />
+            {ciError && (
+              <p className="text-sm text-destructive">{ciError}</p>
+            )}
           </div>
         </CardContent>
       </Card>

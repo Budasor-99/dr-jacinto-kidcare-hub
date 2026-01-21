@@ -9,24 +9,6 @@ const FloatingCTA = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
   const phoneUrl = `tel:${PHONE_NUMBER}`;
 
-  const trackWhatsAppClick = () => {
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Lead', {
-        content_name: 'WhatsApp Click',
-        content_category: 'SEM Landing Floating'
-      });
-    }
-  };
-
-  const trackCallClick = () => {
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Contact', {
-        content_name: 'Call Click',
-        content_category: 'SEM Landing Floating'
-      });
-    }
-  };
-
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       {/* Premium gradient fade */}
@@ -47,7 +29,7 @@ const FloatingCTA = () => {
             asChild
             className="flex-[1.2] bg-[#25D366] hover:bg-[#1da851] text-white font-bold h-12 text-sm shadow-[0_4px_15px_-3px_rgba(37,211,102,0.4)] rounded-xl transition-all duration-200 active:scale-[0.98]"
           >
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="w-4.5 h-4.5 mr-2" />
               WhatsApp
             </a>
@@ -57,7 +39,7 @@ const FloatingCTA = () => {
             variant="outline"
             className="flex-1 border-2 border-primary/30 text-primary hover:bg-primary/5 font-semibold h-12 text-sm rounded-xl transition-all duration-200 active:scale-[0.98]"
           >
-            <a href={phoneUrl} onClick={trackCallClick}>
+            <a href={phoneUrl}>
               <Phone className="w-4.5 h-4.5 mr-1.5" />
               Llamar
             </a>

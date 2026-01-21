@@ -11,24 +11,6 @@ const SEMHero = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
   const phoneUrl = `tel:${PHONE_NUMBER}`;
 
-  const trackWhatsAppClick = () => {
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Lead', {
-        content_name: 'WhatsApp Click',
-        content_category: 'SEM Landing Hero'
-      });
-    }
-  };
-
-  const trackCallClick = () => {
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Contact', {
-        content_name: 'Call Click',
-        content_category: 'SEM Landing Hero'
-      });
-    }
-  };
-
   return (
     <section className="relative min-h-[92vh] overflow-hidden">
       {/* Premium gradient background with multiple layers */}
@@ -150,7 +132,7 @@ const SEMHero = () => {
                 size="lg"
                 className="group relative bg-[#25D366] text-white hover:bg-[#1da851] font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(37,211,102,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
               >
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={trackWhatsAppClick}>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                   <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <MessageCircle className="w-5 h-5 mr-2.5 relative z-10" />
                   <span className="relative z-10">Agendar por WhatsApp</span>
@@ -162,7 +144,7 @@ const SEMHero = () => {
                 size="lg"
                 className="border-2 border-white/50 text-white hover:bg-white hover:text-primary font-bold text-lg h-[60px] px-8 bg-white/10 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] rounded-2xl"
               >
-                <a href={phoneUrl} onClick={trackCallClick}>
+                <a href={phoneUrl}>
                   <Phone className="w-5 h-5 mr-2.5" />
                   Llamar: 0998396186
                 </a>

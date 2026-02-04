@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Scatter,
 } from "recharts";
 import { weightForAgeBoys } from "@/lib/growth-data/who-weight-boys";
 import { weightForAgeGirls } from "@/lib/growth-data/who-weight-girls";
@@ -22,21 +21,60 @@ import {
   getStatusBgColor,
   formatAgeDisplay,
 } from "@/lib/growth-data/growth-utils";
+import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
 
 interface WeightForAgeChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
+  onUpdateWeight?: (controlId: string, newWeight: number) => void;
 }
 
 export const WeightForAgeChart = ({
   controls,
   sex,
   loading,
+  onUpdateWeight,
 }: WeightForAgeChartProps) => {
   const referenceData = sex === "M" ? weightForAgeBoys : weightForAgeGirls;
   const colors = getChartColors(sex);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 300 });
+
+  // Track chart dimensions for coordinate conversion
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartRef.current) {
+        const svg = chartRef.current.querySelector("svg");
+        if (svg) {
+          // Recharts typically has margins: { top: 10, right: 30, left: 0, bottom: 0 }
+          // The actual chart area is within these margins
+          const rect = svg.getBoundingClientRect();
+          setChartDimensions({
+            top: 10, // margin.top
+            height: rect.height - 10 - 30, // subtract top and bottom margins
+          });
+        }
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [loading]);
+
+  // Calculate Y domain based on data
+  const yDomain = useMemo(() => {
+    const allValues = [
+      ...referenceData.map((r) => r.p3),
+      ...referenceData.map((r) => r.p97),
+      ...controls.filter((c) => c.weight).map((c) => parseFloat(c.weight!)),
+    ];
+    const min = Math.floor(Math.min(...allValues) - 1);
+    const max = Math.ceil(Math.max(...allValues) + 1);
+    return [Math.max(0, min), max] as [number, number];
+  }, [referenceData, controls]);
 
   // Prepare chart data combining reference curves with patient data
   const chartData = useMemo(() => {
@@ -56,11 +94,12 @@ export const WeightForAgeChart = ({
         p85: ref.p85,
         p97: ref.p97,
         patientWeight: patientPoint ? parseFloat(patientPoint.weight!) : undefined,
+        controlId: patientPoint?.id,
       };
     });
   }, [referenceData, controls]);
 
-  // Get patient data points for scatter plot
+  // Get patient data points for the interactive line
   const patientPoints = useMemo(() => {
     return controls
       .filter((c) => c.ageInMonths !== undefined && c.weight)
@@ -68,6 +107,7 @@ export const WeightForAgeChart = ({
         month: c.ageInMonths!,
         weight: parseFloat(c.weight!),
         date: c.control_date,
+        controlId: c.id,
       }));
   }, [controls]);
 
@@ -84,6 +124,12 @@ export const WeightForAgeChart = ({
 
     return getPercentileStatus(parseFloat(latest.weight!), refData);
   }, [controls, referenceData]);
+
+  const handleValueChange = (controlId: string, newValue: number) => {
+    if (onUpdateWeight) {
+      onUpdateWeight(controlId, newValue);
+    }
+  };
 
   if (loading) {
     return (
@@ -115,9 +161,14 @@ export const WeightForAgeChart = ({
             </Badge>
           )}
         </div>
+        {onUpdateWeight && patientPoints.length > 0 && (
+          <p className="text-xs text-muted-foreground mt-1">
+            💡 Arrastra los puntos verticalmente para ajustar el peso
+          </p>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="h-[350px] w-full">
+        <div className="h-[350px] w-full" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -128,7 +179,7 @@ export const WeightForAgeChart = ({
               />
               <YAxis
                 label={{ value: "Peso (kg)", angle: -90, position: "insideLeft" }}
-                domain={["auto", "auto"]}
+                domain={yDomain}
               />
               <Tooltip
                 content={({ active, payload, label }) => {
@@ -191,7 +242,7 @@ export const WeightForAgeChart = ({
                 fillOpacity={0.4}
               />
 
-              {/* Reference lines */}
+              {/* Reference line P50 */}
               <Line
                 type="monotone"
                 dataKey="p50"
@@ -201,26 +252,36 @@ export const WeightForAgeChart = ({
                 dot={false}
               />
 
-              {/* Patient data line */}
-              {patientPoints.length > 0 && (
-                <Scatter
-                  data={patientPoints}
-                  dataKey="weight"
-                  fill={colors.line}
-                  shape="circle"
-                  name="Paciente"
-                />
-              )}
-
-              {/* Patient connected line */}
+              {/* Patient connected line with draggable points */}
               <Line
                 type="monotone"
                 data={patientPoints}
                 dataKey="weight"
                 stroke={colors.line}
                 strokeWidth={2}
-                dot={{ fill: colors.line, strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 8 }}
+                dot={(props: any) => {
+                  const { cx, cy, payload } = props;
+                  if (!payload || cx === undefined || cy === undefined) return null;
+                  return (
+                    <DraggablePoint
+                      key={payload.controlId}
+                      cx={cx}
+                      cy={cy}
+                      payload={{
+                        controlId: payload.controlId,
+                        value: payload.weight,
+                        month: payload.month,
+                      }}
+                      chartTop={chartDimensions.top}
+                      chartHeight={chartDimensions.height}
+                      yDomain={yDomain}
+                      onValueChange={onUpdateWeight ? handleValueChange : undefined}
+                      color={colors.line}
+                      unit="kg"
+                    />
+                  );
+                }}
+                activeDot={false}
                 connectNulls
               />
             </ComposedChart>

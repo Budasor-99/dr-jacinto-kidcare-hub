@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Scatter,
 } from "recharts";
 import { headCircumferenceForAgeBoys } from "@/lib/growth-data/who-hc-boys";
 import { headCircumferenceForAgeGirls } from "@/lib/growth-data/who-hc-girls";
@@ -22,26 +21,61 @@ import {
   getStatusBgColor,
   formatAgeDisplay,
 } from "@/lib/growth-data/growth-utils";
+import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
 
 interface HeadCircumferenceChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
+  onUpdateHeadCircumference?: (controlId: string, newHC: number) => void;
 }
 
 export const HeadCircumferenceChart = ({
   controls,
   sex,
   loading,
+  onUpdateHeadCircumference,
 }: HeadCircumferenceChartProps) => {
   const referenceData = sex === "M" ? headCircumferenceForAgeBoys : headCircumferenceForAgeGirls;
   const colors = getChartColors(sex);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 300 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartRef.current) {
+        const svg = chartRef.current.querySelector("svg");
+        if (svg) {
+          const rect = svg.getBoundingClientRect();
+          setChartDimensions({
+            top: 10,
+            height: rect.height - 10 - 30,
+          });
+        }
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [loading]);
 
   // Filter to 0-36 months for head circumference (most relevant range)
   const filteredRefData = useMemo(() => {
     return referenceData.filter((d) => d.month <= 36);
   }, [referenceData]);
+
+  const yDomain = useMemo(() => {
+    const allValues = [
+      ...filteredRefData.map((r) => r.p3),
+      ...filteredRefData.map((r) => r.p97),
+      ...controls.filter((c) => c.head_circumference).map((c) => parseFloat(c.head_circumference!)),
+    ];
+    const min = Math.floor(Math.min(...allValues) - 1);
+    const max = Math.ceil(Math.max(...allValues) + 1);
+    return [Math.max(0, min), max] as [number, number];
+  }, [filteredRefData, controls]);
 
   const chartData = useMemo(() => {
     return filteredRefData.map((ref) => {
@@ -60,6 +94,7 @@ export const HeadCircumferenceChart = ({
         p85: ref.p85,
         p97: ref.p97,
         patientHC: patientPoint ? parseFloat(patientPoint.head_circumference!) : undefined,
+        controlId: patientPoint?.id,
       };
     });
   }, [filteredRefData, controls]);
@@ -71,6 +106,7 @@ export const HeadCircumferenceChart = ({
         month: c.ageInMonths!,
         hc: parseFloat(c.head_circumference!),
         date: c.control_date,
+        controlId: c.id,
       }));
   }, [controls]);
 
@@ -86,6 +122,12 @@ export const HeadCircumferenceChart = ({
 
     return getPercentileStatus(parseFloat(latest.head_circumference!), refData);
   }, [controls, referenceData]);
+
+  const handleValueChange = (controlId: string, newValue: number) => {
+    if (onUpdateHeadCircumference) {
+      onUpdateHeadCircumference(controlId, newValue);
+    }
+  };
 
   if (loading) {
     return (
@@ -117,9 +159,14 @@ export const HeadCircumferenceChart = ({
             </Badge>
           )}
         </div>
+        {onUpdateHeadCircumference && patientPoints.length > 0 && (
+          <p className="text-xs text-muted-foreground mt-1">
+            💡 Arrastra los puntos verticalmente para ajustar el perímetro
+          </p>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="h-[350px] w-full">
+        <div className="h-[350px] w-full" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -130,7 +177,7 @@ export const HeadCircumferenceChart = ({
               />
               <YAxis
                 label={{ value: "P.C. (cm)", angle: -90, position: "insideLeft" }}
-                domain={["auto", "auto"]}
+                domain={yDomain}
               />
               <Tooltip
                 content={({ active, payload, label }) => {
@@ -201,24 +248,35 @@ export const HeadCircumferenceChart = ({
                 dot={false}
               />
 
-              {patientPoints.length > 0 && (
-                <Scatter
-                  data={patientPoints}
-                  dataKey="hc"
-                  fill={colors.line}
-                  shape="circle"
-                  name="Paciente"
-                />
-              )}
-
               <Line
                 type="monotone"
                 data={patientPoints}
                 dataKey="hc"
                 stroke={colors.line}
                 strokeWidth={2}
-                dot={{ fill: colors.line, strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 8 }}
+                dot={(props: any) => {
+                  const { cx, cy, payload } = props;
+                  if (!payload || cx === undefined || cy === undefined) return null;
+                  return (
+                    <DraggablePoint
+                      key={payload.controlId}
+                      cx={cx}
+                      cy={cy}
+                      payload={{
+                        controlId: payload.controlId,
+                        value: payload.hc,
+                        month: payload.month,
+                      }}
+                      chartTop={chartDimensions.top}
+                      chartHeight={chartDimensions.height}
+                      yDomain={yDomain}
+                      onValueChange={onUpdateHeadCircumference ? handleValueChange : undefined}
+                      color={colors.line}
+                      unit="cm"
+                    />
+                  );
+                }}
+                activeDot={false}
                 connectNulls
               />
             </ComposedChart>

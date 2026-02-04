@@ -1,3 +1,11 @@
+import { weightForAgeBoys } from "./growth-data/who-weight-boys";
+import { weightForAgeGirls } from "./growth-data/who-weight-girls";
+import { heightForAgeBoys } from "./growth-data/who-height-boys";
+import { heightForAgeGirls } from "./growth-data/who-height-girls";
+import { headCircumferenceForAgeBoys } from "./growth-data/who-hc-boys";
+import { headCircumferenceForAgeGirls } from "./growth-data/who-hc-girls";
+import { calculateAgeInMonths, getPercentileStatus, getRefDataForMonth, formatAgeDisplay, getStatusColor } from "./growth-data/growth-utils";
+
 interface Patient {
   id: string;
   name: string;
@@ -111,6 +119,115 @@ interface Vaccination {
   application_date: string;
   lot_number: string | null;
 }
+
+// Helper to generate growth chart section
+const generateGrowthChartSection = (
+  patient: Patient,
+  controls: MedicalControl[]
+): string => {
+  if (!patient.birth_date || controls.length === 0) return "";
+
+  const sex = (patient.sex === "M" || patient.sex === "F") ? patient.sex : "M";
+  const birthDate = new Date(patient.birth_date);
+  
+  const weightData = sex === "M" ? weightForAgeBoys : weightForAgeGirls;
+  const heightData = sex === "M" ? heightForAgeBoys : heightForAgeGirls;
+  const hcData = sex === "M" ? headCircumferenceForAgeBoys : headCircumferenceForAgeGirls;
+
+  // Calculate percentiles for each control
+  const growthRows = controls
+    .filter(c => c.weight || c.height || c.head_circumference)
+    .map(c => {
+      const controlDate = new Date(c.control_date);
+      const ageInMonths = calculateAgeInMonths(birthDate, controlDate);
+      
+      let weightPercentile = "-";
+      let heightPercentile = "-";
+      let hcPercentile = "-";
+      
+      if (c.weight) {
+        const refData = getRefDataForMonth(ageInMonths, weightData);
+        if (refData) {
+          const status = getPercentileStatus(parseFloat(c.weight), refData);
+          weightPercentile = `P${status.percentile} (${status.label})`;
+        }
+      }
+      
+      if (c.height) {
+        const refData = getRefDataForMonth(ageInMonths, heightData);
+        if (refData) {
+          const status = getPercentileStatus(parseFloat(c.height), refData);
+          heightPercentile = `P${status.percentile} (${status.label})`;
+        }
+      }
+      
+      if (c.head_circumference && ageInMonths <= 36) {
+        const refData = getRefDataForMonth(ageInMonths, hcData);
+        if (refData) {
+          const status = getPercentileStatus(parseFloat(c.head_circumference), refData);
+          hcPercentile = `P${status.percentile} (${status.label})`;
+        }
+      }
+      
+      return {
+        date: c.control_date,
+        age: formatAgeDisplay(ageInMonths),
+        weight: c.weight || "-",
+        weightPercentile,
+        height: c.height || "-",
+        heightPercentile,
+        hc: c.head_circumference || "-",
+        hcPercentile,
+      };
+    });
+
+  if (growthRows.length === 0) return "";
+
+  return `
+  <div class="section" style="page-break-before: always;">
+    <div class="section-title">Curvas de Crecimiento OMS - Resumen de Percentiles</div>
+    <div class="section-content">
+      <p style="font-size: 9px; color: #666; margin-bottom: 10px;">
+        Clasificación según estándares OMS: <strong style="color: hsl(142, 76%, 36%);">Normal</strong> (P15-P85) | 
+        <strong style="color: hsl(45, 93%, 47%);">Vigilar</strong> (P3-P15 o P85-P97) | 
+        <strong style="color: hsl(0, 84%, 60%);">Evaluar</strong> (&lt;P3 o &gt;P97)
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 70px;">Fecha</th>
+            <th style="width: 60px;">Edad</th>
+            <th style="width: 50px;">Peso (kg)</th>
+            <th style="width: 90px;">Percentil Peso</th>
+            <th style="width: 50px;">Talla (cm)</th>
+            <th style="width: 90px;">Percentil Talla</th>
+            <th style="width: 50px;">P.C. (cm)</th>
+            <th style="width: 90px;">Percentil P.C.</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${growthRows.map(row => `
+            <tr>
+              <td>${new Date(row.date).toLocaleDateString("es-EC")}</td>
+              <td>${row.age}</td>
+              <td>${row.weight}</td>
+              <td>${row.weightPercentile}</td>
+              <td>${row.height}</td>
+              <td>${row.heightPercentile}</td>
+              <td>${row.hc}</td>
+              <td>${row.hcPercentile}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+      <p style="font-size: 8px; color: #666; margin-top: 8px;">
+        * Perímetro cefálico evaluado hasta los 36 meses según estándares OMS.
+        Los valores de percentil son aproximados basados en los datos de referencia de la OMS.
+      </p>
+    </div>
+  </div>
+  `;
+};
 
 export const generateMedicalRecordPDF = (
   patient: Patient,
@@ -633,6 +750,8 @@ export const generateMedicalRecordPDF = (
     </div>
   </div>
   ` : ""}
+
+  ${generateGrowthChartSection(patient, controls)}
 
   ${record.notes ? `
   <div class="section">

@@ -10,6 +10,7 @@ import { MedicalRecordForm } from "./MedicalRecordForm";
 import { MedicalControlsTab } from "./MedicalControlsTab";
 import { VaccinationsTab } from "./VaccinationsTab";
 import { EvolutionNotesTab } from "./EvolutionNotesTab";
+import { GrowthChartsTab } from "./growth-charts/GrowthChartsTab";
 import { generateMedicalRecordPDF } from "@/lib/pdfGenerator";
 
 interface MedicalRecordDialogProps {
@@ -314,10 +315,11 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
           </div>
         ) : (
           <Tabs defaultValue="patient" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="patient" className="text-xs sm:text-sm">Paciente</TabsTrigger>
               <TabsTrigger value="anamnesis" className="text-xs sm:text-sm">Anamnesis</TabsTrigger>
               <TabsTrigger value="controls" className="text-xs sm:text-sm">Controles</TabsTrigger>
+              <TabsTrigger value="growth" className="text-xs sm:text-sm">Crecimiento</TabsTrigger>
               <TabsTrigger value="evolution" className="text-xs sm:text-sm">Evolución</TabsTrigger>
               <TabsTrigger value="vaccinations" className="text-xs sm:text-sm">Vacunas</TabsTrigger>
             </TabsList>
@@ -345,6 +347,16 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
             <TabsContent value="controls" className="mt-4">
               {medicalRecord && (
                 <MedicalControlsTab medicalRecordId={medicalRecord.id} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="growth" className="mt-4">
+              {medicalRecord && patient && (
+                <GrowthChartsTab
+                  medicalRecordId={medicalRecord.id}
+                  patientBirthDate={patient.birth_date}
+                  patientSex={patient.sex}
+                />
               )}
             </TabsContent>
 

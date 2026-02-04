@@ -160,6 +160,19 @@ export const GrowthChartsTab = ({
     }
   };
 
+  // Handlers for draggable chart points
+  const handleUpdateWeight = (controlId: string, newWeight: number) => {
+    handleUpdateControl(controlId, "weight", newWeight.toFixed(2));
+  };
+
+  const handleUpdateHeight = (controlId: string, newHeight: number) => {
+    handleUpdateControl(controlId, "height", newHeight.toFixed(1));
+  };
+
+  const handleUpdateHeadCircumference = (controlId: string, newHC: number) => {
+    handleUpdateControl(controlId, "head_circumference", newHC.toFixed(1));
+  };
+
   const handleDeleteControl = async (controlId: string) => {
     try {
       const { error } = await supabase
@@ -220,6 +233,7 @@ export const GrowthChartsTab = ({
             controls={controls}
             sex={sex}
             loading={loading}
+            onUpdateWeight={handleUpdateWeight}
           />
         </TabsContent>
 
@@ -228,6 +242,7 @@ export const GrowthChartsTab = ({
             controls={controls}
             sex={sex}
             loading={loading}
+            onUpdateHeight={handleUpdateHeight}
           />
         </TabsContent>
 
@@ -236,6 +251,7 @@ export const GrowthChartsTab = ({
             controls={controls}
             sex={sex}
             loading={loading}
+            onUpdateHeadCircumference={handleUpdateHeadCircumference}
           />
         </TabsContent>
       </Tabs>

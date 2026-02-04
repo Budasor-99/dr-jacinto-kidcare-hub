@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Scatter,
 } from "recharts";
 import { heightForAgeBoys } from "@/lib/growth-data/who-height-boys";
 import { heightForAgeGirls } from "@/lib/growth-data/who-height-girls";
@@ -22,21 +21,56 @@ import {
   getStatusBgColor,
   formatAgeDisplay,
 } from "@/lib/growth-data/growth-utils";
+import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
 
 interface HeightForAgeChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
+  onUpdateHeight?: (controlId: string, newHeight: number) => void;
 }
 
 export const HeightForAgeChart = ({
   controls,
   sex,
   loading,
+  onUpdateHeight,
 }: HeightForAgeChartProps) => {
   const referenceData = sex === "M" ? heightForAgeBoys : heightForAgeGirls;
   const colors = getChartColors(sex);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 300 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (chartRef.current) {
+        const svg = chartRef.current.querySelector("svg");
+        if (svg) {
+          const rect = svg.getBoundingClientRect();
+          setChartDimensions({
+            top: 10,
+            height: rect.height - 10 - 30,
+          });
+        }
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [loading]);
+
+  const yDomain = useMemo(() => {
+    const allValues = [
+      ...referenceData.map((r) => r.p3),
+      ...referenceData.map((r) => r.p97),
+      ...controls.filter((c) => c.height).map((c) => parseFloat(c.height!)),
+    ];
+    const min = Math.floor(Math.min(...allValues) - 2);
+    const max = Math.ceil(Math.max(...allValues) + 2);
+    return [Math.max(0, min), max] as [number, number];
+  }, [referenceData, controls]);
 
   const chartData = useMemo(() => {
     return referenceData.map((ref) => {
@@ -55,6 +89,7 @@ export const HeightForAgeChart = ({
         p85: ref.p85,
         p97: ref.p97,
         patientHeight: patientPoint ? parseFloat(patientPoint.height!) : undefined,
+        controlId: patientPoint?.id,
       };
     });
   }, [referenceData, controls]);
@@ -66,6 +101,7 @@ export const HeightForAgeChart = ({
         month: c.ageInMonths!,
         height: parseFloat(c.height!),
         date: c.control_date,
+        controlId: c.id,
       }));
   }, [controls]);
 
@@ -81,6 +117,12 @@ export const HeightForAgeChart = ({
 
     return getPercentileStatus(parseFloat(latest.height!), refData);
   }, [controls, referenceData]);
+
+  const handleValueChange = (controlId: string, newValue: number) => {
+    if (onUpdateHeight) {
+      onUpdateHeight(controlId, newValue);
+    }
+  };
 
   if (loading) {
     return (
@@ -112,9 +154,14 @@ export const HeightForAgeChart = ({
             </Badge>
           )}
         </div>
+        {onUpdateHeight && patientPoints.length > 0 && (
+          <p className="text-xs text-muted-foreground mt-1">
+            💡 Arrastra los puntos verticalmente para ajustar la talla
+          </p>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="h-[350px] w-full">
+        <div className="h-[350px] w-full" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -125,7 +172,7 @@ export const HeightForAgeChart = ({
               />
               <YAxis
                 label={{ value: "Talla (cm)", angle: -90, position: "insideLeft" }}
-                domain={["auto", "auto"]}
+                domain={yDomain}
               />
               <Tooltip
                 content={({ active, payload, label }) => {
@@ -196,24 +243,35 @@ export const HeightForAgeChart = ({
                 dot={false}
               />
 
-              {patientPoints.length > 0 && (
-                <Scatter
-                  data={patientPoints}
-                  dataKey="height"
-                  fill={colors.line}
-                  shape="circle"
-                  name="Paciente"
-                />
-              )}
-
               <Line
                 type="monotone"
                 data={patientPoints}
                 dataKey="height"
                 stroke={colors.line}
                 strokeWidth={2}
-                dot={{ fill: colors.line, strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 8 }}
+                dot={(props: any) => {
+                  const { cx, cy, payload } = props;
+                  if (!payload || cx === undefined || cy === undefined) return null;
+                  return (
+                    <DraggablePoint
+                      key={payload.controlId}
+                      cx={cx}
+                      cy={cy}
+                      payload={{
+                        controlId: payload.controlId,
+                        value: payload.height,
+                        month: payload.month,
+                      }}
+                      chartTop={chartDimensions.top}
+                      chartHeight={chartDimensions.height}
+                      yDomain={yDomain}
+                      onValueChange={onUpdateHeight ? handleValueChange : undefined}
+                      color={colors.line}
+                      unit="cm"
+                    />
+                  );
+                }}
+                activeDot={false}
                 connectNulls
               />
             </ComposedChart>

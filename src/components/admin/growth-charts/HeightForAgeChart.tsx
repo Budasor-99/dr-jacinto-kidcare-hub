@@ -7,7 +7,7 @@ interface HeightForAgeChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
-  onUpdateHeight?: (controlId: string, newHeight: number) => void;
+  onUpdateHeight?: (controlId: string, newHeight: number, newMonth?: number) => void;
 }
 
 // MSP Ecuador: 6 curves A-F

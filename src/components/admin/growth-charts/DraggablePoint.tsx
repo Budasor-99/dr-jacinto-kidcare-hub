@@ -18,8 +18,11 @@ interface DraggablePointProps {
   };
   chartTop: number;
   chartHeight: number;
+  chartLeft: number;
+  chartWidth: number;
   yDomain: [number, number];
-  onValueChange?: (controlId: string, newValue: number) => void;
+  xDomain: [number, number];
+  onValueChange?: (controlId: string, newValue: number, newMonth: number) => void;
   color: string;
   unit: string;
   referenceData?: Array<{ month: number; p3: number; p15: number; p50: number; p85: number; p97: number }>;
@@ -31,73 +34,87 @@ export const DraggablePoint = ({
   payload,
   chartTop,
   chartHeight,
+  chartLeft,
+  chartWidth,
   yDomain,
+  xDomain,
   onValueChange,
   color,
   unit,
   referenceData,
 }: DraggablePointProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [currentX, setCurrentX] = useState(cx);
   const [currentY, setCurrentY] = useState(cy);
   const [displayValue, setDisplayValue] = useState<number | null>(null);
+  const [displayMonth, setDisplayMonth] = useState<number | null>(null);
   const [dragStatus, setDragStatus] = useState<{ status: PercentileStatus; percentile: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!isDragging) setCurrentY(cy);
-  }, [cy, isDragging]);
+    if (!isDragging) {
+      setCurrentX(cx);
+      setCurrentY(cy);
+    }
+  }, [cx, cy, isDragging]);
 
   const yToValue = useCallback(
     (yPixel: number): number => {
       const [minVal, maxVal] = yDomain;
       const ratio = (yPixel - chartTop) / chartHeight;
-      const value = maxVal - ratio * (maxVal - minVal);
-      return Math.max(minVal, Math.min(maxVal, value));
+      return Math.max(minVal, Math.min(maxVal, maxVal - ratio * (maxVal - minVal)));
     },
     [chartTop, chartHeight, yDomain]
   );
 
-  // Compute percentile status for a given value
+  const xToMonth = useCallback(
+    (xPixel: number): number => {
+      const [minM, maxM] = xDomain;
+      const ratio = (xPixel - chartLeft) / chartWidth;
+      return Math.max(minM, Math.min(maxM, minM + ratio * (maxM - minM)));
+    },
+    [chartLeft, chartWidth, xDomain]
+  );
+
   const computeStatus = useCallback(
-    (value: number) => {
-      if (!referenceData || !payload) return null;
-      const refData = getRefDataForMonth(payload.month, referenceData);
+    (value: number, month: number) => {
+      if (!referenceData) return null;
+      const refData = getRefDataForMonth(month, referenceData);
       if (!refData) return null;
       return getPercentileStatus(value, refData);
     },
-    [referenceData, payload]
+    [referenceData]
+  );
+
+  const startDrag = useCallback(
+    (svg: SVGSVGElement | null) => {
+      if (!payload?.controlId || !onValueChange) return;
+      setIsDragging(true);
+      setDisplayValue(payload.value);
+      setDisplayMonth(payload.month);
+      const status = computeStatus(payload.value, payload.month);
+      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
+      if (svg) svgRef.current = svg;
+    },
+    [payload, onValueChange, computeStatus]
   );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<SVGCircleElement>) => {
-      if (!payload?.controlId || !onValueChange) return;
       e.preventDefault();
       e.stopPropagation();
-      setIsDragging(true);
-      setDisplayValue(payload.value);
-      const status = computeStatus(payload.value);
-      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
-
-      const svg = (e.target as SVGCircleElement).ownerSVGElement;
-      if (svg) svgRef.current = svg;
+      startDrag((e.target as SVGCircleElement).ownerSVGElement);
     },
-    [payload, onValueChange, computeStatus]
+    [startDrag]
   );
 
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<SVGCircleElement>) => {
-      if (!payload?.controlId || !onValueChange) return;
       e.preventDefault();
       e.stopPropagation();
-      setIsDragging(true);
-      setDisplayValue(payload.value);
-      const status = computeStatus(payload.value);
-      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
-
-      const svg = (e.target as SVGCircleElement).ownerSVGElement;
-      if (svg) svgRef.current = svg;
+      startDrag((e.target as SVGCircleElement).ownerSVGElement);
     },
-    [payload, onValueChange, computeStatus]
+    [startDrag]
   );
 
   useEffect(() => {
@@ -105,16 +122,22 @@ export const DraggablePoint = ({
 
     const handleMove = (clientX: number, clientY: number) => {
       if (!svgRef.current) return;
-      const svg = svgRef.current;
-      const pt = svg.createSVGPoint();
+      const pt = svgRef.current.createSVGPoint();
       pt.x = clientX;
       pt.y = clientY;
-      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+      const svgP = pt.matrixTransform(svgRef.current.getScreenCTM()?.inverse());
+
       const clampedY = Math.max(chartTop, Math.min(chartTop + chartHeight, svgP.y));
+      const clampedX = Math.max(chartLeft, Math.min(chartLeft + chartWidth, svgP.x));
       setCurrentY(clampedY);
+      setCurrentX(clampedX);
+
       const newValue = Math.round(yToValue(clampedY) * 100) / 100;
+      const newMonth = Math.round(xToMonth(clampedX) * 10) / 10;
       setDisplayValue(newValue);
-      const status = computeStatus(newValue);
+      setDisplayMonth(newMonth);
+
+      const status = computeStatus(newValue, newMonth);
       if (status) setDragStatus({ status: status.status, percentile: status.percentile });
     };
 
@@ -124,11 +147,12 @@ export const DraggablePoint = ({
     };
 
     const handleEnd = () => {
-      if (payload?.controlId && onValueChange && displayValue !== null) {
-        onValueChange(payload.controlId, displayValue);
+      if (payload?.controlId && onValueChange && displayValue !== null && displayMonth !== null) {
+        onValueChange(payload.controlId, displayValue, displayMonth);
       }
       setIsDragging(false);
       setDisplayValue(null);
+      setDisplayMonth(null);
       setDragStatus(null);
     };
 
@@ -143,68 +167,39 @@ export const DraggablePoint = ({
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleEnd);
     };
-  }, [isDragging, chartTop, chartHeight, yToValue, payload, onValueChange, displayValue, computeStatus]);
+  }, [isDragging, chartTop, chartHeight, chartLeft, chartWidth, yToValue, xToMonth, payload, onValueChange, displayValue, displayMonth, computeStatus]);
 
   if (!payload?.controlId) {
-    return (
-      <circle cx={cx} cy={cy} r={5} fill={color} stroke="#fff" strokeWidth={2} />
-    );
+    return <circle cx={cx} cy={cy} r={5} fill={color} stroke="#fff" strokeWidth={2} />;
   }
 
-  // Status-based colors for tooltip
-  const tooltipBg = isDragging && dragStatus
-    ? getStatusBgColor(dragStatus.status)
-    : "hsl(var(--background))";
-  const tooltipBorder = isDragging && dragStatus
-    ? getStatusColor(dragStatus.status)
-    : "hsl(var(--border))";
+  const tooltipBg = isDragging && dragStatus ? getStatusBgColor(dragStatus.status) : "hsl(var(--background))";
+  const tooltipBorder = isDragging && dragStatus ? getStatusColor(dragStatus.status) : "hsl(var(--border))";
 
   return (
     <g>
-      {/* Horizontal guide line while dragging */}
       {isDragging && (
         <>
-          <line
-            x1={0}
-            y1={currentY}
-            x2={cx}
-            y2={currentY}
-            stroke={tooltipBorder}
-            strokeWidth={1}
-            strokeDasharray="4 2"
-            opacity={0.6}
-          />
-          {/* Enhanced tooltip with percentile */}
-          <g transform={`translate(${cx + 15}, ${currentY})`}>
-            <rect
-              x={0}
-              y={-20}
-              width={90}
-              height={40}
-              rx={6}
-              fill={tooltipBg}
-              stroke={tooltipBorder}
-              strokeWidth={1.5}
-            />
-            <text
-              x={45}
-              y={-4}
-              textAnchor="middle"
-              fontSize={12}
-              fontWeight="bold"
-              fill={dragStatus ? getStatusColor(dragStatus.status) : color}
-            >
+          {/* Crosshair lines */}
+          <line x1={chartLeft} y1={currentY} x2={currentX} y2={currentY}
+            stroke={tooltipBorder} strokeWidth={1} strokeDasharray="4 2" opacity={0.6} />
+          <line x1={currentX} y1={chartTop + chartHeight} x2={currentX} y2={currentY}
+            stroke={tooltipBorder} strokeWidth={1} strokeDasharray="4 2" opacity={0.6} />
+
+          {/* Tooltip */}
+          <g transform={`translate(${currentX + 15}, ${currentY - 10})`}>
+            <rect x={0} y={-22} width={100} height={52} rx={6}
+              fill={tooltipBg} stroke={tooltipBorder} strokeWidth={1.5} />
+            <text x={50} y={-6} textAnchor="middle" fontSize={12} fontWeight="bold"
+              fill={dragStatus ? getStatusColor(dragStatus.status) : color}>
               {displayValue} {unit}
             </text>
+            <text x={50} y={10} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
+              {displayMonth !== null ? formatAgeDisplay(displayMonth) : ""}
+            </text>
             {dragStatus && (
-              <text
-                x={45}
-                y={12}
-                textAnchor="middle"
-                fontSize={10}
-                fontWeight="600"
-                fill={getStatusColor(dragStatus.status)}
-              >
+              <text x={50} y={24} textAnchor="middle" fontSize={10} fontWeight="600"
+                fill={getStatusColor(dragStatus.status)}>
                 P{dragStatus.percentile}
               </text>
             )}
@@ -212,38 +207,29 @@ export const DraggablePoint = ({
         </>
       )}
 
-      {/* Drop shadow when dragging */}
       {isDragging && (
-        <circle cx={cx} cy={currentY} r={14} fill={tooltipBorder} opacity={0.2} />
+        <circle cx={currentX} cy={currentY} r={14} fill={tooltipBorder} opacity={0.2} />
       )}
 
-      {/* Main draggable point */}
       <circle
-        cx={cx}
+        cx={currentX}
         cy={currentY}
         r={isDragging ? 10 : 7}
         fill={color}
         stroke="#fff"
         strokeWidth={3}
-        cursor="ns-resize"
+        cursor="move"
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         style={{
-          transition: isDragging ? "none" : "r 0.15s ease-out, cy 0.15s ease-out",
+          transition: isDragging ? "none" : "r 0.15s ease-out",
           filter: isDragging ? "drop-shadow(0 2px 6px rgba(0,0,0,0.35))" : "drop-shadow(0 1px 2px rgba(0,0,0,0.15))",
         }}
       />
 
-      {/* Age label below point when not dragging */}
       {!isDragging && payload && (
-        <text
-          x={cx}
-          y={currentY + 20}
-          textAnchor="middle"
-          fontSize={9}
-          fill="hsl(var(--muted-foreground))"
-          style={{ pointerEvents: "none" }}
-        >
+        <text x={currentX} y={currentY + 20} textAnchor="middle" fontSize={9}
+          fill="hsl(var(--muted-foreground))" style={{ pointerEvents: "none" }}>
           {formatAgeDisplay(payload.month)}
         </text>
       )}

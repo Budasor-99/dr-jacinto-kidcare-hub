@@ -166,16 +166,36 @@ export const GrowthChartsTab = ({
     }
   };
 
-  const handleUpdateWeight = (controlId: string, newWeight: number) => {
-    handleUpdateControl(controlId, "weight", newWeight.toFixed(2));
+  const handleUpdateWithMonth = async (
+    controlId: string,
+    newValue: number,
+    field: string,
+    newMonth?: number
+  ) => {
+    // Update the value field
+    await handleUpdateControl(controlId, field, newValue.toFixed(field === "weight" ? 2 : 1));
+
+    // If month changed, recalculate control_date from birth date
+    if (newMonth !== undefined && patientBirthDate) {
+      const birthDate = new Date(patientBirthDate);
+      const roundedMonths = Math.round(newMonth);
+      const newDate = new Date(birthDate);
+      newDate.setMonth(newDate.getMonth() + roundedMonths);
+      const dateStr = newDate.toISOString().split("T")[0];
+      await handleUpdateControl(controlId, "control_date", dateStr);
+    }
   };
 
-  const handleUpdateHeight = (controlId: string, newHeight: number) => {
-    handleUpdateControl(controlId, "height", newHeight.toFixed(1));
+  const handleUpdateWeight = (controlId: string, newWeight: number, newMonth?: number) => {
+    handleUpdateWithMonth(controlId, newWeight, "weight", newMonth);
   };
 
-  const handleUpdateHeadCircumference = (controlId: string, newHC: number) => {
-    handleUpdateControl(controlId, "head_circumference", newHC.toFixed(1));
+  const handleUpdateHeight = (controlId: string, newHeight: number, newMonth?: number) => {
+    handleUpdateWithMonth(controlId, newHeight, "height", newMonth);
+  };
+
+  const handleUpdateHeadCircumference = (controlId: string, newHC: number, newMonth?: number) => {
+    handleUpdateWithMonth(controlId, newHC, "head_circumference", newMonth);
   };
 
   const handleDeleteControl = async (controlId: string) => {

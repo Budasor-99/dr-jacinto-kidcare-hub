@@ -7,7 +7,7 @@ interface WeightForAgeChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
-  onUpdateWeight?: (controlId: string, newWeight: number) => void;
+  onUpdateWeight?: (controlId: string, newWeight: number, newMonth?: number) => void;
 }
 
 // MSP Ecuador: 6 curves A-F

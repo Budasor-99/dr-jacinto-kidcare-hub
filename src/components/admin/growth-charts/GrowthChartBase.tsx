@@ -25,6 +25,14 @@ import {
 import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
 
+export interface CurveDefinition {
+  key: string;
+  label: string;
+  dash: string;
+  width: number;
+  isBold?: boolean;
+}
+
 interface ChartAnnotation {
   x: number;
   yOffset: number;
@@ -36,34 +44,51 @@ interface GrowthChartBaseProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
-  referenceData: Array<{ month: number; p3: number; p15: number; p50: number; p85: number; p97: number }>;
+  referenceData: Array<{
+    month: number;
+    p3: number;
+    p15: number;
+    p50: number;
+    p85: number;
+    p97: number;
+  }>;
   title: string;
   valueField: "weight" | "height" | "head_circumference";
   unit: string;
   yLabel: string;
   maxMonths?: number;
   onUpdateValue?: (controlId: string, newValue: number) => void;
-  /** Custom annotations on the chart area (e.g. "Acostado", "De pie") */
   annotations?: ChartAnnotation[];
-  /** Y-axis minor grid interval */
   yMinorInterval?: number;
-  /** X-axis tick interval in months */
   xTickInterval?: number;
-  /** Month position where letter labels appear ON the curves */
+  /** Month at which to render letter labels ON the curves */
   labelMonth?: number;
+  /** Custom curve definitions (overrides default A-E) */
+  curves?: CurveDefinition[];
+  /**
+   * "on-curve" = letter labels on the curve at labelMonth (default)
+   * "right-numbers" = numeric labels on the right edge of each curve
+   */
+  labelMode?: "on-curve" | "right-numbers";
+  /** Function to compute extra percentile fields from standard ref data */
+  computeExtraFields?: (ref: {
+    p3: number;
+    p15: number;
+    p50: number;
+    p85: number;
+    p97: number;
+  }) => Record<string, number>;
 }
 
-// Year labels for the X-axis grouping
-const YEAR_LABELS = ["1er Año", "2do Año", "3er Año", "4to Año", "5to Año"];
+const DEFAULT_CURVES: CurveDefinition[] = [
+  { key: "p97", label: "A", dash: "", width: 1.8 },
+  { key: "p85", label: "B", dash: "", width: 1.5 },
+  { key: "p50", label: "C", dash: "", width: 2.5, isBold: true },
+  { key: "p15", label: "D", dash: "8 4", width: 1.5 },
+  { key: "p3", label: "E", dash: "4 3", width: 1.2 },
+];
 
-// Percentile curve config: letter, dash pattern, stroke width (MSP style)
-const PERCENTILE_CURVES = [
-  { key: "p97", letter: "A", dash: "", width: 1.8 },
-  { key: "p85", letter: "B", dash: "", width: 1.5 },
-  { key: "p50", letter: "C", dash: "", width: 2.8 },
-  { key: "p15", letter: "D", dash: "8 4", width: 1.5 },
-  { key: "p3", letter: "E", dash: "3 3", width: 1.2 },
-] as const;
+const YEAR_LABELS = ["1er Año", "2do Año", "3er Año", "4to Año", "5to Año"];
 
 export const GrowthChartBase = ({
   controls,
@@ -80,13 +105,21 @@ export const GrowthChartBase = ({
   yMinorInterval,
   xTickInterval,
   labelMonth,
+  curves,
+  labelMode = "on-curve",
+  computeExtraFields,
 }: GrowthChartBaseProps) => {
   const colors = getChartColors(sex);
   const chartRef = useRef<HTMLDivElement>(null);
-  const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 440 });
+  const [chartDimensions, setChartDimensions] = useState({
+    top: 10,
+    height: 440,
+  });
   const [zoomMode, setZoomMode] = useState<"auto" | "full">("auto");
 
-  // Clinical monochrome colors (like printed paper form)
+  const activeCurves = curves || DEFAULT_CURVES;
+
+  // Clinical monochrome colors
   const lineColor = "hsl(var(--foreground))";
   const lineFaded = "hsl(var(--muted-foreground))";
   const gridColor = "hsl(var(--border))";
@@ -97,10 +130,7 @@ export const GrowthChartBase = ({
         const svg = chartRef.current.querySelector("svg");
         if (svg) {
           const rect = svg.getBoundingClientRect();
-          setChartDimensions({
-            top: 10,
-            height: rect.height - 10 - 50,
-          });
+          setChartDimensions({ top: 10, height: rect.height - 60 });
         }
       }
     };
@@ -112,64 +142,77 @@ export const GrowthChartBase = ({
   const xDomain = useMemo(() => {
     const fullMax = defaultMaxMonths || 60;
     if (zoomMode === "full") return [0, fullMax] as [number, number];
-
     const patientMaxAge = Math.max(
       0,
       ...controls
         .filter((c) => c.ageInMonths !== undefined && c[valueField])
         .map((c) => c.ageInMonths!)
     );
-
-    if (patientMaxAge === 0) return [0, Math.min(24, fullMax)] as [number, number];
-    const optimized = Math.min(fullMax, Math.ceil((patientMaxAge + 6) / 12) * 12);
+    if (patientMaxAge === 0)
+      return [0, Math.min(24, fullMax)] as [number, number];
+    const optimized = Math.min(
+      fullMax,
+      Math.ceil((patientMaxAge + 6) / 12) * 12
+    );
     return [0, Math.max(12, optimized)] as [number, number];
   }, [controls, valueField, zoomMode, defaultMaxMonths]);
 
   const filteredRefData = useMemo(() => {
-    return referenceData.filter((d) => d.month >= xDomain[0] && d.month <= xDomain[1]);
+    return referenceData.filter(
+      (d) => d.month >= xDomain[0] && d.month <= xDomain[1]
+    );
   }, [referenceData, xDomain]);
 
+  // Build chart data with optional extra computed fields
+  const chartData = useMemo(() => {
+    return filteredRefData.map((ref) => {
+      const base: Record<string, number> = {
+        month: ref.month,
+        p3: ref.p3,
+        p15: ref.p15,
+        p50: ref.p50,
+        p85: ref.p85,
+        p97: ref.p97,
+      };
+      if (computeExtraFields) {
+        const extra = computeExtraFields(ref);
+        Object.assign(base, extra);
+      }
+      return base;
+    });
+  }, [filteredRefData, computeExtraFields]);
+
   const yDomain = useMemo(() => {
-    const refValues = filteredRefData.flatMap((r) => [r.p3, r.p97]);
+    // Collect all values from all active curve keys
+    const allCurveKeys = activeCurves.map((c) => c.key);
+    const refValues = chartData.flatMap((d) =>
+      allCurveKeys.map((k) => d[k]).filter((v) => v !== undefined)
+    );
     const patientValues = controls
-      .filter((c) => c[valueField] && c.ageInMonths !== undefined && c.ageInMonths <= xDomain[1])
+      .filter(
+        (c) =>
+          c[valueField] &&
+          c.ageInMonths !== undefined &&
+          c.ageInMonths <= xDomain[1]
+      )
       .map((c) => parseFloat(c[valueField]!));
     const allValues = [...refValues, ...patientValues];
     if (allValues.length === 0) return [0, 20] as [number, number];
     const min = Math.floor(Math.min(...allValues) - 1);
     const max = Math.ceil(Math.max(...allValues) + 1);
     return [Math.max(0, min), max] as [number, number];
-  }, [filteredRefData, controls, valueField, xDomain]);
+  }, [chartData, controls, valueField, xDomain, activeCurves]);
 
-  // Chart data: reference curves + inline letter labels
   const effectiveLabelMonth = labelMonth ?? Math.round(xDomain[1] * 0.75);
-
-  const chartData = useMemo(() => {
-    return filteredRefData.map((ref) => ({
-      month: ref.month,
-      p3: ref.p3,
-      p15: ref.p15,
-      p50: ref.p50,
-      p85: ref.p85,
-      p97: ref.p97,
-    }));
-  }, [filteredRefData]);
-
-  // Find the data point closest to labelMonth for placing letters ON the curves
-  const labelData = useMemo(() => {
-    const target = effectiveLabelMonth;
-    let closest = filteredRefData[0];
-    let minDist = Infinity;
-    for (const d of filteredRefData) {
-      const dist = Math.abs(d.month - target);
-      if (dist < minDist) { minDist = dist; closest = d; }
-    }
-    return closest;
-  }, [filteredRefData, effectiveLabelMonth]);
 
   const patientPoints = useMemo(() => {
     return controls
-      .filter((c) => c.ageInMonths !== undefined && c[valueField] && c.ageInMonths <= xDomain[1])
+      .filter(
+        (c) =>
+          c.ageInMonths !== undefined &&
+          c[valueField] &&
+          c.ageInMonths <= xDomain[1]
+      )
       .map((c) => ({
         month: c.ageInMonths!,
         value: parseFloat(c[valueField]!),
@@ -198,8 +241,8 @@ export const GrowthChartBase = ({
     let interval = xTickInterval || 1;
     if (!xTickInterval) {
       const range = max - min;
-      if (range > 36) interval = 3;
-      else if (range > 24) interval = 2;
+      if (range > 36) interval = 6;
+      else if (range > 24) interval = 3;
     }
     const ticks: number[] = [];
     for (let i = min; i <= max; i += interval) ticks.push(i);
@@ -212,38 +255,62 @@ export const GrowthChartBase = ({
     return lines;
   }, [xDomain]);
 
-  // Custom dot renderer that places letter labels ON the curves
-  const makePercentileDot = (letter: string) => (props: any) => {
-    const { cx, cy, payload } = props;
-    if (!payload || cx === undefined || cy === undefined) return <g />;
-    // Only render the letter at the labelMonth position
-    if (Math.abs(payload.month - effectiveLabelMonth) > 0.5) return <g />;
-    return (
-      <g>
-        {/* White background for readability */}
-        <rect
-          x={cx - 7}
-          y={cy - 9}
-          width={14}
-          height={16}
-          rx={2}
-          fill="hsl(var(--background))"
-          stroke={lineColor}
-          strokeWidth={0.5}
-        />
-        <text
-          x={cx}
-          y={cy + 4}
-          textAnchor="middle"
-          fontSize={12}
-          fontWeight="bold"
-          fill={lineColor}
-          style={{ fontFamily: "serif" }}
-        >
-          {letter}
-        </text>
-      </g>
-    );
+  // ── DOT RENDERERS ───────────────────────────────────────────
+  // "on-curve" mode: render letter label at labelMonth position
+  const makeOnCurveDot =
+    (label: string) =>
+    (props: any) => {
+      const { cx, cy, payload } = props;
+      if (!payload || cx === undefined || cy === undefined) return <g />;
+      if (Math.abs(payload.month - effectiveLabelMonth) > 0.5) return <g />;
+      return (
+        <g>
+          <circle cx={cx} cy={cy} r={9} fill="hsl(var(--background))" />
+          <text
+            x={cx}
+            y={cy + 4}
+            textAnchor="middle"
+            fontSize={12}
+            fontWeight="bold"
+            fill={lineColor}
+            style={{ fontFamily: "serif" }}
+          >
+            {label}
+          </text>
+        </g>
+      );
+    };
+
+  // "right-numbers" mode: render numeric label at the LAST data point (right edge)
+  const makeRightLabelDot =
+    (label: string) =>
+    (props: any) => {
+      const { cx, cy, payload, index } = props;
+      if (!payload || cx === undefined || cy === undefined) return <g />;
+      // Only render on the last data point
+      if (index !== chartData.length - 1) return <g />;
+      return (
+        <g>
+          <text
+            x={cx + 8}
+            y={cy + 4}
+            textAnchor="start"
+            fontSize={11}
+            fontWeight="bold"
+            fill={lineColor}
+            style={{ fontFamily: "sans-serif" }}
+          >
+            {label}
+          </text>
+        </g>
+      );
+    };
+
+  const getDotRenderer = (curve: CurveDefinition) => {
+    if (labelMode === "right-numbers") {
+      return makeRightLabelDot(curve.label);
+    }
+    return makeOnCurveDot(curve.label);
   };
 
   if (loading) {
@@ -279,13 +346,21 @@ export const GrowthChartBase = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setZoomMode(zoomMode === "auto" ? "full" : "auto")}
+              onClick={() =>
+                setZoomMode(zoomMode === "auto" ? "full" : "auto")
+              }
               className="h-7 px-2 text-xs"
             >
               {zoomMode === "auto" ? (
-                <><ZoomOut className="h-3 w-3 mr-1" />Completa</>
+                <>
+                  <ZoomOut className="h-3 w-3 mr-1" />
+                  Completa
+                </>
               ) : (
-                <><ZoomIn className="h-3 w-3 mr-1" />Enfocada</>
+                <>
+                  <ZoomIn className="h-3 w-3 mr-1" />
+                  Enfocada
+                </>
               )}
             </Button>
           </div>
@@ -301,9 +376,14 @@ export const GrowthChartBase = ({
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 10, right: 15, left: 5, bottom: 45 }}
+              margin={{
+                top: 10,
+                right: labelMode === "right-numbers" ? 35 : 15,
+                left: 5,
+                bottom: 45,
+              }}
             >
-              {/* Dense clinical grid (paper milimetrado style) */}
+              {/* Dense clinical grid */}
               <CartesianGrid
                 strokeDasharray="1 3"
                 stroke={gridColor}
@@ -314,8 +394,14 @@ export const GrowthChartBase = ({
                   if (!scale || !domain) return [];
                   const [minY, maxY] = domain;
                   const coords: number[] = [];
-                  const step = yMinorInterval || (valueField === "weight" ? 0.5 : 1);
-                  for (let v = Math.ceil(minY / step) * step; v <= maxY; v += step) {
+                  const step =
+                    yMinorInterval ||
+                    (valueField === "weight" ? 0.5 : 1);
+                  for (
+                    let v = Math.ceil(minY / step) * step;
+                    v <= maxY;
+                    v += step
+                  ) {
                     const y = scale(v);
                     if (y !== undefined) coords.push(y);
                   }
@@ -323,7 +409,7 @@ export const GrowthChartBase = ({
                 }}
               />
 
-              {/* Year separator lines with labels */}
+              {/* Year separator lines */}
               {yearLines.map((month) => (
                 <ReferenceLine
                   key={`year-${month}`}
@@ -334,7 +420,9 @@ export const GrowthChartBase = ({
                   strokeDasharray="none"
                 >
                   <Label
-                    value={YEAR_LABELS[month / 12 - 1] || `${month / 12}° Año`}
+                    value={
+                      YEAR_LABELS[month / 12 - 1] || `${month / 12}° Año`
+                    }
                     position="bottom"
                     offset={22}
                     style={{
@@ -360,7 +448,11 @@ export const GrowthChartBase = ({
                   value="Meses"
                   position="bottom"
                   offset={8}
-                  style={{ fontSize: "12px", fill: lineColor, fontWeight: 700 }}
+                  style={{
+                    fontSize: "12px",
+                    fill: lineColor,
+                    fontWeight: 700,
+                  }}
                 />
               </XAxis>
 
@@ -375,7 +467,11 @@ export const GrowthChartBase = ({
                   angle={-90}
                   position="insideLeft"
                   offset={10}
-                  style={{ fontSize: "12px", fill: lineColor, fontWeight: 700 }}
+                  style={{
+                    fontSize: "12px",
+                    fill: lineColor,
+                    fontWeight: 700,
+                  }}
                 />
               </YAxis>
 
@@ -393,38 +489,48 @@ export const GrowthChartBase = ({
                         Edad: {formatAgeDisplay(label)}
                       </p>
                       {pp && (
-                        <p className="text-sm font-bold mb-1" style={{ color: colors.line }}>
+                        <p
+                          className="text-sm font-bold mb-1"
+                          style={{ color: colors.line }}
+                        >
                           ● Paciente: {pp.value} {unit}
                         </p>
                       )}
                       <div className="text-muted-foreground space-y-0.5 font-mono">
-                        <p>A (P97): {data.p97} {unit}</p>
-                        <p>B (P85): {data.p85} {unit}</p>
-                        <p className="font-bold text-foreground">C (P50): {data.p50} {unit}</p>
-                        <p>D (P15): {data.p15} {unit}</p>
-                        <p>E (P3): {data.p3} {unit}</p>
+                        {activeCurves.map((c) => (
+                          <p
+                            key={c.key}
+                            className={
+                              c.isBold
+                                ? "font-bold text-foreground"
+                                : ""
+                            }
+                          >
+                            {c.label}: {data[c.key]?.toFixed(1)} {unit}
+                          </p>
+                        ))}
                       </div>
                     </div>
                   );
                 }}
               />
 
-              {/* Percentile curves — clinical monochrome style with letters ON curves */}
-              {PERCENTILE_CURVES.map((curve) => (
+              {/* Percentile curves */}
+              {activeCurves.map((curve) => (
                 <Line
                   key={curve.key}
                   type="monotone"
                   dataKey={curve.key}
-                  stroke={curve.key === "p50" ? lineColor : lineFaded}
+                  stroke={curve.isBold ? lineColor : lineFaded}
                   strokeWidth={curve.width}
                   strokeDasharray={curve.dash || undefined}
-                  dot={makePercentileDot(curve.letter)}
+                  dot={getDotRenderer(curve)}
                   activeDot={false}
                   isAnimationActive={false}
                 />
               ))}
 
-              {/* Patient connected line with draggable points */}
+              {/* Patient line with draggable points */}
               <Line
                 type="monotone"
                 data={patientPoints}
@@ -433,7 +539,12 @@ export const GrowthChartBase = ({
                 strokeWidth={2.5}
                 dot={(props: any) => {
                   const { cx, cy, payload } = props;
-                  if (!payload || cx === undefined || cy === undefined) return <g />;
+                  if (
+                    !payload ||
+                    cx === undefined ||
+                    cy === undefined
+                  )
+                    return <g />;
                   return (
                     <DraggablePoint
                       key={payload.controlId}
@@ -447,7 +558,9 @@ export const GrowthChartBase = ({
                       chartTop={chartDimensions.top}
                       chartHeight={chartDimensions.height}
                       yDomain={yDomain}
-                      onValueChange={onUpdateValue ? handleValueChange : undefined}
+                      onValueChange={
+                        onUpdateValue ? handleValueChange : undefined
+                      }
                       color={colors.line}
                       unit={unit}
                       referenceData={referenceData}
@@ -459,7 +572,7 @@ export const GrowthChartBase = ({
                 isAnimationActive={false}
               />
 
-              {/* Custom annotations (e.g. "Acostado", "De pie") */}
+              {/* Custom annotations */}
               {annotations?.map((ann, i) => (
                 <ReferenceLine
                   key={`ann-${i}`}
@@ -484,24 +597,32 @@ export const GrowthChartBase = ({
           </ResponsiveContainer>
         </div>
 
-        {/* Legend — clinical style */}
-        <div className="flex justify-center gap-5 mt-3 text-xs flex-wrap">
-          <span className="flex items-center gap-1.5 font-semibold" style={{ color: colors.line }}>
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.line }} />
+        {/* Legend */}
+        <div className="flex justify-center gap-4 mt-3 text-xs flex-wrap">
+          <span
+            className="flex items-center gap-1.5 font-semibold"
+            style={{ color: colors.line }}
+          >
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: colors.line }}
+            />
             Paciente
           </span>
-          <span className="flex items-center gap-1.5 text-foreground">
-            <div className="w-6 h-0 border-b-2 border-foreground" />
-            <span className="font-serif font-bold">C</span> = P50 (Mediana)
-          </span>
-          <span className="flex items-center gap-1.5 text-muted-foreground">
-            <div className="w-6 h-0 border-b border-muted-foreground" />
-            <span className="font-serif font-bold">A/B</span> = P97/P85
-          </span>
-          <span className="flex items-center gap-1.5 text-muted-foreground">
-            <div className="w-6 h-0 border-b border-dashed border-muted-foreground" />
-            <span className="font-serif font-bold">D/E</span> = P15/P3
-          </span>
+          {activeCurves.map((c) => (
+            <span
+              key={c.key}
+              className={`flex items-center gap-1 ${c.isBold ? "text-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <div
+                className="w-5 h-0"
+                style={{
+                  borderBottom: `${c.width}px ${c.dash ? "dashed" : "solid"} ${c.isBold ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))"}`,
+                }}
+              />
+              <span className="font-serif font-bold">{c.label}</span>
+            </span>
+          ))}
         </div>
       </CardContent>
     </Card>

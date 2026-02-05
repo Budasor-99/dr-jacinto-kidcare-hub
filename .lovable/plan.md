@@ -1,37 +1,66 @@
 
-# Plan: Agregar noindex a Landing Page SEM
+# Plan: Implementar Google Analytics 4
 
-## Objetivo
-Evitar que la página `/lp` sea indexada por motores de búsqueda (Google, Bing) para mantenerla exclusiva para campañas de publicidad pagada.
+## Measurement ID
+`G-M16WB3CEP5`
+
+---
+
+## Archivos a Crear/Modificar
+
+| Archivo | Acción | Descripción |
+|---------|--------|-------------|
+| `index.html` | Modificar | Agregar script de gtag.js |
+| `src/vite-env.d.ts` | Modificar | Agregar tipos para gtag |
+| `src/lib/analytics.ts` | **Crear** | Funciones helper para eventos |
+| `src/hooks/usePageTracking.ts` | **Crear** | Hook para tracking automático de rutas |
+| `src/App.tsx` | Modificar | Integrar hook de tracking |
 
 ---
 
 ## Implementación
 
-### Archivo a Modificar
-`src/pages/LandingSEM.tsx`
-
-### Cambio
-Agregar un `useEffect` que inserte dinámicamente la meta tag `robots` con valor `noindex, nofollow` cuando se carga la página:
-
-```typescript
-useEffect(() => {
-  // Agregar meta noindex
-  const meta = document.createElement('meta');
-  meta.name = 'robots';
-  meta.content = 'noindex, nofollow';
-  document.head.appendChild(meta);
-
-  // Limpiar al desmontar
-  return () => {
-    document.head.removeChild(meta);
-  };
-}, []);
+### 1. index.html
+Agregar script de GA4 después del Meta Pixel existente:
+```html
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M16WB3CEP5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-M16WB3CEP5');
+</script>
 ```
+
+### 2. src/vite-env.d.ts
+Extender la interfaz Window para incluir gtag:
+```typescript
+gtag: (
+  command: 'config' | 'event' | 'js' | 'set',
+  targetId: string | Date,
+  params?: Record<string, any>
+) => void;
+dataLayer: any[];
+```
+
+### 3. src/lib/analytics.ts (nuevo)
+Funciones helper para tracking:
+- `trackPageView(path, title)` - Vistas de página
+- `trackEvent(eventName, params)` - Eventos genéricos
+- `trackAppointmentRequest()` - Solicitud de cita (generate_lead)
+- `trackWhatsAppClick()` - Click en WhatsApp (contact)
+- `trackPhoneClick()` - Click en teléfono (contact)
+
+### 4. src/hooks/usePageTracking.ts (nuevo)
+Hook que detecta cambios de ruta usando `useLocation` de react-router-dom y envía eventos `page_view` automáticamente.
+
+### 5. src/App.tsx
+Agregar componente `PageTracker` dentro de `BrowserRouter` para activar el tracking automático.
 
 ---
 
 ## Resultado
-- La página `/lp` no aparecerá en resultados de búsqueda de Google
-- Solo será accesible mediante links directos de campañas publicitarias
-- La página principal `/` seguirá siendo indexable normalmente
+- Tracking automático de todas las páginas visitadas
+- Funciones listas para agregar eventos de conversión en formularios y botones
+- Compatible con el Meta Pixel existente

@@ -30,9 +30,9 @@ export const HeadCircumferenceChart = ({
       yLabel="P.C. (cm)"
       maxMonths={36}
       onUpdateValue={onUpdateHeadCircumference}
-      useLetterLabels
       xTickInterval={3}
       yMinorInterval={1}
+      labelMonth={27}
     />
   );
 };

@@ -6,7 +6,6 @@ import { ZoomIn, ZoomOut } from "lucide-react";
 import {
   ComposedChart,
   Line,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -28,7 +27,7 @@ import type { MedicalControlData } from "./GrowthChartsTab";
 
 interface ChartAnnotation {
   x: number;
-  y: number;
+  yOffset: number;
   text: string;
   fontSize?: number;
 }
@@ -44,20 +43,27 @@ interface GrowthChartBaseProps {
   yLabel: string;
   maxMonths?: number;
   onUpdateValue?: (controlId: string, newValue: number) => void;
-  /** Use letter labels (A-F) on right side of curves instead of P3-P97 */
-  useLetterLabels?: boolean;
-  /** Custom annotations on the chart area */
+  /** Custom annotations on the chart area (e.g. "Acostado", "De pie") */
   annotations?: ChartAnnotation[];
-  /** Y-axis major grid interval (solid lines) */
-  yMajorInterval?: number;
-  /** Y-axis minor grid interval (dashed lines) */
+  /** Y-axis minor grid interval */
   yMinorInterval?: number;
   /** X-axis tick interval in months */
   xTickInterval?: number;
+  /** Month position where letter labels appear ON the curves */
+  labelMonth?: number;
 }
 
 // Year labels for the X-axis grouping
 const YEAR_LABELS = ["1er Año", "2do Año", "3er Año", "4to Año", "5to Año"];
+
+// Percentile curve config: letter, dash pattern, stroke width (MSP style)
+const PERCENTILE_CURVES = [
+  { key: "p97", letter: "A", dash: "", width: 1.8 },
+  { key: "p85", letter: "B", dash: "", width: 1.5 },
+  { key: "p50", letter: "C", dash: "", width: 2.8 },
+  { key: "p15", letter: "D", dash: "8 4", width: 1.5 },
+  { key: "p3", letter: "E", dash: "3 3", width: 1.2 },
+] as const;
 
 export const GrowthChartBase = ({
   controls,
@@ -70,21 +76,20 @@ export const GrowthChartBase = ({
   yLabel,
   maxMonths: defaultMaxMonths,
   onUpdateValue,
-  useLetterLabels,
   annotations,
-  yMajorInterval,
   yMinorInterval,
   xTickInterval,
+  labelMonth,
 }: GrowthChartBaseProps) => {
   const colors = getChartColors(sex);
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 440 });
   const [zoomMode, setZoomMode] = useState<"auto" | "full">("auto");
 
-  // Letter labels for MSP-style charts (A=P97, B=P85, C=P50, D=P15, E=P3)
-  const percentileLetters: Record<string, string> = {
-    p97: "A", p85: "B", p50: "C", p15: "D", p3: "E",
-  };
+  // Clinical monochrome colors (like printed paper form)
+  const lineColor = "hsl(var(--foreground))";
+  const lineFaded = "hsl(var(--muted-foreground))";
+  const gridColor = "hsl(var(--border))";
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -104,7 +109,6 @@ export const GrowthChartBase = ({
     return () => window.removeEventListener("resize", updateDimensions);
   }, [loading]);
 
-  // Calculate optimal X range based on patient data
   const xDomain = useMemo(() => {
     const fullMax = defaultMaxMonths || 60;
     if (zoomMode === "full") return [0, fullMax] as [number, number];
@@ -117,13 +121,10 @@ export const GrowthChartBase = ({
     );
 
     if (patientMaxAge === 0) return [0, Math.min(24, fullMax)] as [number, number];
-
-    // Round up to next 12-month period + 6 months buffer
     const optimized = Math.min(fullMax, Math.ceil((patientMaxAge + 6) / 12) * 12);
     return [0, Math.max(12, optimized)] as [number, number];
   }, [controls, valueField, zoomMode, defaultMaxMonths]);
 
-  // Filter reference data to visible range
   const filteredRefData = useMemo(() => {
     return referenceData.filter((d) => d.month >= xDomain[0] && d.month <= xDomain[1]);
   }, [referenceData, xDomain]);
@@ -140,7 +141,9 @@ export const GrowthChartBase = ({
     return [Math.max(0, min), max] as [number, number];
   }, [filteredRefData, controls, valueField, xDomain]);
 
-  // Chart data: reference curves
+  // Chart data: reference curves + inline letter labels
+  const effectiveLabelMonth = labelMonth ?? Math.round(xDomain[1] * 0.75);
+
   const chartData = useMemo(() => {
     return filteredRefData.map((ref) => ({
       month: ref.month,
@@ -152,7 +155,18 @@ export const GrowthChartBase = ({
     }));
   }, [filteredRefData]);
 
-  // Patient data points
+  // Find the data point closest to labelMonth for placing letters ON the curves
+  const labelData = useMemo(() => {
+    const target = effectiveLabelMonth;
+    let closest = filteredRefData[0];
+    let minDist = Infinity;
+    for (const d of filteredRefData) {
+      const dist = Math.abs(d.month - target);
+      if (dist < minDist) { minDist = dist; closest = d; }
+    }
+    return closest;
+  }, [filteredRefData, effectiveLabelMonth]);
+
   const patientPoints = useMemo(() => {
     return controls
       .filter((c) => c.ageInMonths !== undefined && c[valueField] && c.ageInMonths <= xDomain[1])
@@ -164,7 +178,6 @@ export const GrowthChartBase = ({
       }));
   }, [controls, valueField, xDomain]);
 
-  // Latest percentile status
   const latestStatus = useMemo(() => {
     const valid = controls.filter(
       (c) => c.ageInMonths !== undefined && c[valueField]
@@ -180,7 +193,6 @@ export const GrowthChartBase = ({
     if (onUpdateValue) onUpdateValue(controlId, newValue);
   };
 
-  // Generate month ticks
   const monthTicks = useMemo(() => {
     const [min, max] = xDomain;
     let interval = xTickInterval || 1;
@@ -189,26 +201,50 @@ export const GrowthChartBase = ({
       if (range > 36) interval = 3;
       else if (range > 24) interval = 2;
     }
-
     const ticks: number[] = [];
-    for (let i = min; i <= max; i += interval) {
-      ticks.push(i);
-    }
+    for (let i = min; i <= max; i += interval) ticks.push(i);
     return ticks;
   }, [xDomain, xTickInterval]);
 
-  // Year reference lines
   const yearLines = useMemo(() => {
     const lines: number[] = [];
-    for (let y = 12; y <= xDomain[1]; y += 12) {
-      lines.push(y);
-    }
+    for (let y = 12; y <= xDomain[1]; y += 12) lines.push(y);
     return lines;
   }, [xDomain]);
 
-  // Percentile line colors
-  const percentileLineColor = sex === "M" ? "hsl(210, 60%, 55%)" : "hsl(330, 60%, 55%)";
-  const percentileLineFaded = sex === "M" ? "hsl(210, 40%, 70%)" : "hsl(330, 40%, 70%)";
+  // Custom dot renderer that places letter labels ON the curves
+  const makePercentileDot = (letter: string) => (props: any) => {
+    const { cx, cy, payload } = props;
+    if (!payload || cx === undefined || cy === undefined) return <g />;
+    // Only render the letter at the labelMonth position
+    if (Math.abs(payload.month - effectiveLabelMonth) > 0.5) return <g />;
+    return (
+      <g>
+        {/* White background for readability */}
+        <rect
+          x={cx - 7}
+          y={cy - 9}
+          width={14}
+          height={16}
+          rx={2}
+          fill="hsl(var(--background))"
+          stroke={lineColor}
+          strokeWidth={0.5}
+        />
+        <text
+          x={cx}
+          y={cy + 4}
+          textAnchor="middle"
+          fontSize={12}
+          fontWeight="bold"
+          fill={lineColor}
+          style={{ fontFamily: "serif" }}
+        >
+          {letter}
+        </text>
+      </g>
+    );
+  };
 
   if (loading) {
     return (
@@ -221,10 +257,10 @@ export const GrowthChartBase = ({
   }
 
   return (
-    <Card>
+    <Card className="border-2">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center flex-wrap gap-2">
-          <CardTitle className="text-base">
+          <CardTitle className="text-base font-bold tracking-wide uppercase">
             {title} ({sex === "M" ? "Niño" : "Niña"})
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -256,22 +292,22 @@ export const GrowthChartBase = ({
         </div>
         {onUpdateValue && patientPoints.length > 0 && (
           <p className="text-xs text-muted-foreground mt-1">
-            💡 Arrastra los puntos verticalmente para ajustar
+            💡 Arrastra los puntos verticalmente para ajustar valores
           </p>
         )}
       </CardHeader>
       <CardContent>
-        <div className="h-[500px] w-full" ref={chartRef}>
+        <div className="h-[550px] w-full" ref={chartRef}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 10, right: useLetterLabels ? 70 : 50, left: 5, bottom: 40 }}
+              margin={{ top: 10, right: 15, left: 5, bottom: 45 }}
             >
-              {/* Dense medical grid */}
+              {/* Dense clinical grid (paper milimetrado style) */}
               <CartesianGrid
                 strokeDasharray="1 3"
-                stroke="hsl(var(--border))"
-                strokeOpacity={0.4}
+                stroke={gridColor}
+                strokeOpacity={0.5}
                 horizontalCoordinatesGenerator={({ yAxis }) => {
                   if (!yAxis) return [];
                   const { scale, domain } = yAxis as any;
@@ -287,24 +323,24 @@ export const GrowthChartBase = ({
                 }}
               />
 
-              {/* Year separator lines */}
+              {/* Year separator lines with labels */}
               {yearLines.map((month) => (
                 <ReferenceLine
                   key={`year-${month}`}
                   x={month}
-                  stroke="hsl(var(--foreground))"
-                  strokeOpacity={0.25}
+                  stroke={lineColor}
+                  strokeOpacity={0.3}
                   strokeWidth={1.5}
                   strokeDasharray="none"
                 >
                   <Label
                     value={YEAR_LABELS[month / 12 - 1] || `${month / 12}° Año`}
                     position="bottom"
-                    offset={20}
+                    offset={22}
                     style={{
                       fontSize: "10px",
                       fill: "hsl(var(--muted-foreground))",
-                      fontWeight: 600,
+                      fontWeight: 700,
                     }}
                   />
                 </ReferenceLine>
@@ -316,30 +352,30 @@ export const GrowthChartBase = ({
                 domain={xDomain}
                 ticks={monthTicks}
                 tickFormatter={(v) => `${v}`}
-                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fontSize: 11, fill: lineColor, fontWeight: 600 }}
+                axisLine={{ stroke: lineColor, strokeWidth: 1.5 }}
+                tickLine={{ stroke: lineColor }}
               >
                 <Label
-                  value="Edad (meses)"
+                  value="Meses"
                   position="bottom"
-                  offset={5}
-                  style={{ fontSize: "11px", fill: "hsl(var(--muted-foreground))" }}
+                  offset={8}
+                  style={{ fontSize: "12px", fill: lineColor, fontWeight: 700 }}
                 />
               </XAxis>
 
               <YAxis
                 domain={yDomain}
-                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
-                tickLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fontSize: 11, fill: lineColor, fontWeight: 600 }}
+                axisLine={{ stroke: lineColor, strokeWidth: 1.5 }}
+                tickLine={{ stroke: lineColor }}
               >
                 <Label
                   value={yLabel}
                   angle={-90}
                   position="insideLeft"
                   offset={10}
-                  style={{ fontSize: "11px", fill: "hsl(var(--muted-foreground))" }}
+                  style={{ fontSize: "12px", fill: lineColor, fontWeight: 700 }}
                 />
               </YAxis>
 
@@ -348,95 +384,45 @@ export const GrowthChartBase = ({
                   if (!active || !payload?.length) return null;
                   const data = payload[0]?.payload;
                   if (!data) return null;
-                  // Find matching patient point
                   const pp = patientPoints.find(
                     (p) => Math.abs(p.month - label) < 0.5
                   );
                   return (
-                    <div className="bg-background border rounded-lg p-3 shadow-lg text-xs">
-                      <p className="font-medium mb-1 text-sm">
+                    <div className="bg-background border-2 border-foreground/20 rounded-lg p-3 shadow-lg text-xs">
+                      <p className="font-bold mb-1 text-sm">
                         Edad: {formatAgeDisplay(label)}
                       </p>
                       {pp && (
                         <p className="text-sm font-bold mb-1" style={{ color: colors.line }}>
-                          Paciente: {pp.value} {unit}
+                          ● Paciente: {pp.value} {unit}
                         </p>
                       )}
-                      <div className="text-muted-foreground space-y-0.5">
-                        <p>P97: {data.p97} {unit}</p>
-                        <p>P85: {data.p85} {unit}</p>
-                        <p className="font-semibold">P50: {data.p50} {unit}</p>
-                        <p>P15: {data.p15} {unit}</p>
-                        <p>P3: {data.p3} {unit}</p>
+                      <div className="text-muted-foreground space-y-0.5 font-mono">
+                        <p>A (P97): {data.p97} {unit}</p>
+                        <p>B (P85): {data.p85} {unit}</p>
+                        <p className="font-bold text-foreground">C (P50): {data.p50} {unit}</p>
+                        <p>D (P15): {data.p15} {unit}</p>
+                        <p>E (P3): {data.p3} {unit}</p>
                       </div>
                     </div>
                   );
                 }}
               />
 
-              {/* Normal zone shading P15-P85 */}
-              <Area
-                type="monotone"
-                dataKey="p85"
-                fill={colors.p85Fill}
-                stroke="none"
-                fillOpacity={0.25}
-                isAnimationActive={false}
-              />
-              <Area
-                type="monotone"
-                dataKey="p15"
-                fill="hsl(var(--background))"
-                stroke="none"
-                fillOpacity={1}
-                isAnimationActive={false}
-              />
-
-              {/* Percentile lines with different dash patterns */}
-              <Line
-                type="monotone"
-                dataKey="p97"
-                stroke={percentileLineFaded}
-                strokeWidth={1}
-                strokeDasharray="2 3"
-                dot={false}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="p85"
-                stroke={percentileLineFaded}
-                strokeWidth={1}
-                strokeDasharray="6 3"
-                dot={false}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="p50"
-                stroke={percentileLineColor}
-                strokeWidth={2.5}
-                dot={false}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="p15"
-                stroke={percentileLineFaded}
-                strokeWidth={1}
-                strokeDasharray="6 3"
-                dot={false}
-                isAnimationActive={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="p3"
-                stroke={percentileLineFaded}
-                strokeWidth={1}
-                strokeDasharray="2 3"
-                dot={false}
-                isAnimationActive={false}
-              />
+              {/* Percentile curves — clinical monochrome style with letters ON curves */}
+              {PERCENTILE_CURVES.map((curve) => (
+                <Line
+                  key={curve.key}
+                  type="monotone"
+                  dataKey={curve.key}
+                  stroke={curve.key === "p50" ? lineColor : lineFaded}
+                  strokeWidth={curve.width}
+                  strokeDasharray={curve.dash || undefined}
+                  dot={makePercentileDot(curve.letter)}
+                  activeDot={false}
+                  isAnimationActive={false}
+                />
+              ))}
 
               {/* Patient connected line with draggable points */}
               <Line
@@ -447,7 +433,7 @@ export const GrowthChartBase = ({
                 strokeWidth={2.5}
                 dot={(props: any) => {
                   const { cx, cy, payload } = props;
-                  if (!payload || cx === undefined || cy === undefined) return null;
+                  if (!payload || cx === undefined || cy === undefined) return <g />;
                   return (
                     <DraggablePoint
                       key={payload.controlId}
@@ -473,37 +459,6 @@ export const GrowthChartBase = ({
                 isAnimationActive={false}
               />
 
-              {/* Right-side percentile end-labels (letter or P-number) */}
-              {useLetterLabels && filteredRefData.length > 0 && (() => {
-                const lastRef = filteredRefData[filteredRefData.length - 1];
-                const entries = [
-                  { key: "p97", val: lastRef.p97, letter: "A" },
-                  { key: "p85", val: lastRef.p85, letter: "B" },
-                  { key: "p50", val: lastRef.p50, letter: "C" },
-                  { key: "p15", val: lastRef.p15, letter: "D" },
-                  { key: "p3", val: lastRef.p3, letter: "E" },
-                ];
-                return entries.map((e) => (
-                  <ReferenceLine
-                    key={`label-${e.key}`}
-                    y={e.val}
-                    stroke="none"
-                    ifOverflow="extendDomain"
-                  >
-                    <Label
-                      value={e.letter}
-                      position="right"
-                      offset={8}
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        fill: e.key === "p50" ? percentileLineColor : percentileLineFaded,
-                      }}
-                    />
-                  </ReferenceLine>
-                ));
-              })()}
-
               {/* Custom annotations (e.g. "Acostado", "De pie") */}
               {annotations?.map((ann, i) => (
                 <ReferenceLine
@@ -515,11 +470,12 @@ export const GrowthChartBase = ({
                   <Label
                     value={ann.text}
                     position="insideBottom"
-                    offset={ann.y || 15}
+                    offset={ann.yOffset || 15}
                     style={{
                       fontSize: ann.fontSize || 11,
-                      fontWeight: 600,
-                      fill: "hsl(var(--muted-foreground))",
+                      fontWeight: 700,
+                      fill: lineColor,
+                      fontStyle: "italic",
                     }}
                   />
                 </ReferenceLine>
@@ -528,46 +484,23 @@ export const GrowthChartBase = ({
           </ResponsiveContainer>
         </div>
 
-        {/* Legend */}
-        <div className="flex justify-center gap-4 mt-3 text-xs text-muted-foreground flex-wrap">
-          <span className="flex items-center gap-1">
+        {/* Legend — clinical style */}
+        <div className="flex justify-center gap-5 mt-3 text-xs flex-wrap">
+          <span className="flex items-center gap-1.5 font-semibold" style={{ color: colors.line }}>
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.line }} />
             Paciente
           </span>
-          {useLetterLabels ? (
-            <>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b-2" style={{ borderColor: percentileLineColor }} />
-                C = P50
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b border-dashed" style={{ borderColor: percentileLineFaded }} />
-                B/D = P85/P15
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b border-dotted" style={{ borderColor: percentileLineFaded }} />
-                A/E = P97/P3
-              </span>
-            </>
-          ) : (
-            <>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b-2" style={{ borderColor: percentileLineColor }} />
-                P50
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b border-dashed" style={{ borderColor: percentileLineFaded }} />
-                P15 / P85
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-5 h-0.5 border-b border-dotted" style={{ borderColor: percentileLineFaded }} />
-                P3 / P97
-              </span>
-            </>
-          )}
-          <span className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: colors.p85Fill, opacity: 0.3 }} />
-            Zona Normal
+          <span className="flex items-center gap-1.5 text-foreground">
+            <div className="w-6 h-0 border-b-2 border-foreground" />
+            <span className="font-serif font-bold">C</span> = P50 (Mediana)
+          </span>
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <div className="w-6 h-0 border-b border-muted-foreground" />
+            <span className="font-serif font-bold">A/B</span> = P97/P85
+          </span>
+          <span className="flex items-center gap-1.5 text-muted-foreground">
+            <div className="w-6 h-0 border-b border-dashed border-muted-foreground" />
+            <span className="font-serif font-bold">D/E</span> = P15/P3
           </span>
         </div>
       </CardContent>

@@ -27,12 +27,12 @@ export const WeightForAgeChart = ({
       title="Peso para la Edad"
       valueField="weight"
       unit="kg"
-      yLabel="Peso (kg)"
+      yLabel="Peso en Kilogramos"
       maxMonths={60}
       onUpdateValue={onUpdateWeight}
-      useLetterLabels
       xTickInterval={6}
       yMinorInterval={0.5}
+      labelMonth={45}
     />
   );
 };

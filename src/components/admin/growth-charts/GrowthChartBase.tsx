@@ -26,6 +26,13 @@ import {
 import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
 
+interface ChartAnnotation {
+  x: number;
+  y: number;
+  text: string;
+  fontSize?: number;
+}
+
 interface GrowthChartBaseProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
@@ -37,6 +44,16 @@ interface GrowthChartBaseProps {
   yLabel: string;
   maxMonths?: number;
   onUpdateValue?: (controlId: string, newValue: number) => void;
+  /** Use letter labels (A-F) on right side of curves instead of P3-P97 */
+  useLetterLabels?: boolean;
+  /** Custom annotations on the chart area */
+  annotations?: ChartAnnotation[];
+  /** Y-axis major grid interval (solid lines) */
+  yMajorInterval?: number;
+  /** Y-axis minor grid interval (dashed lines) */
+  yMinorInterval?: number;
+  /** X-axis tick interval in months */
+  xTickInterval?: number;
 }
 
 // Year labels for the X-axis grouping
@@ -53,11 +70,21 @@ export const GrowthChartBase = ({
   yLabel,
   maxMonths: defaultMaxMonths,
   onUpdateValue,
+  useLetterLabels,
+  annotations,
+  yMajorInterval,
+  yMinorInterval,
+  xTickInterval,
 }: GrowthChartBaseProps) => {
   const colors = getChartColors(sex);
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartDimensions, setChartDimensions] = useState({ top: 10, height: 440 });
   const [zoomMode, setZoomMode] = useState<"auto" | "full">("auto");
+
+  // Letter labels for MSP-style charts (A=P97, B=P85, C=P50, D=P15, E=P3)
+  const percentileLetters: Record<string, string> = {
+    p97: "A", p85: "B", p50: "C", p15: "D", p3: "E",
+  };
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -156,17 +183,19 @@ export const GrowthChartBase = ({
   // Generate month ticks
   const monthTicks = useMemo(() => {
     const [min, max] = xDomain;
-    const range = max - min;
-    let interval = 1;
-    if (range > 36) interval = 3;
-    else if (range > 24) interval = 2;
+    let interval = xTickInterval || 1;
+    if (!xTickInterval) {
+      const range = max - min;
+      if (range > 36) interval = 3;
+      else if (range > 24) interval = 2;
+    }
 
     const ticks: number[] = [];
     for (let i = min; i <= max; i += interval) {
       ticks.push(i);
     }
     return ticks;
-  }, [xDomain]);
+  }, [xDomain, xTickInterval]);
 
   // Year reference lines
   const yearLines = useMemo(() => {
@@ -236,7 +265,7 @@ export const GrowthChartBase = ({
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
-              margin={{ top: 10, right: 50, left: 5, bottom: 40 }}
+              margin={{ top: 10, right: useLetterLabels ? 70 : 50, left: 5, bottom: 40 }}
             >
               {/* Dense medical grid */}
               <CartesianGrid
@@ -249,7 +278,7 @@ export const GrowthChartBase = ({
                   if (!scale || !domain) return [];
                   const [minY, maxY] = domain;
                   const coords: number[] = [];
-                  const step = valueField === "weight" ? 0.5 : 1;
+                  const step = yMinorInterval || (valueField === "weight" ? 0.5 : 1);
                   for (let v = Math.ceil(minY / step) * step; v <= maxY; v += step) {
                     const y = scale(v);
                     if (y !== undefined) coords.push(y);
@@ -443,28 +472,99 @@ export const GrowthChartBase = ({
                 connectNulls
                 isAnimationActive={false}
               />
+
+              {/* Right-side percentile end-labels (letter or P-number) */}
+              {useLetterLabels && filteredRefData.length > 0 && (() => {
+                const lastRef = filteredRefData[filteredRefData.length - 1];
+                const entries = [
+                  { key: "p97", val: lastRef.p97, letter: "A" },
+                  { key: "p85", val: lastRef.p85, letter: "B" },
+                  { key: "p50", val: lastRef.p50, letter: "C" },
+                  { key: "p15", val: lastRef.p15, letter: "D" },
+                  { key: "p3", val: lastRef.p3, letter: "E" },
+                ];
+                return entries.map((e) => (
+                  <ReferenceLine
+                    key={`label-${e.key}`}
+                    y={e.val}
+                    stroke="none"
+                    ifOverflow="extendDomain"
+                  >
+                    <Label
+                      value={e.letter}
+                      position="right"
+                      offset={8}
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: 700,
+                        fill: e.key === "p50" ? percentileLineColor : percentileLineFaded,
+                      }}
+                    />
+                  </ReferenceLine>
+                ));
+              })()}
+
+              {/* Custom annotations (e.g. "Acostado", "De pie") */}
+              {annotations?.map((ann, i) => (
+                <ReferenceLine
+                  key={`ann-${i}`}
+                  x={ann.x}
+                  stroke="none"
+                  ifOverflow="extendDomain"
+                >
+                  <Label
+                    value={ann.text}
+                    position="insideBottom"
+                    offset={ann.y || 15}
+                    style={{
+                      fontSize: ann.fontSize || 11,
+                      fontWeight: 600,
+                      fill: "hsl(var(--muted-foreground))",
+                    }}
+                  />
+                </ReferenceLine>
+              ))}
             </ComposedChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Legend with percentile labels */}
+        {/* Legend */}
         <div className="flex justify-center gap-4 mt-3 text-xs text-muted-foreground flex-wrap">
           <span className="flex items-center gap-1">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors.line }} />
             Paciente
           </span>
-          <span className="flex items-center gap-1">
-            <div className="w-5 h-0.5 border-b-2" style={{ borderColor: percentileLineColor }} />
-            P50
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="w-5 h-0.5 border-b border-dashed" style={{ borderColor: percentileLineFaded }} />
-            P15 / P85
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="w-5 h-0.5 border-b border-dotted" style={{ borderColor: percentileLineFaded }} />
-            P3 / P97
-          </span>
+          {useLetterLabels ? (
+            <>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b-2" style={{ borderColor: percentileLineColor }} />
+                C = P50
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b border-dashed" style={{ borderColor: percentileLineFaded }} />
+                B/D = P85/P15
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b border-dotted" style={{ borderColor: percentileLineFaded }} />
+                A/E = P97/P3
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b-2" style={{ borderColor: percentileLineColor }} />
+                P50
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b border-dashed" style={{ borderColor: percentileLineFaded }} />
+                P15 / P85
+              </span>
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-0.5 border-b border-dotted" style={{ borderColor: percentileLineFaded }} />
+                P3 / P97
+              </span>
+            </>
+          )}
           <span className="flex items-center gap-1">
             <div className="w-3 h-3 rounded" style={{ backgroundColor: colors.p85Fill, opacity: 0.3 }} />
             Zona Normal

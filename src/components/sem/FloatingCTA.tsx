@@ -1,5 +1,6 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 
 const WHATSAPP_NUMBER = "593998396186";
 const PHONE_NUMBER = "0998396186";
@@ -28,6 +29,7 @@ const FloatingCTA = () => {
           <Button
             asChild
             className="flex-[1.2] bg-[#25D366] hover:bg-[#1da851] text-white font-bold h-12 text-sm shadow-[0_4px_15px_-3px_rgba(37,211,102,0.4)] rounded-xl transition-all duration-200 active:scale-[0.98]"
+            onClick={() => trackWhatsAppClick('sem_floating_cta')}
           >
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="w-4.5 h-4.5 mr-2" />
@@ -38,6 +40,7 @@ const FloatingCTA = () => {
             asChild
             variant="outline"
             className="flex-1 border-2 border-primary/30 text-primary hover:bg-primary/5 font-semibold h-12 text-sm rounded-xl transition-all duration-200 active:scale-[0.98]"
+            onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_floating_cta')}
           >
             <a href={phoneUrl}>
               <Phone className="w-4.5 h-4.5 mr-1.5" />

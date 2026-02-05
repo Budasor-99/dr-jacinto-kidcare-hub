@@ -1,6 +1,7 @@
 import { MapPin, Clock, Phone, Navigation, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { trackPhoneClick } from "@/lib/analytics";
 
 const SEMContact = () => {
   const googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=Rodrigo+Muñoz+N81-46+Carcelén+Quito";
@@ -79,10 +80,18 @@ const SEMContact = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground text-sm">Teléfono</p>
-                    <a href="tel:0998396186" className="text-primary text-xs font-medium hover:underline block">
+                    <a 
+                      href="tel:0998396186" 
+                      className="text-primary text-xs font-medium hover:underline block"
+                      onClick={() => trackPhoneClick('0998396186', 'sem_contact')}
+                    >
                       0998396186
                     </a>
-                    <a href="tel:022485286" className="text-muted-foreground text-xs hover:underline block">
+                    <a 
+                      href="tel:022485286" 
+                      className="text-muted-foreground text-xs hover:underline block"
+                      onClick={() => trackPhoneClick('022485286', 'sem_contact')}
+                    >
                       022485286
                     </a>
                   </div>

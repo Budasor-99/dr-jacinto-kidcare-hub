@@ -1,5 +1,6 @@
 import { Phone, MessageCircle, Award, Star, MapPin, Shield, Clock, CheckCircle2, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 import logo from "@/assets/logo.png";
 import doctorImage from "@/assets/doctor-profile.png";
 
@@ -131,6 +132,7 @@ const SEMHero = () => {
                 asChild
                 size="lg"
                 className="group relative bg-[#25D366] text-white hover:bg-[#1da851] font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(37,211,102,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
+                onClick={() => trackWhatsAppClick('sem_hero')}
               >
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                   <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -143,6 +145,7 @@ const SEMHero = () => {
                 variant="outline"
                 size="lg"
                 className="border-2 border-white/50 text-white hover:bg-white hover:text-primary font-bold text-lg h-[60px] px-8 bg-white/10 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] rounded-2xl"
+                onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_hero')}
               >
                 <a href={phoneUrl}>
                   <Phone className="w-5 h-5 mr-2.5" />

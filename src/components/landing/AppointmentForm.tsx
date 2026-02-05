@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { usePatient } from "@/hooks/usePatient";
 import { supabase } from "@/integrations/supabase/client";
+import { trackAppointmentRequest } from "@/lib/analytics";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 import DotPattern from "@/components/decorative/DotPattern";
 
@@ -105,6 +106,12 @@ const AppointmentForm = () => {
       });
 
       if (error) throw error;
+
+      // Track conversion event
+      trackAppointmentRequest({
+        source: 'main_site',
+        child_age: formData.childAge,
+      });
 
       toast({
         title: "¡Cita solicitada!",

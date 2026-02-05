@@ -60,6 +60,8 @@ interface GrowthChartBaseProps {
   onUpdateValue?: (controlId: string, newValue: number) => void;
   annotations?: ChartAnnotation[];
   yMinorInterval?: number;
+  yTickInterval?: number;
+  yDomainFixed?: [number, number];
   xTickInterval?: number;
   /** Month at which to render letter labels ON the curves */
   labelMonth?: number;
@@ -103,6 +105,8 @@ export const GrowthChartBase = ({
   onUpdateValue,
   annotations,
   yMinorInterval,
+  yTickInterval,
+  yDomainFixed,
   xTickInterval,
   labelMonth,
   curves,
@@ -183,6 +187,7 @@ export const GrowthChartBase = ({
   }, [filteredRefData, computeExtraFields]);
 
   const yDomain = useMemo(() => {
+    if (yDomainFixed) return yDomainFixed;
     // Collect all values from all active curve keys
     const allCurveKeys = activeCurves.map((c) => c.key);
     const refValues = chartData.flatMap((d) =>
@@ -201,7 +206,7 @@ export const GrowthChartBase = ({
     const min = Math.floor(Math.min(...allValues) - 1);
     const max = Math.ceil(Math.max(...allValues) + 1);
     return [Math.max(0, min), max] as [number, number];
-  }, [chartData, controls, valueField, xDomain, activeCurves]);
+  }, [chartData, controls, valueField, xDomain, activeCurves, yDomainFixed]);
 
   const effectiveLabelMonth = labelMonth ?? Math.round(xDomain[1] * 0.75);
 
@@ -458,6 +463,11 @@ export const GrowthChartBase = ({
 
               <YAxis
                 domain={yDomain}
+                ticks={yTickInterval ? (() => {
+                  const ticks: number[] = [];
+                  for (let v = yDomain[0]; v <= yDomain[1]; v += yTickInterval) ticks.push(v);
+                  return ticks;
+                })() : undefined}
                 tick={{ fontSize: 11, fill: lineColor, fontWeight: 600 }}
                 axisLine={{ stroke: lineColor, strokeWidth: 1.5 }}
                 tickLine={{ stroke: lineColor }}

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
@@ -139,6 +140,7 @@ const Contact = () => {
               asChild 
               size="lg" 
               className="w-full bg-emerald-500 hover:bg-emerald-600 text-lg shadow-lg"
+              onClick={() => trackWhatsAppClick('contact_section')}
             >
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="w-5 h-5 mr-2" />

@@ -57,7 +57,7 @@ interface GrowthChartBaseProps {
   unit: string;
   yLabel: string;
   maxMonths?: number;
-  onUpdateValue?: (controlId: string, newValue: number) => void;
+  onUpdateValue?: (controlId: string, newValue: number, newMonth?: number) => void;
   annotations?: ChartAnnotation[];
   yMinorInterval?: number;
   yTickInterval?: number;
@@ -118,6 +118,8 @@ export const GrowthChartBase = ({
   const [chartDimensions, setChartDimensions] = useState({
     top: 10,
     height: 440,
+    left: 40,
+    width: 600,
   });
   const [zoomMode, setZoomMode] = useState<"auto" | "full">("auto");
 
@@ -133,14 +135,30 @@ export const GrowthChartBase = ({
       if (chartRef.current) {
         const svg = chartRef.current.querySelector("svg");
         if (svg) {
-          const rect = svg.getBoundingClientRect();
-          setChartDimensions({ top: 10, height: rect.height - 60 });
+          const plotArea = svg.querySelector(".recharts-cartesian-grid");
+          if (plotArea) {
+            const plotRect = plotArea.getBoundingClientRect();
+            const svgRect = svg.getBoundingClientRect();
+            setChartDimensions({
+              top: plotRect.top - svgRect.top,
+              height: plotRect.height,
+              left: plotRect.left - svgRect.left,
+              width: plotRect.width,
+            });
+          } else {
+            const rect = svg.getBoundingClientRect();
+            setChartDimensions({ top: 10, height: rect.height - 60, left: 40, width: rect.width - 55 });
+          }
         }
       }
     };
-    updateDimensions();
+    // Small delay to let Recharts render
+    const timer = setTimeout(updateDimensions, 100);
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateDimensions);
+    };
   }, [loading]);
 
   const xDomain = useMemo(() => {
@@ -237,8 +255,8 @@ export const GrowthChartBase = ({
     return getPercentileStatus(parseFloat(latest[valueField]!), refData);
   }, [controls, referenceData, valueField]);
 
-  const handleValueChange = (controlId: string, newValue: number) => {
-    if (onUpdateValue) onUpdateValue(controlId, newValue);
+  const handleValueChange = (controlId: string, newValue: number, newMonth?: number) => {
+    if (onUpdateValue) onUpdateValue(controlId, newValue, newMonth);
   };
 
   const monthTicks = useMemo(() => {
@@ -372,7 +390,7 @@ export const GrowthChartBase = ({
         </div>
         {onUpdateValue && patientPoints.length > 0 && (
           <p className="text-xs text-muted-foreground mt-1">
-            💡 Arrastra los puntos verticalmente para ajustar valores
+            💡 Arrastra los puntos libremente para ajustar valor y edad
           </p>
         )}
       </CardHeader>
@@ -567,7 +585,10 @@ export const GrowthChartBase = ({
                       }}
                       chartTop={chartDimensions.top}
                       chartHeight={chartDimensions.height}
+                      chartLeft={chartDimensions.left}
+                      chartWidth={chartDimensions.width}
                       yDomain={yDomain}
+                      xDomain={xDomain}
                       onValueChange={
                         onUpdateValue ? handleValueChange : undefined
                       }

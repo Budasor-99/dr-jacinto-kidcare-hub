@@ -7,7 +7,7 @@ interface HeadCircumferenceChartProps {
   controls: MedicalControlData[];
   sex: "M" | "F";
   loading: boolean;
-  onUpdateHeadCircumference?: (controlId: string, newHC: number) => void;
+  onUpdateHeadCircumference?: (controlId: string, newHC: number, newMonth?: number) => void;
 }
 
 // MSP Ecuador P.C.: 7 curves with NUMERIC labels on the right side

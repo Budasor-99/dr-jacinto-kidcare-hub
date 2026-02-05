@@ -24,18 +24,18 @@ export const HeightForAgeChart = ({
       sex={sex}
       loading={loading}
       referenceData={referenceData}
-      title={`Talla/Longitud para la Edad`}
+      title="Talla/Longitud para la Edad"
       valueField="height"
       unit="cm"
       yLabel="Centímetros"
       maxMonths={60}
       onUpdateValue={onUpdateHeight}
-      useLetterLabels
       xTickInterval={6}
       yMinorInterval={5}
+      labelMonth={45}
       annotations={[
-        { x: 12, y: 25, text: "Acostado", fontSize: 10 },
-        { x: 42, y: 25, text: "De pie", fontSize: 10 },
+        { x: 12, yOffset: 25, text: "Acostado", fontSize: 10 },
+        { x: 42, yOffset: 25, text: "De pie", fontSize: 10 },
       ]}
     />
   );

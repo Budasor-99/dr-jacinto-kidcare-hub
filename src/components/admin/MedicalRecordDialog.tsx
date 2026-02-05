@@ -356,6 +356,7 @@ export const MedicalRecordDialog = ({ patientId, open, onOpenChange }: MedicalRe
                   medicalRecordId={medicalRecord.id}
                   patientBirthDate={patient.birth_date}
                   patientSex={patient.sex}
+                  patientName={patient.name}
                 />
               )}
             </TabsContent>

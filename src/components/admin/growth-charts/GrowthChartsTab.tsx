@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp } from "lucide-react";
+import { Plus, TrendingUp, Printer, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { WeightForAgeChart } from "./WeightForAgeChart";
 import { HeightForAgeChart } from "./HeightForAgeChart";
 import { HeadCircumferenceChart } from "./HeadCircumferenceChart";
 import { GrowthDataTable } from "./GrowthDataTable";
+import { GrowthCardHeader } from "./GrowthCardHeader";
+import { GrowthTrackingTable } from "./GrowthTrackingTable";
+import { ClinicalInterpretation } from "./ClinicalInterpretation";
 import { calculateAgeInMonths } from "@/lib/growth-data/growth-utils";
 
 interface GrowthChartsTabProps {
   medicalRecordId: string;
   patientBirthDate: string | null;
   patientSex: string | null;
+  patientName?: string;
 }
 
 export interface MedicalControlData {
@@ -30,10 +34,15 @@ export const GrowthChartsTab = ({
   medicalRecordId,
   patientBirthDate,
   patientSex,
+  patientName,
 }: GrowthChartsTabProps) => {
   const [controls, setControls] = useState<MedicalControlData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChart, setActiveChart] = useState("weight");
+  const [viewMode, setViewMode] = useState<"charts" | "ficha">("charts");
+  const [evaluation, setEvaluation] = useState("");
+  const [recommendations, setRecommendations] = useState("");
+  const fichaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const sex = (patientSex === "M" || patientSex === "F") ? patientSex : "M";
@@ -53,7 +62,6 @@ export const GrowthChartsTab = ({
 
       if (error) throw error;
 
-      // Calculate age in months for each control
       const controlsWithAge = (data || []).map((control) => {
         let ageInMonths: number | undefined;
         if (patientBirthDate && control.control_date) {
@@ -128,12 +136,10 @@ export const GrowthChartsTab = ({
 
       if (error) throw error;
 
-      // Update local state
       setControls(
         controls.map((c) => {
           if (c.id === controlId) {
             const updated = { ...c, [field]: value || null };
-            // Recalculate age if date changed
             if (field === "control_date" && patientBirthDate && value) {
               updated.ageInMonths = calculateAgeInMonths(
                 new Date(patientBirthDate),
@@ -160,7 +166,6 @@ export const GrowthChartsTab = ({
     }
   };
 
-  // Handlers for draggable chart points
   const handleUpdateWeight = (controlId: string, newWeight: number) => {
     handleUpdateControl(controlId, "weight", newWeight.toFixed(2));
   };
@@ -197,6 +202,12 @@ export const GrowthChartsTab = ({
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const latestControl = controls.length > 0 ? controls[controls.length - 1] : undefined;
+
   if (!patientBirthDate) {
     return (
       <Card>
@@ -210,66 +221,152 @@ export const GrowthChartsTab = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      {/* Top bar */}
+      <div className="flex justify-between items-center flex-wrap gap-2">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
           Curvas de Crecimiento OMS
         </h3>
-        <Button onClick={handleAddControl} size="sm">
-          <Plus className="h-4 w-4 mr-1" />
-          Agregar Medición
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={viewMode === "charts" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setViewMode("charts")}
+          >
+            <TrendingUp className="h-4 w-4 mr-1" />
+            Gráficas
+          </Button>
+          <Button
+            variant={viewMode === "ficha" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setViewMode("ficha")}
+          >
+            <FileText className="h-4 w-4 mr-1" />
+            Ficha Completa
+          </Button>
+          <Button onClick={handleAddControl} size="sm">
+            <Plus className="h-4 w-4 mr-1" />
+            Agregar Medición
+          </Button>
+        </div>
       </div>
 
-      <Tabs value={activeChart} onValueChange={setActiveChart}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="weight">Peso</TabsTrigger>
-          <TabsTrigger value="height">Talla</TabsTrigger>
-          <TabsTrigger value="headCircumference">P. Cefálico</TabsTrigger>
-        </TabsList>
+      {viewMode === "charts" ? (
+        /* Original charts view */
+        <>
+          <Tabs value={activeChart} onValueChange={setActiveChart}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="weight">Peso</TabsTrigger>
+              <TabsTrigger value="height">Talla</TabsTrigger>
+              <TabsTrigger value="headCircumference">P. Cefálico</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="weight" className="mt-4">
-          <WeightForAgeChart
+            <TabsContent value="weight" className="mt-4">
+              <WeightForAgeChart
+                controls={controls}
+                sex={sex}
+                loading={loading}
+                onUpdateWeight={handleUpdateWeight}
+              />
+            </TabsContent>
+
+            <TabsContent value="height" className="mt-4">
+              <HeightForAgeChart
+                controls={controls}
+                sex={sex}
+                loading={loading}
+                onUpdateHeight={handleUpdateHeight}
+              />
+            </TabsContent>
+
+            <TabsContent value="headCircumference" className="mt-4">
+              <HeadCircumferenceChart
+                controls={controls}
+                sex={sex}
+                loading={loading}
+                onUpdateHeadCircumference={handleUpdateHeadCircumference}
+              />
+            </TabsContent>
+          </Tabs>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Tabla de Mediciones</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GrowthDataTable
+                controls={controls}
+                patientBirthDate={patientBirthDate}
+                onUpdate={handleUpdateControl}
+                onDelete={handleDeleteControl}
+                loading={loading}
+              />
+            </CardContent>
+          </Card>
+        </>
+      ) : (
+        /* Ficha Completa — printable A4 layout */
+        <div ref={fichaRef} className="space-y-4 print:space-y-3">
+          <div className="flex justify-end print:hidden">
+            <Button variant="outline" size="sm" onClick={handlePrint}>
+              <Printer className="h-4 w-4 mr-1" />
+              Imprimir Ficha
+            </Button>
+          </div>
+
+          {/* 1. Header */}
+          <GrowthCardHeader
+            patientName={patientName || "Paciente"}
+            birthDate={patientBirthDate}
+            sex={sex}
+            latestAgeMonths={latestControl?.ageInMonths}
+            controlDate={latestControl?.control_date}
+          />
+
+          {/* 2. Tracking table with percentiles */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2 text-foreground">
+              Tabla de Seguimiento
+            </h3>
+            <GrowthTrackingTable controls={controls} sex={sex} />
+          </div>
+
+          {/* 3. Three charts */}
+          <div className="space-y-4 print:break-before-page">
+            <h3 className="text-sm font-semibold text-foreground">
+              Gráficas de Crecimiento
+            </h3>
+            <WeightForAgeChart
+              controls={controls}
+              sex={sex}
+              loading={loading}
+              onUpdateWeight={handleUpdateWeight}
+            />
+            <HeightForAgeChart
+              controls={controls}
+              sex={sex}
+              loading={loading}
+              onUpdateHeight={handleUpdateHeight}
+            />
+            <HeadCircumferenceChart
+              controls={controls}
+              sex={sex}
+              loading={loading}
+              onUpdateHeadCircumference={handleUpdateHeadCircumference}
+            />
+          </div>
+
+          {/* 4. Clinical interpretation */}
+          <ClinicalInterpretation
             controls={controls}
             sex={sex}
-            loading={loading}
-            onUpdateWeight={handleUpdateWeight}
+            evaluation={evaluation}
+            onEvaluationChange={setEvaluation}
+            recommendations={recommendations}
+            onRecommendationsChange={setRecommendations}
           />
-        </TabsContent>
-
-        <TabsContent value="height" className="mt-4">
-          <HeightForAgeChart
-            controls={controls}
-            sex={sex}
-            loading={loading}
-            onUpdateHeight={handleUpdateHeight}
-          />
-        </TabsContent>
-
-        <TabsContent value="headCircumference" className="mt-4">
-          <HeadCircumferenceChart
-            controls={controls}
-            sex={sex}
-            loading={loading}
-            onUpdateHeadCircumference={handleUpdateHeadCircumference}
-          />
-        </TabsContent>
-      </Tabs>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Tabla de Mediciones</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <GrowthDataTable
-            controls={controls}
-            patientBirthDate={patientBirthDate}
-            onUpdate={handleUpdateControl}
-            onDelete={handleDeleteControl}
-            loading={loading}
-          />
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 };

@@ -30,6 +30,9 @@ export const WeightForAgeChart = ({
       yLabel="Peso (kg)"
       maxMonths={60}
       onUpdateValue={onUpdateWeight}
+      useLetterLabels
+      xTickInterval={6}
+      yMinorInterval={0.5}
     />
   );
 };

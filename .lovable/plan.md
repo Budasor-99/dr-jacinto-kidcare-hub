@@ -1,90 +1,94 @@
 
 
-# Plan: Mejora Visual y Funcional de las Curvas de Crecimiento
+# Plan: Movimiento libre (2D) del punto en las graficas y edicion de edad
 
-## Objetivo
-Redisenar las graficas de crecimiento para que se asemejen al formato MSP Ecuador (la imagen de referencia), mejorando tanto la presentacion visual como la funcionalidad de interaccion con arrastre de puntos.
+## Problema actual
+1. El punto del paciente solo se mueve **verticalmente** (eje Y), pero el doctor necesita moverlo libremente en ambas direcciones (X e Y) para posicionar el registro en la edad y valor correctos.
+2. El campo "Edad" en la tabla de mediciones no es editable directamente - solo se calcula automaticamente a partir de la fecha de control.
 
----
+## Solucion propuesta
 
-## Cambios Visuales Principales
+### 1. Drag-and-drop libre (horizontal + vertical) en DraggablePoint
 
-### 1. Eje X mejorado: Agrupacion por anos
-La imagen de referencia agrupa los meses en secciones anuales (1er Ano, 2do Ano, etc.). Actualmente el eje muestra "0m, 6m, 12m..." de forma plana.
+Modificar `DraggablePoint.tsx` para soportar movimiento en ambos ejes:
 
-**Cambio:** Agregar etiquetas secundarias que agrupen visualmente por ano, con lineas divisorias mas prominentes cada 12 meses, y tick marks mensuales finos.
+- Agregar props: `chartLeft`, `chartWidth`, `xDomain` para convertir pixeles X a meses.
+- Durante el drag, calcular tanto el nuevo valor (Y) como el nuevo mes (X).
+- Actualizar visualmente la posicion en ambos ejes en tiempo real.
+- Al soltar el punto, emitir un callback con el nuevo valor Y **y** el nuevo mes X.
+- Cambiar el cursor de `ns-resize` a `move` para indicar movimiento libre.
+- Mostrar en el tooltip tanto el valor como la edad mientras se arrastra.
 
-### 2. Curvas de percentiles como lineas individuales etiquetadas
-En la imagen de referencia, los percentiles son lineas curvas etiquetadas (A, B, C, D, E, F). Actualmente se muestran como areas rellenas.
+### 2. Actualizar GrowthChartBase para pasar dimensiones X
 
-**Cambio:** Reemplazar las areas rellenas por lineas individuales para P3, P15, P50, P85, P97 con etiquetas visibles al final de cada curva. Mantener un sombreado suave entre P15-P85 como zona "normal".
+Modificar `GrowthChartBase.tsx`:
 
-### 3. Grilla mas densa y profesional
-La imagen tiene una grilla densa con subdivisiones finas, similar a papel milimetrado medico.
+- Capturar las dimensiones del area de ploteo (left, width) ademas de top/height.
+- Pasar `chartLeft`, `chartWidth` y `xDomain` al componente `DraggablePoint`.
+- Cambiar el callback `onUpdateValue` para incluir el mes: `(controlId, newValue, newMonth) => void`.
 
-**Cambio:** Aumentar la densidad de la grilla con lineas principales cada unidad y lineas secundarias cada subdivision. Usar colores mas suaves para las lineas secundarias.
+### 3. Actualizar GrowthChartsTab para guardar cambios de edad
 
-### 4. Tamano del grafico mas alto
-Aumentar la altura del area de grafico de 350px a 500px para mayor legibilidad clinica.
+Modificar `GrowthChartsTab.tsx`:
 
-### 5. Etiquetas de percentiles en las curvas
-Agregar etiquetas directas sobre las lineas de percentiles (P3, P15, P50, P85, P97) al final derecho de cada curva, eliminando la necesidad de leyenda separada.
+- Al recibir un cambio de mes desde el drag, recalcular la nueva `control_date` sumando los meses a la fecha de nacimiento del paciente.
+- Guardar tanto el nuevo valor (peso/talla/PC) como la nueva fecha de control en la base de datos.
 
----
+### 4. Hacer el campo "Edad" editable en la tabla de mediciones
 
-## Mejoras Funcionales
+Modificar `GrowthDataTable.tsx`:
 
-### 6. Mejora del DraggablePoint
-- Punto mas visible con borde mas grueso
-- Tooltip mejorado: mostrar edad, valor actual y percentil en tiempo real mientras se arrastra
-- Feedback haptico visual: cambio de color del fondo segun la zona de percentil al arrastrar (verde=normal, amarillo=vigilar, rojo=evaluar)
-
-### 7. Mejor sincronizacion punto-tabla
-- Al arrastrar un punto y soltar, destacar visualmente la fila correspondiente en la tabla de mediciones (flash de color)
-
-### 8. Zoom automatico al rango de datos
-- Si el paciente solo tiene datos hasta los 18 meses, mostrar el grafico optimizado de 0-24 meses en vez de 0-60 para mayor detalle
-- Agregar botones para cambiar entre vista completa (0-60m) y vista enfocada
+- Agregar un campo editable para la edad (en meses) en la columna "Edad".
+- Cuando el doctor cambie la edad, recalcular automaticamente la `control_date` a partir de la fecha de nacimiento + meses ingresados, y guardar ambos valores.
 
 ---
 
-## Archivos a Modificar
+## Detalles tecnicos
 
-| Archivo | Cambio |
-|---------|--------|
-| `WeightForAgeChart.tsx` | Rediseno visual completo: lineas de percentiles, grilla densa, etiquetas, zoom |
-| `HeightForAgeChart.tsx` | Mismos cambios visuales que peso |
-| `HeadCircumferenceChart.tsx` | Mismos cambios visuales que peso |
-| `DraggablePoint.tsx` | Tooltip mejorado con percentil en tiempo real, feedback de color por zona |
-| `GrowthChartsTab.tsx` | Agregar controles de zoom/vista |
-| `growth-utils.ts` | Agregar funcion para calcular percentil interpolado en tiempo real |
+### DraggablePoint.tsx - Nuevas props y logica X
 
----
+```text
+Props nuevas:
+  - chartLeft: number (pixel izquierdo del area de ploteo)
+  - chartWidth: number (ancho en pixeles del area de ploteo)  
+  - xDomain: [number, number] (rango de meses, ej: [0, 60])
+  - onValueChange: (controlId, newValue, newMonth) => void
 
-## Detalles Tecnicos
+Conversion pixel -> mes:
+  xToMonth(xPixel) = xDomain[0] + ((xPixel - chartLeft) / chartWidth) * (xDomain[1] - xDomain[0])
 
-### Estructura del eje X agrupado
-Se usara `XAxis` con ticks custom que muestren el numero de mes dentro de cada ano, y `ReferenceLine` verticales para separar los anos. Debajo se colocara un segundo label con "1er Ano", "2do Ano", etc.
+Durante drag:
+  - Mover currentX y currentY simultaneamente
+  - Mostrar en tooltip: valor + edad
+```
 
-### Lineas de percentiles etiquetadas
-Se reemplazaran los componentes `Area` por `Line` con `strokeDasharray` diferenciado:
-- P3 y P97: linea punteada fina
-- P15 y P85: linea con guiones
-- P50: linea solida gruesa (mediana)
+### GrowthChartBase.tsx - Captura de dimensiones X
 
-Cada linea tendra un `Label` posicionado al final derecho.
+Se obtendra `chartLeft` y `chartWidth` del SVG de Recharts de la misma forma que ya se obtiene `chartTop` y `chartHeight`, usando el bounding rect del area de ploteo.
 
-### Grilla densa
-Se utilizara `CartesianGrid` con intervalos personalizados y `ReferenceLine` adicionales para subdivisiones, simulando el patron de grilla del papel MSP.
+### GrowthChartsTab.tsx - Recalculo de fecha
 
-### Zoom inteligente
-Se calculara el rango optimo basado en la edad maxima del paciente, redondeado al siguiente periodo de 12 meses. Se agregaran botones "Vista completa" / "Vista enfocada".
+```text
+Cuando el punto se mueve horizontalmente:
+  1. Recibir newMonth (ej: 14.5 meses)
+  2. Calcular nueva fecha: birthDate + round(newMonth) meses
+  3. Actualizar control_date en la BD
+  4. Recalcular ageInMonths en el estado local
+```
 
-### DraggablePoint con feedback de percentil
-Al arrastrar, el tooltip mostrara en tiempo real:
-- Valor numerico (ej: "8.5 kg")
-- Percentil calculado (ej: "P62")
-- Color del fondo del tooltip cambia segun zona (verde/amarillo/rojo)
+### GrowthDataTable.tsx - Columna edad editable
 
-Se usara la funcion `getPercentileStatus` existente con interpolacion para el mes actual.
+Agregar un input numerico en la columna "Edad" que al cambiar:
+1. Tome el valor en meses ingresado
+2. Calcule `control_date = birthDate + N meses`
+3. Llame a `onUpdate(controlId, "control_date", nuevaFecha)`
+
+## Archivos a modificar
+- `src/components/admin/growth-charts/DraggablePoint.tsx`
+- `src/components/admin/growth-charts/GrowthChartBase.tsx`
+- `src/components/admin/growth-charts/GrowthChartsTab.tsx`
+- `src/components/admin/growth-charts/GrowthDataTable.tsx`
+- `src/components/admin/growth-charts/WeightForAgeChart.tsx`
+- `src/components/admin/growth-charts/HeightForAgeChart.tsx`
+- `src/components/admin/growth-charts/HeadCircumferenceChart.tsx`
 

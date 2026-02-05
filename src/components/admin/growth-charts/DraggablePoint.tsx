@@ -1,4 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import {
+  getPercentileStatus,
+  getRefDataForMonth,
+  getStatusColor,
+  getStatusBgColor,
+  formatAgeDisplay,
+  type PercentileStatus,
+} from "@/lib/growth-data/growth-utils";
 
 interface DraggablePointProps {
   cx: number;
@@ -14,6 +22,7 @@ interface DraggablePointProps {
   onValueChange?: (controlId: string, newValue: number) => void;
   color: string;
   unit: string;
+  referenceData?: Array<{ month: number; p3: number; p15: number; p50: number; p85: number; p97: number }>;
 }
 
 export const DraggablePoint = ({
@@ -26,40 +35,37 @@ export const DraggablePoint = ({
   onValueChange,
   color,
   unit,
+  referenceData,
 }: DraggablePointProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [currentY, setCurrentY] = useState(cy);
   const [displayValue, setDisplayValue] = useState<number | null>(null);
+  const [dragStatus, setDragStatus] = useState<{ status: PercentileStatus; percentile: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // Reset position when cy prop changes (external update)
   useEffect(() => {
-    if (!isDragging) {
-      setCurrentY(cy);
-    }
+    if (!isDragging) setCurrentY(cy);
   }, [cy, isDragging]);
 
-  // Convert Y pixel position to data value
   const yToValue = useCallback(
     (yPixel: number): number => {
       const [minVal, maxVal] = yDomain;
-      // Invert because SVG Y goes down
       const ratio = (yPixel - chartTop) / chartHeight;
       const value = maxVal - ratio * (maxVal - minVal);
-      // Clamp to domain
       return Math.max(minVal, Math.min(maxVal, value));
     },
     [chartTop, chartHeight, yDomain]
   );
 
-  // Convert data value to Y pixel position
-  const valueToY = useCallback(
-    (value: number): number => {
-      const [minVal, maxVal] = yDomain;
-      const ratio = (maxVal - value) / (maxVal - minVal);
-      return chartTop + ratio * chartHeight;
+  // Compute percentile status for a given value
+  const computeStatus = useCallback(
+    (value: number) => {
+      if (!referenceData || !payload) return null;
+      const refData = getRefDataForMonth(payload.month, referenceData);
+      if (!refData) return null;
+      return getPercentileStatus(value, refData);
     },
-    [chartTop, chartHeight, yDomain]
+    [referenceData, payload]
   );
 
   const handleMouseDown = useCallback(
@@ -69,14 +75,13 @@ export const DraggablePoint = ({
       e.stopPropagation();
       setIsDragging(true);
       setDisplayValue(payload.value);
+      const status = computeStatus(payload.value);
+      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
 
-      // Get SVG element for coordinate transformation
       const svg = (e.target as SVGCircleElement).ownerSVGElement;
-      if (svg) {
-        svgRef.current = svg;
-      }
+      if (svg) svgRef.current = svg;
     },
-    [payload, onValueChange]
+    [payload, onValueChange, computeStatus]
   );
 
   const handleTouchStart = useCallback(
@@ -86,46 +91,36 @@ export const DraggablePoint = ({
       e.stopPropagation();
       setIsDragging(true);
       setDisplayValue(payload.value);
+      const status = computeStatus(payload.value);
+      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
 
       const svg = (e.target as SVGCircleElement).ownerSVGElement;
-      if (svg) {
-        svgRef.current = svg;
-      }
+      if (svg) svgRef.current = svg;
     },
-    [payload, onValueChange]
+    [payload, onValueChange, computeStatus]
   );
 
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (clientX: number, clientY: number) => {
       if (!svgRef.current) return;
-
       const svg = svgRef.current;
       const pt = svg.createSVGPoint();
-      pt.x = e.clientX;
-      pt.y = e.clientY;
+      pt.x = clientX;
+      pt.y = clientY;
       const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse());
-
-      // Clamp Y within chart bounds
       const clampedY = Math.max(chartTop, Math.min(chartTop + chartHeight, svgP.y));
       setCurrentY(clampedY);
-      setDisplayValue(Math.round(yToValue(clampedY) * 100) / 100);
+      const newValue = Math.round(yToValue(clampedY) * 100) / 100;
+      setDisplayValue(newValue);
+      const status = computeStatus(newValue);
+      if (status) setDragStatus({ status: status.status, percentile: status.percentile });
     };
 
+    const handleMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
     const handleTouchMove = (e: TouchEvent) => {
-      if (!svgRef.current || e.touches.length === 0) return;
-
-      const touch = e.touches[0];
-      const svg = svgRef.current;
-      const pt = svg.createSVGPoint();
-      pt.x = touch.clientX;
-      pt.y = touch.clientY;
-      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse());
-
-      const clampedY = Math.max(chartTop, Math.min(chartTop + chartHeight, svgP.y));
-      setCurrentY(clampedY);
-      setDisplayValue(Math.round(yToValue(clampedY) * 100) / 100);
+      if (e.touches.length > 0) handleMove(e.touches[0].clientX, e.touches[0].clientY);
     };
 
     const handleEnd = () => {
@@ -134,6 +129,7 @@ export const DraggablePoint = ({
       }
       setIsDragging(false);
       setDisplayValue(null);
+      setDragStatus(null);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -147,21 +143,21 @@ export const DraggablePoint = ({
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleEnd);
     };
-  }, [isDragging, chartTop, chartHeight, yToValue, payload, onValueChange, displayValue]);
+  }, [isDragging, chartTop, chartHeight, yToValue, payload, onValueChange, displayValue, computeStatus]);
 
   if (!payload?.controlId) {
-    // Non-interactive point (reference data)
     return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill={color}
-        stroke="#fff"
-        strokeWidth={2}
-      />
+      <circle cx={cx} cy={cy} r={5} fill={color} stroke="#fff" strokeWidth={2} />
     );
   }
+
+  // Status-based colors for tooltip
+  const tooltipBg = isDragging && dragStatus
+    ? getStatusBgColor(dragStatus.status)
+    : "hsl(var(--background))";
+  const tooltipBorder = isDragging && dragStatus
+    ? getStatusColor(dragStatus.status)
+    : "hsl(var(--border))";
 
   return (
     <g>
@@ -173,87 +169,83 @@ export const DraggablePoint = ({
             y1={currentY}
             x2={cx}
             y2={currentY}
-            stroke={color}
+            stroke={tooltipBorder}
             strokeWidth={1}
             strokeDasharray="4 2"
             opacity={0.6}
           />
-          {/* Value tooltip */}
+          {/* Enhanced tooltip with percentile */}
           <g transform={`translate(${cx + 15}, ${currentY})`}>
             <rect
               x={0}
-              y={-12}
-              width={60}
-              height={24}
-              rx={4}
-              fill="hsl(var(--background))"
-              stroke="hsl(var(--border))"
-              strokeWidth={1}
+              y={-20}
+              width={90}
+              height={40}
+              rx={6}
+              fill={tooltipBg}
+              stroke={tooltipBorder}
+              strokeWidth={1.5}
             />
             <text
-              x={30}
-              y={4}
+              x={45}
+              y={-4}
               textAnchor="middle"
               fontSize={12}
               fontWeight="bold"
-              fill={color}
+              fill={dragStatus ? getStatusColor(dragStatus.status) : color}
             >
               {displayValue} {unit}
             </text>
+            {dragStatus && (
+              <text
+                x={45}
+                y={12}
+                textAnchor="middle"
+                fontSize={10}
+                fontWeight="600"
+                fill={getStatusColor(dragStatus.status)}
+              >
+                P{dragStatus.percentile}
+              </text>
+            )}
           </g>
         </>
       )}
 
       {/* Drop shadow when dragging */}
       {isDragging && (
-        <circle
-          cx={cx}
-          cy={currentY}
-          r={14}
-          fill={color}
-          opacity={0.2}
-        />
+        <circle cx={cx} cy={currentY} r={14} fill={tooltipBorder} opacity={0.2} />
       )}
 
       {/* Main draggable point */}
       <circle
         cx={cx}
         cy={currentY}
-        r={isDragging ? 10 : 6}
+        r={isDragging ? 10 : 7}
         fill={color}
         stroke="#fff"
-        strokeWidth={2}
+        strokeWidth={3}
         cursor="ns-resize"
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         style={{
           transition: isDragging ? "none" : "r 0.15s ease-out, cy 0.15s ease-out",
-          filter: isDragging ? "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" : "none",
+          filter: isDragging ? "drop-shadow(0 2px 6px rgba(0,0,0,0.35))" : "drop-shadow(0 1px 2px rgba(0,0,0,0.15))",
         }}
       />
 
-      {/* Drag indicator arrows */}
-      {!isDragging && payload?.controlId && (
-        <g opacity={0} className="hover-show" style={{ pointerEvents: "none" }}>
-          <text
-            x={cx}
-            y={currentY - 12}
-            textAnchor="middle"
-            fontSize={10}
-            fill={color}
-          >
-            ▲
-          </text>
-          <text
-            x={cx}
-            y={currentY + 16}
-            textAnchor="middle"
-            fontSize={10}
-            fill={color}
-          >
-            ▼
-          </text>
-        </g>
+      {/* Age label below point when not dragging */}
+      {!isDragging && payload && (
+        <text
+          x={cx}
+          y={currentY + 20}
+          textAnchor="middle"
+          fontSize={9}
+          fill="hsl(var(--muted-foreground))"
+          style={{ pointerEvents: "none" }}
+        >
+          {formatAgeDisplay(payload.month)}
+        </text>
       )}
     </g>
   );

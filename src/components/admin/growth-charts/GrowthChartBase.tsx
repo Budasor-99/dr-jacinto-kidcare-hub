@@ -190,9 +190,11 @@ export const GrowthChartBase = ({
     );
   }, [referenceData, xDomain]);
 
-  // Build chart data with optional extra computed fields
+  // Build chart data merging reference + patient points into a single array
   const chartData = useMemo(() => {
-    return filteredRefData.map((ref) => {
+    // Start with reference data
+    const refMap = new Map<number, Record<string, number>>();
+    filteredRefData.forEach((ref) => {
       const base: Record<string, number> = {
         month: ref.month,
         p3: ref.p3,
@@ -202,12 +204,43 @@ export const GrowthChartBase = ({
         p97: ref.p97,
       };
       if (computeExtraFields) {
-        const extra = computeExtraFields(ref);
-        Object.assign(base, extra);
+        Object.assign(base, computeExtraFields(ref));
       }
-      return base;
+      refMap.set(ref.month, base);
     });
-  }, [filteredRefData, computeExtraFields]);
+
+    // Merge patient points — add patientValue to existing month or insert new entry
+    const validPoints = controls
+      .filter(
+        (c) =>
+          c.ageInMonths !== undefined &&
+          c[valueField] &&
+          c.ageInMonths >= xDomain[0] &&
+          c.ageInMonths <= xDomain[1]
+      )
+      .map((c) => ({
+        month: c.ageInMonths!,
+        value: parseFloat(c[valueField]!),
+        controlId: c.id,
+        date: c.control_date,
+      }));
+
+    validPoints.forEach((pt) => {
+      const existing = refMap.get(pt.month);
+      if (existing) {
+        existing.patientValue = pt.value;
+        existing.controlId = pt.controlId as any;
+        existing.patientDate = pt.date as any;
+      } else {
+        // Interpolate reference values for this month or just add patient data
+        const entry: Record<string, any> = { month: pt.month, patientValue: pt.value, controlId: pt.controlId, patientDate: pt.date };
+        refMap.set(pt.month, entry);
+      }
+    });
+
+    // Sort by month
+    return Array.from(refMap.values()).sort((a, b) => a.month - b.month);
+  }, [filteredRefData, computeExtraFields, controls, valueField, xDomain]);
 
   const yDomain = useMemo(() => {
     if (yDomainFixed) return yDomainFixed;
@@ -234,20 +267,8 @@ export const GrowthChartBase = ({
   const effectiveLabelMonth = labelMonth ?? Math.round(xDomain[1] * 0.75);
 
   const patientPoints = useMemo(() => {
-    return controls
-      .filter(
-        (c) =>
-          c.ageInMonths !== undefined &&
-          c[valueField] &&
-          c.ageInMonths <= xDomain[1]
-      )
-      .map((c) => ({
-        month: c.ageInMonths!,
-        value: parseFloat(c[valueField]!),
-        date: c.control_date,
-        controlId: c.id,
-      }));
-  }, [controls, valueField, xDomain]);
+    return chartData.filter((d) => d.patientValue !== undefined);
+  }, [chartData]);
 
   const latestDiagnosis = useMemo(() => {
     const valid = controls.filter(
@@ -515,20 +536,19 @@ export const GrowthChartBase = ({
                   if (!active || !payload?.length) return null;
                   const data = payload[0]?.payload;
                   if (!data) return null;
-                  const pp = patientPoints.find(
-                    (p) => Math.abs(p.month - label) < 0.5
-                  );
+                  const pp = data.patientValue !== undefined ? data : null;
+                  const ppVal = pp?.patientValue;
                   return (
                     <div className="bg-background border-2 border-foreground/20 rounded-lg p-3 shadow-lg text-xs">
                       <p className="font-bold mb-1 text-sm">
                         Edad: {formatAgeDisplay(label)}
                       </p>
-                      {pp && (
+                      {ppVal !== undefined && (
                         <p
                           className="text-sm font-bold mb-1"
                           style={{ color: colors.line }}
                         >
-                          ● Paciente: {pp.value} {unit}
+                          ● Paciente: {ppVal} {unit}
                         </p>
                       )}
                       <div className="text-muted-foreground space-y-0.5 font-mono">
@@ -565,17 +585,17 @@ export const GrowthChartBase = ({
                 />
               ))}
 
-              {/* Patient line with draggable points */}
+              {/* Patient line — uses merged data */}
               <Line
                 type="monotone"
-                data={patientPoints}
-                dataKey="value"
+                dataKey="patientValue"
                 stroke={colors.line}
                 strokeWidth={2.5}
                 dot={(props: any) => {
                   const { cx, cy, payload } = props;
                   if (
                     !payload ||
+                    payload.patientValue === undefined ||
                     cx === undefined ||
                     cy === undefined
                   )
@@ -587,7 +607,7 @@ export const GrowthChartBase = ({
                       cy={cy}
                       payload={{
                         controlId: payload.controlId,
-                        value: payload.value,
+                        value: payload.patientValue,
                         month: payload.month,
                       }}
                       chartTop={chartDimensions.top}

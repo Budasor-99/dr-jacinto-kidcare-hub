@@ -110,6 +110,46 @@ export const getChartColors = (sex: "M" | "F") => {
   };
 };
 
+// Nutritional diagnosis types
+export type MeasurementType = "weight" | "height" | "hc";
+export type DiagnosisSeverity = "obese" | "overweight" | "normal" | "mild" | "moderate" | "severe" | "tall" | "short_risk" | "short" | "macro" | "micro";
+
+export interface NutritionalDiagnosis {
+  diagnosis: string;
+  severity: DiagnosisSeverity;
+  color: string;
+  bgColor: string;
+}
+
+export const getNutritionalDiagnosis = (
+  value: number,
+  referenceData: { p3: number; p15: number; p50: number; p85: number; p97: number },
+  type: MeasurementType
+): NutritionalDiagnosis => {
+  if (type === "weight") {
+    // Estimate -3SD as p3 * 0.85 (approximation)
+    const minus3SD = referenceData.p3 * 0.85;
+    if (value > referenceData.p97) return { diagnosis: "Obesidad", severity: "obese", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+    if (value > referenceData.p85) return { diagnosis: "Sobrepeso", severity: "overweight", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
+    if (value >= referenceData.p15) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value >= referenceData.p3) return { diagnosis: "Desnutrición Grado 1", severity: "mild", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
+    if (value >= minus3SD) return { diagnosis: "Desnutrición Grado 2", severity: "moderate", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
+    return { diagnosis: "Desnutrición Grado 3", severity: "severe", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+  }
+
+  if (type === "height") {
+    if (value > referenceData.p97) return { diagnosis: "Talla Alta", severity: "tall", color: "hsl(210, 100%, 45%)", bgColor: "hsl(210, 100%, 95%)" };
+    if (value >= referenceData.p15) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value >= referenceData.p3) return { diagnosis: "Riesgo Talla Baja", severity: "short_risk", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
+    return { diagnosis: "Talla Baja", severity: "short", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+  }
+
+  // HC
+  if (value > referenceData.p97) return { diagnosis: "Macrocefalia", severity: "macro", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+  if (value >= referenceData.p3) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+  return { diagnosis: "Microcefalia", severity: "micro", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+};
+
 // Status colors
 export const getStatusColor = (status: PercentileStatus): string => {
   const colors: Record<PercentileStatus, string> = {

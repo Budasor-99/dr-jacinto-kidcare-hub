@@ -58,6 +58,7 @@ export const WeightForAgeChart = ({
       yDomainFixed={[2, 26]}
       labelMonth={42}
       curves={WEIGHT_CURVES}
+      measurementType="weight"
       computeExtraFields={computeWeightExtra}
     />
   );

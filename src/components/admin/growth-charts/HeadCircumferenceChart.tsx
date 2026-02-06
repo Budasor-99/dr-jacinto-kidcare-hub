@@ -61,6 +61,7 @@ export const HeadCircumferenceChart = ({
       yTickInterval={1}
       yDomainFixed={[30, 54]}
       curves={HC_CURVES}
+      measurementType="hc"
       labelMode="right-numbers"
       computeExtraFields={computeHCExtra}
     />

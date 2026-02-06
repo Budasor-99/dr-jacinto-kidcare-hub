@@ -4,8 +4,11 @@ import {
   getRefDataForMonth,
   getStatusColor,
   getStatusBgColor,
+  getNutritionalDiagnosis,
   formatAgeDisplay,
   type PercentileStatus,
+  type MeasurementType,
+  type NutritionalDiagnosis,
 } from "@/lib/growth-data/growth-utils";
 
 interface DraggablePointProps {
@@ -26,6 +29,7 @@ interface DraggablePointProps {
   color: string;
   unit: string;
   referenceData?: Array<{ month: number; p3: number; p15: number; p50: number; p85: number; p97: number }>;
+  measurementType?: MeasurementType;
 }
 
 export const DraggablePoint = ({
@@ -42,6 +46,7 @@ export const DraggablePoint = ({
   color,
   unit,
   referenceData,
+  measurementType = "weight",
 }: DraggablePointProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [currentX, setCurrentX] = useState(cx);
@@ -49,6 +54,7 @@ export const DraggablePoint = ({
   const [displayValue, setDisplayValue] = useState<number | null>(null);
   const [displayMonth, setDisplayMonth] = useState<number | null>(null);
   const [dragStatus, setDragStatus] = useState<{ status: PercentileStatus; percentile: number } | null>(null);
+  const [dragDiagnosis, setDragDiagnosis] = useState<NutritionalDiagnosis | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
@@ -81,9 +87,11 @@ export const DraggablePoint = ({
       if (!referenceData) return null;
       const refData = getRefDataForMonth(month, referenceData);
       if (!refData) return null;
+      const dx = getNutritionalDiagnosis(value, refData, measurementType);
+      setDragDiagnosis(dx);
       return getPercentileStatus(value, refData);
     },
-    [referenceData]
+    [referenceData, measurementType]
   );
 
   const startDrag = useCallback(
@@ -154,6 +162,8 @@ export const DraggablePoint = ({
       setDisplayValue(null);
       setDisplayMonth(null);
       setDragStatus(null);
+      setDragDiagnosis(null);
+      setDragStatus(null);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -187,20 +197,26 @@ export const DraggablePoint = ({
             stroke={tooltipBorder} strokeWidth={1} strokeDasharray="4 2" opacity={0.6} />
 
           {/* Tooltip */}
-          <g transform={`translate(${currentX + 15}, ${currentY - 10})`}>
-            <rect x={0} y={-22} width={100} height={52} rx={6}
+          <g transform={`translate(${currentX + 15}, ${currentY - 15})`}>
+            <rect x={0} y={-22} width={120} height={dragDiagnosis ? 68 : 52} rx={6}
               fill={tooltipBg} stroke={tooltipBorder} strokeWidth={1.5} />
-            <text x={50} y={-6} textAnchor="middle" fontSize={12} fontWeight="bold"
+            <text x={60} y={-6} textAnchor="middle" fontSize={12} fontWeight="bold"
               fill={dragStatus ? getStatusColor(dragStatus.status) : color}>
               {displayValue} {unit}
             </text>
-            <text x={50} y={10} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
+            <text x={60} y={10} textAnchor="middle" fontSize={10} fill="hsl(var(--muted-foreground))">
               {displayMonth !== null ? formatAgeDisplay(displayMonth) : ""}
             </text>
             {dragStatus && (
-              <text x={50} y={24} textAnchor="middle" fontSize={10} fontWeight="600"
+              <text x={60} y={24} textAnchor="middle" fontSize={10} fontWeight="600"
                 fill={getStatusColor(dragStatus.status)}>
                 P{dragStatus.percentile}
+              </text>
+            )}
+            {dragDiagnosis && (
+              <text x={60} y={40} textAnchor="middle" fontSize={9} fontWeight="700"
+                fill={dragDiagnosis.color}>
+                {dragDiagnosis.diagnosis}
               </text>
             )}
           </g>

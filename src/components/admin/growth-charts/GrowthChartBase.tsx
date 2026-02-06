@@ -20,7 +20,9 @@ import {
   getRefDataForMonth,
   getStatusColor,
   getStatusBgColor,
+  getNutritionalDiagnosis,
   formatAgeDisplay,
+  type MeasurementType,
 } from "@/lib/growth-data/growth-utils";
 import { DraggablePoint } from "./DraggablePoint";
 import type { MedicalControlData } from "./GrowthChartsTab";
@@ -72,6 +74,8 @@ interface GrowthChartBaseProps {
    * "right-numbers" = numeric labels on the right edge of each curve
    */
   labelMode?: "on-curve" | "right-numbers";
+  /** Measurement type for nutritional diagnosis */
+  measurementType?: MeasurementType;
   /** Function to compute extra percentile fields from standard ref data */
   computeExtraFields?: (ref: {
     p3: number;
@@ -111,6 +115,7 @@ export const GrowthChartBase = ({
   labelMonth,
   curves,
   labelMode = "on-curve",
+  measurementType = "weight",
   computeExtraFields,
 }: GrowthChartBaseProps) => {
   const colors = getChartColors(sex);
@@ -244,7 +249,7 @@ export const GrowthChartBase = ({
       }));
   }, [controls, valueField, xDomain]);
 
-  const latestStatus = useMemo(() => {
+  const latestDiagnosis = useMemo(() => {
     const valid = controls.filter(
       (c) => c.ageInMonths !== undefined && c[valueField]
     );
@@ -252,8 +257,10 @@ export const GrowthChartBase = ({
     const latest = valid[valid.length - 1];
     const refData = getRefDataForMonth(latest.ageInMonths!, referenceData);
     if (!refData) return null;
-    return getPercentileStatus(parseFloat(latest[valueField]!), refData);
-  }, [controls, referenceData, valueField]);
+    const pStatus = getPercentileStatus(parseFloat(latest[valueField]!), refData);
+    const dx = getNutritionalDiagnosis(parseFloat(latest[valueField]!), refData, measurementType);
+    return { ...pStatus, dx };
+  }, [controls, referenceData, valueField, measurementType]);
 
   const handleValueChange = (controlId: string, newValue: number, newMonth?: number) => {
     if (onUpdateValue) onUpdateValue(controlId, newValue, newMonth);
@@ -354,16 +361,16 @@ export const GrowthChartBase = ({
             {title} ({sex === "M" ? "Niño" : "Niña"})
           </CardTitle>
           <div className="flex items-center gap-2">
-            {latestStatus && (
+            {latestDiagnosis && (
               <Badge
                 style={{
-                  backgroundColor: getStatusBgColor(latestStatus.status),
-                  color: getStatusColor(latestStatus.status),
-                  borderColor: getStatusColor(latestStatus.status),
+                  backgroundColor: latestDiagnosis.dx.bgColor,
+                  color: latestDiagnosis.dx.color,
+                  borderColor: latestDiagnosis.dx.color,
                 }}
                 variant="outline"
               >
-                P{latestStatus.percentile} - {latestStatus.label}
+                P{latestDiagnosis.percentile} — {latestDiagnosis.dx.diagnosis}
               </Badge>
             )}
             <Button
@@ -595,6 +602,7 @@ export const GrowthChartBase = ({
                       color={colors.line}
                       unit={unit}
                       referenceData={referenceData}
+                      measurementType={measurementType}
                     />
                   );
                 }}

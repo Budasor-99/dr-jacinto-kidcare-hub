@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,13 @@ import { GrowthDataTable } from "./GrowthDataTable";
 import { GrowthCardHeader } from "./GrowthCardHeader";
 import { GrowthTrackingTable } from "./GrowthTrackingTable";
 import { ClinicalInterpretation } from "./ClinicalInterpretation";
-import { calculateAgeInMonths } from "@/lib/growth-data/growth-utils";
+import { calculateAgeInMonths, getRefDataForMonth, getPercentileStatus, getNutritionalDiagnosis } from "@/lib/growth-data/growth-utils";
+import { weightForAgeBoys } from "@/lib/growth-data/who-weight-boys";
+import { weightForAgeGirls } from "@/lib/growth-data/who-weight-girls";
+import { heightForAgeBoys } from "@/lib/growth-data/who-height-boys";
+import { heightForAgeGirls } from "@/lib/growth-data/who-height-girls";
+import { headCircumferenceForAgeBoys } from "@/lib/growth-data/who-hc-boys";
+import { headCircumferenceForAgeGirls } from "@/lib/growth-data/who-hc-girls";
 
 interface GrowthChartsTabProps {
   medicalRecordId: string;
@@ -228,6 +234,33 @@ export const GrowthChartsTab = ({
 
   const latestControl = controls.length > 0 ? controls[controls.length - 1] : undefined;
 
+  // Compute risk items for header
+  const headerRisks = useMemo(() => {
+    const valid = controls.filter(c => c.ageInMonths !== undefined);
+    if (valid.length === 0) return [];
+    const latest = valid[valid.length - 1];
+    const month = latest.ageInMonths!;
+    const wRef = sex === "M" ? weightForAgeBoys : weightForAgeGirls;
+    const hRef = sex === "M" ? heightForAgeBoys : heightForAgeGirls;
+    const hcRefData = sex === "M" ? headCircumferenceForAgeBoys : headCircumferenceForAgeGirls;
+
+    const assess = (val: string | null, ref: typeof wRef, label: string, type: "weight" | "height" | "hc") => {
+      if (!val) return null;
+      const refData = getRefDataForMonth(month, ref);
+      if (!refData) return null;
+      const v = parseFloat(val);
+      const p = getPercentileStatus(v, refData);
+      const dx = getNutritionalDiagnosis(v, refData, type);
+      return { label, percentile: p.percentile, diagnosis: dx };
+    };
+
+    return [
+      assess(latest.weight, wRef, "Peso", "weight"),
+      assess(latest.height, hRef, "Talla", "height"),
+      assess(latest.head_circumference, hcRefData, "P.C.", "hc"),
+    ].filter(Boolean) as Array<{ label: string; percentile: number; diagnosis: any }>;
+  }, [controls, sex]);
+
   if (!patientBirthDate) {
     return (
       <Card>
@@ -341,6 +374,7 @@ export const GrowthChartsTab = ({
             sex={sex}
             latestAgeMonths={latestControl?.ageInMonths}
             controlDate={latestControl?.control_date}
+            risks={headerRisks}
           />
 
           {/* 2. Tracking table with percentiles */}

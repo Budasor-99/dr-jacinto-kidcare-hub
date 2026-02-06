@@ -57,6 +57,7 @@ export const HeightForAgeChart = ({
       yDomainFixed={[44, 120]}
       labelMonth={48}
       curves={HEIGHT_CURVES}
+      measurementType="height"
       computeExtraFields={computeHeightExtra}
       annotations={[
         { x: 10, yOffset: 25, text: "Acostado", fontSize: 11 },

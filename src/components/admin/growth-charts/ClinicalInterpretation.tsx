@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { AlertTriangle } from "lucide-react";
 import {
-  getPercentileStatus,
   getRefDataForMonth,
-  getStatusColor,
-  getStatusBgColor,
+  getNutritionalDiagnosis,
+  getPercentileStatus,
+  type MeasurementType,
+  type NutritionalDiagnosis,
 } from "@/lib/growth-data/growth-utils";
 import { weightForAgeBoys } from "@/lib/growth-data/who-weight-boys";
 import { weightForAgeGirls } from "@/lib/growth-data/who-weight-girls";
@@ -24,6 +26,13 @@ interface ClinicalInterpretationProps {
   onRecommendationsChange: (value: string) => void;
 }
 
+interface DiagnosisResult {
+  label: string;
+  type: MeasurementType;
+  percentile: number;
+  diagnosis: NutritionalDiagnosis;
+}
+
 export const ClinicalInterpretation = ({
   controls,
   sex,
@@ -36,27 +45,35 @@ export const ClinicalInterpretation = ({
   const heightRef = sex === "M" ? heightForAgeBoys : heightForAgeGirls;
   const hcRef = sex === "M" ? headCircumferenceForAgeBoys : headCircumferenceForAgeGirls;
 
-  // Auto-detect risk from latest control
-  const riskAssessment = useMemo(() => {
+  const diagnosisResults = useMemo(() => {
     const valid = controls.filter(c => c.ageInMonths !== undefined);
-    if (valid.length === 0) return null;
+    if (valid.length === 0) return [];
     const latest = valid[valid.length - 1];
     const month = latest.ageInMonths!;
 
-    const assess = (value: string | null, ref: typeof weightRef, label: string) => {
+    const assess = (
+      value: string | null,
+      ref: typeof weightRef,
+      label: string,
+      type: MeasurementType
+    ): DiagnosisResult | null => {
       if (!value) return null;
       const refData = getRefDataForMonth(month, ref);
       if (!refData) return null;
-      const status = getPercentileStatus(parseFloat(value), refData);
-      return { label, ...status };
+      const val = parseFloat(value);
+      const pStatus = getPercentileStatus(val, refData);
+      const dx = getNutritionalDiagnosis(val, refData, type);
+      return { label, type, percentile: pStatus.percentile, diagnosis: dx };
     };
 
     return [
-      assess(latest.weight, weightRef, "Peso"),
-      assess(latest.height, heightRef, "Talla"),
-      assess(latest.head_circumference, hcRef, "P. Cefálico"),
-    ].filter(Boolean) as Array<{ label: string; status: string; percentile: number }>;
+      assess(latest.weight, weightRef, "Peso", "weight"),
+      assess(latest.height, heightRef, "Talla", "height"),
+      assess(latest.head_circumference, hcRef, "P. Cefálico", "hc"),
+    ].filter(Boolean) as DiagnosisResult[];
   }, [controls, sex]);
+
+  const hasRisk = diagnosisResults.some(r => r.diagnosis.severity !== "normal");
 
   return (
     <div className="border rounded-lg p-4 space-y-4 bg-card">
@@ -64,21 +81,31 @@ export const ClinicalInterpretation = ({
         Interpretación Clínica
       </h3>
 
-      {/* Auto-detected risk summary */}
-      {riskAssessment && riskAssessment.length > 0 && (
+      {/* Risk alert */}
+      {hasRisk && (
+        <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/30">
+          <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+          <p className="text-xs text-destructive font-medium">
+            Se detectaron hallazgos que requieren atención clínica en el último control.
+          </p>
+        </div>
+      )}
+
+      {/* Diagnosis badges */}
+      {diagnosisResults.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {riskAssessment.map((r: any) => (
+          {diagnosisResults.map((r) => (
             <Badge
               key={r.label}
               variant="outline"
-              className="text-xs"
+              className="text-xs py-1 px-2"
               style={{
-                backgroundColor: getStatusBgColor(r.status),
-                color: getStatusColor(r.status),
-                borderColor: getStatusColor(r.status),
+                backgroundColor: r.diagnosis.bgColor,
+                color: r.diagnosis.color,
+                borderColor: r.diagnosis.color,
               }}
             >
-              {r.label}: P{r.percentile} — {r.status === "normal" ? "Normal" : r.status === "watch" ? "Vigilar" : "Evaluar"}
+              {r.label}: P{r.percentile} — {r.diagnosis.diagnosis}
             </Badge>
           ))}
         </div>

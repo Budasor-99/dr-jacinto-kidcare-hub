@@ -1,94 +1,92 @@
 
 
-# Plan: Movimiento libre (2D) del punto en las graficas y edicion de edad
+# Plan: Diagnosticos Nutricionales Automaticos basados en Percentiles OMS/MSP
 
-## Problema actual
-1. El punto del paciente solo se mueve **verticalmente** (eje Y), pero el doctor necesita moverlo libremente en ambas direcciones (X e Y) para posicionar el registro en la edad y valor correctos.
-2. El campo "Edad" en la tabla de mediciones no es editable directamente - solo se calcula automaticamente a partir de la fecha de control.
+## Objetivo
+Agregar clasificacion nutricional automatica en las graficas de crecimiento, generando diagnosticos clinicos de:
+- **Sobrepeso** (por encima de P85-P97)
+- **Obesidad** (por encima de P97)
+- **Normal** (entre P15 y P85)
+- **Desnutricion Grado 1 / Leve** (entre P3 y P15)
+- **Desnutricion Grado 2 / Moderada** (por debajo de P3, hasta -3DE)
+- **Desnutricion Grado 3 / Severa** (por debajo de -3DE)
 
-## Solucion propuesta
+Estos diagnosticos se basan en la clasificacion de Gomez/Waterlow adaptada al estandar MSP Ecuador, usando las curvas OMS que ya tenemos implementadas.
 
-### 1. Drag-and-drop libre (horizontal + vertical) en DraggablePoint
+## Donde se mostraran los diagnosticos
 
-Modificar `DraggablePoint.tsx` para soportar movimiento en ambos ejes:
+1. **En la Interpretacion Clinica** (seccion existente): Los badges actuales que dicen "Normal / Vigilar / Evaluar" se reemplazaran por diagnosticos clinicos reales (ej: "Peso: P12 - Desnutricion Leve").
 
-- Agregar props: `chartLeft`, `chartWidth`, `xDomain` para convertir pixeles X a meses.
-- Durante el drag, calcular tanto el nuevo valor (Y) como el nuevo mes (X).
-- Actualizar visualmente la posicion en ambos ejes en tiempo real.
-- Al soltar el punto, emitir un callback con el nuevo valor Y **y** el nuevo mes X.
-- Cambiar el cursor de `ns-resize` a `move` para indicar movimiento libre.
-- Mostrar en el tooltip tanto el valor como la edad mientras se arrastra.
+2. **En la Tabla de Seguimiento** (GrowthTrackingTable): Se agregara una columna "Dx" (Diagnostico) que muestre el diagnostico nutricional por cada control.
 
-### 2. Actualizar GrowthChartBase para pasar dimensiones X
+3. **En el tooltip del drag-and-drop**: Al arrastrar un punto, ademas del percentil se mostrara el diagnostico correspondiente.
 
-Modificar `GrowthChartBase.tsx`:
+4. **Alerta visual en el encabezado**: Si el ultimo control tiene un diagnostico de riesgo, se mostrara una alerta destacada.
 
-- Capturar las dimensiones del area de ploteo (left, width) ademas de top/height.
-- Pasar `chartLeft`, `chartWidth` y `xDomain` al componente `DraggablePoint`.
-- Cambiar el callback `onUpdateValue` para incluir el mes: `(controlId, newValue, newMonth) => void`.
+## Clasificacion nutricional propuesta
 
-### 3. Actualizar GrowthChartsTab para guardar cambios de edad
+Basada en percentiles OMS y estandar MSP Ecuador:
 
-Modificar `GrowthChartsTab.tsx`:
+```text
+Zona Percentil         | Diagnostico Peso        | Color
+-----------------------|-------------------------|--------
+> P97                  | Obesidad                | Rojo
+P85 - P97              | Sobrepeso               | Naranja
+P15 - P85              | Normal                  | Verde
+P3 - P15               | Desnutricion Grado 1    | Amarillo
+< P3 (hasta -3DE)      | Desnutricion Grado 2    | Naranja
+< -3DE (curva F)       | Desnutricion Grado 3    | Rojo
 
-- Al recibir un cambio de mes desde el drag, recalcular la nueva `control_date` sumando los meses a la fecha de nacimiento del paciente.
-- Guardar tanto el nuevo valor (peso/talla/PC) como la nueva fecha de control en la base de datos.
+Para Talla:
+> P97                  | Talla Alta              | Azul
+P15 - P85              | Normal                  | Verde
+P3 - P15               | Riesgo Talla Baja       | Amarillo
+< P3                   | Talla Baja              | Rojo
 
-### 4. Hacer el campo "Edad" editable en la tabla de mediciones
-
-Modificar `GrowthDataTable.tsx`:
-
-- Agregar un campo editable para la edad (en meses) en la columna "Edad".
-- Cuando el doctor cambie la edad, recalcular automaticamente la `control_date` a partir de la fecha de nacimiento + meses ingresados, y guardar ambos valores.
-
----
+Para P. Cefalico:
+> P97                  | Macrocefalia             | Rojo
+P3 - P97               | Normal                  | Verde
+< P3                   | Microcefalia             | Rojo
+```
 
 ## Detalles tecnicos
 
-### DraggablePoint.tsx - Nuevas props y logica X
+### 1. Nuevo sistema de diagnostico en `growth-utils.ts`
+
+Se creara una funcion `getNutritionalDiagnosis()` que recibe el valor, datos de referencia, y el tipo de medicion (peso/talla/pc) para retornar el diagnostico clinico correcto:
 
 ```text
-Props nuevas:
-  - chartLeft: number (pixel izquierdo del area de ploteo)
-  - chartWidth: number (ancho en pixeles del area de ploteo)  
-  - xDomain: [number, number] (rango de meses, ej: [0, 60])
-  - onValueChange: (controlId, newValue, newMonth) => void
-
-Conversion pixel -> mes:
-  xToMonth(xPixel) = xDomain[0] + ((xPixel - chartLeft) / chartWidth) * (xDomain[1] - xDomain[0])
-
-Durante drag:
-  - Mover currentX y currentY simultaneamente
-  - Mostrar en tooltip: valor + edad
+Funcion: getNutritionalDiagnosis(value, refData, type)
+  - type: "weight" | "height" | "hc"
+  - Retorna: { diagnosis: string, severity: "normal"|"mild"|"moderate"|"severe"|"overweight"|"obese", color, bgColor }
+  - Para peso: usa -3DE (curva F estimada) para distinguir Grado 2 vs Grado 3
+  - Para talla: diagnosticos especificos de estatura
+  - Para PC: macrocefalia/microcefalia
 ```
 
-### GrowthChartBase.tsx - Captura de dimensiones X
+### 2. Actualizacion de `ClinicalInterpretation.tsx`
 
-Se obtendra `chartLeft` y `chartWidth` del SVG de Recharts de la misma forma que ya se obtiene `chartTop` y `chartHeight`, usando el bounding rect del area de ploteo.
+- Reemplazar los badges genericos por diagnosticos nutricionales especificos
+- Agregar una seccion de "Diagnostico Nutricional" con iconos y colores por severidad
+- Incluir auto-generacion de texto sugerido para la evaluacion basado en los diagnosticos detectados
 
-### GrowthChartsTab.tsx - Recalculo de fecha
+### 3. Actualizacion de `GrowthTrackingTable.tsx`
 
-```text
-Cuando el punto se mueve horizontalmente:
-  1. Recibir newMonth (ej: 14.5 meses)
-  2. Calcular nueva fecha: birthDate + round(newMonth) meses
-  3. Actualizar control_date en la BD
-  4. Recalcular ageInMonths en el estado local
-```
+- Agregar columna "Diagnostico" con badge de diagnostico nutricional por cada control
+- Color-coding segun severidad
 
-### GrowthDataTable.tsx - Columna edad editable
+### 4. Actualizacion del tooltip en `DraggablePoint.tsx`
 
-Agregar un input numerico en la columna "Edad" que al cambiar:
-1. Tome el valor en meses ingresado
-2. Calcule `control_date = birthDate + N meses`
-3. Llame a `onUpdate(controlId, "control_date", nuevaFecha)`
+- Mostrar el diagnostico junto al percentil mientras se arrastra el punto
+
+### 5. Alerta en `GrowthCardHeader.tsx`
+
+- Si el ultimo control tiene diagnostico de riesgo, mostrar alerta visual
 
 ## Archivos a modificar
-- `src/components/admin/growth-charts/DraggablePoint.tsx`
-- `src/components/admin/growth-charts/GrowthChartBase.tsx`
-- `src/components/admin/growth-charts/GrowthChartsTab.tsx`
-- `src/components/admin/growth-charts/GrowthDataTable.tsx`
-- `src/components/admin/growth-charts/WeightForAgeChart.tsx`
-- `src/components/admin/growth-charts/HeightForAgeChart.tsx`
-- `src/components/admin/growth-charts/HeadCircumferenceChart.tsx`
+- `src/lib/growth-data/growth-utils.ts` - Nueva funcion de diagnostico nutricional
+- `src/components/admin/growth-charts/ClinicalInterpretation.tsx` - Badges con diagnosticos reales
+- `src/components/admin/growth-charts/GrowthTrackingTable.tsx` - Columna de diagnostico
+- `src/components/admin/growth-charts/DraggablePoint.tsx` - Tooltip con diagnostico
+- `src/components/admin/growth-charts/GrowthCardHeader.tsx` - Alerta de riesgo
 

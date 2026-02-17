@@ -110,13 +110,29 @@ export const getChartColors = (sex: "M" | "F") => {
   };
 };
 
-// Nutritional diagnosis types
+// Calculate -2SD and -3SD from reference data
+export const calculateSDFromRef = (ref: { p3: number; p50: number }) => {
+  const sd = (ref.p50 - ref.p3) / 1.88;
+  return {
+    minus2sd: Math.max(0, ref.p50 - 2 * sd),
+    minus3sd: Math.max(0, ref.p50 - 3 * sd),
+  };
+};
+
+// Nutritional diagnosis types — updated per Dr. Salazar / MSP Ecuador zones
 export type MeasurementType = "weight" | "height" | "hc";
-export type DiagnosisSeverity = "obese" | "overweight" | "normal" | "mild" | "moderate" | "severe" | "tall" | "short_risk" | "short" | "macro" | "micro";
+export type DiagnosisSeverity = 
+  | "overweight" | "normal_high" | "normal_low" 
+  | "mild" | "moderate" | "severe" 
+  | "tall" | "short_risk" | "short_moderate" | "short_severe"
+  | "normal" | "macro" | "micro";
+
+export type ZoneLetter = "A" | "B" | "C" | "D" | "E" | "F";
 
 export interface NutritionalDiagnosis {
   diagnosis: string;
   severity: DiagnosisSeverity;
+  zone: ZoneLetter;
   color: string;
   bgColor: string;
 }
@@ -126,28 +142,30 @@ export const getNutritionalDiagnosis = (
   referenceData: { p3: number; p15: number; p50: number; p85: number; p97: number },
   type: MeasurementType
 ): NutritionalDiagnosis => {
+  const { minus2sd, minus3sd } = calculateSDFromRef(referenceData);
+
   if (type === "weight") {
-    // Estimate -3SD as p3 * 0.85 (approximation)
-    const minus3SD = referenceData.p3 * 0.85;
-    if (value > referenceData.p97) return { diagnosis: "Obesidad", severity: "obese", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
-    if (value > referenceData.p85) return { diagnosis: "Sobrepeso", severity: "overweight", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
-    if (value >= referenceData.p15) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
-    if (value >= referenceData.p3) return { diagnosis: "Desnutrición Grado 1", severity: "mild", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
-    if (value >= minus3SD) return { diagnosis: "Desnutrición Grado 2", severity: "moderate", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
-    return { diagnosis: "Desnutrición Grado 3", severity: "severe", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+    if (value > referenceData.p97) return { diagnosis: "Sobrepeso", severity: "overweight", zone: "A", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+    if (value > referenceData.p50) return { diagnosis: "Normal Alto", severity: "normal_high", zone: "B", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value > referenceData.p3) return { diagnosis: "Normal Bajo", severity: "normal_low", zone: "C", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value > minus2sd) return { diagnosis: "Desnutrición Grado 1", severity: "mild", zone: "D", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
+    if (value > minus3sd) return { diagnosis: "Desnutrición Grado 2", severity: "moderate", zone: "E", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
+    return { diagnosis: "Desnutrición Grado 3", severity: "severe", zone: "F", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
   }
 
   if (type === "height") {
-    if (value > referenceData.p97) return { diagnosis: "Talla Alta", severity: "tall", color: "hsl(210, 100%, 45%)", bgColor: "hsl(210, 100%, 95%)" };
-    if (value >= referenceData.p15) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
-    if (value >= referenceData.p3) return { diagnosis: "Riesgo Talla Baja", severity: "short_risk", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
-    return { diagnosis: "Talla Baja", severity: "short", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+    if (value > referenceData.p97) return { diagnosis: "Talla Alta", severity: "tall", zone: "A", color: "hsl(210, 100%, 45%)", bgColor: "hsl(210, 100%, 95%)" };
+    if (value > referenceData.p50) return { diagnosis: "Normal Alto", severity: "normal_high", zone: "B", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value > referenceData.p3) return { diagnosis: "Normal Bajo", severity: "normal_low", zone: "C", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+    if (value > minus2sd) return { diagnosis: "Riesgo Talla Baja", severity: "short_risk", zone: "D", color: "hsl(45, 93%, 40%)", bgColor: "hsl(45, 93%, 95%)" };
+    if (value > minus3sd) return { diagnosis: "Talla Baja G2", severity: "short_moderate", zone: "E", color: "hsl(25, 95%, 45%)", bgColor: "hsl(25, 95%, 95%)" };
+    return { diagnosis: "Talla Baja G3", severity: "short_severe", zone: "F", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
   }
 
-  // HC
-  if (value > referenceData.p97) return { diagnosis: "Macrocefalia", severity: "macro", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
-  if (value >= referenceData.p3) return { diagnosis: "Normal", severity: "normal", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
-  return { diagnosis: "Microcefalia", severity: "micro", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+  // HC — keep existing system (no zones A-F)
+  if (value > referenceData.p97) return { diagnosis: "Macrocefalia", severity: "macro", zone: "A", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
+  if (value >= referenceData.p3) return { diagnosis: "Normal", severity: "normal", zone: "B", color: "hsl(142, 76%, 36%)", bgColor: "hsl(142, 76%, 95%)" };
+  return { diagnosis: "Microcefalia", severity: "micro", zone: "F", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };
 };
 
 // Status colors

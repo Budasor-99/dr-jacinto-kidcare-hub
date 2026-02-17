@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Label,
+  Customized,
 } from "recharts";
 import {
   getChartColors,
@@ -33,6 +34,15 @@ export interface CurveDefinition {
   dash: string;
   width: number;
   isBold?: boolean;
+}
+
+export interface ZoneLabelDefinition {
+  letter: string;
+  label: string;
+  /** Key of the curve ABOVE the zone (undefined = top of chart) */
+  upperKey?: string;
+  /** Key of the curve BELOW the zone (undefined = bottom of chart) */
+  lowerKey?: string;
 }
 
 interface ChartAnnotation {
@@ -65,18 +75,10 @@ interface GrowthChartBaseProps {
   yTickInterval?: number;
   yDomainFixed?: [number, number];
   xTickInterval?: number;
-  /** Month at which to render letter labels ON the curves */
   labelMonth?: number;
-  /** Custom curve definitions (overrides default A-E) */
   curves?: CurveDefinition[];
-  /**
-   * "on-curve" = letter labels on the curve at labelMonth (default)
-   * "right-numbers" = numeric labels on the right edge of each curve
-   */
   labelMode?: "on-curve" | "right-numbers";
-  /** Measurement type for nutritional diagnosis */
   measurementType?: MeasurementType;
-  /** Function to compute extra percentile fields from standard ref data */
   computeExtraFields?: (ref: {
     p3: number;
     p15: number;
@@ -84,14 +86,16 @@ interface GrowthChartBaseProps {
     p85: number;
     p97: number;
   }) => Record<string, number>;
+  /** Zone labels A-F rendered between curves */
+  zoneLabels?: ZoneLabelDefinition[];
 }
 
 const DEFAULT_CURVES: CurveDefinition[] = [
-  { key: "p97", label: "A", dash: "", width: 1.8 },
-  { key: "p85", label: "B", dash: "", width: 1.5 },
-  { key: "p50", label: "C", dash: "", width: 2.5, isBold: true },
-  { key: "p15", label: "D", dash: "8 4", width: 1.5 },
-  { key: "p3", label: "E", dash: "4 3", width: 1.2 },
+  { key: "p97", label: "P97", dash: "", width: 1.8 },
+  { key: "p85", label: "P85", dash: "", width: 1.5 },
+  { key: "p50", label: "P50", dash: "", width: 2.5, isBold: true },
+  { key: "p15", label: "P15", dash: "8 4", width: 1.5 },
+  { key: "p3", label: "P3", dash: "4 3", width: 1.2 },
 ];
 
 const YEAR_LABELS = ["1er Año", "2do Año", "3er Año", "4to Año", "5to Año"];
@@ -117,6 +121,7 @@ export const GrowthChartBase = ({
   labelMode = "on-curve",
   measurementType = "weight",
   computeExtraFields,
+  zoneLabels,
 }: GrowthChartBaseProps) => {
   const colors = getChartColors(sex);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -157,7 +162,6 @@ export const GrowthChartBase = ({
         }
       }
     };
-    // Small delay to let Recharts render
     const timer = setTimeout(updateDimensions, 100);
     window.addEventListener("resize", updateDimensions);
     return () => {
@@ -192,7 +196,6 @@ export const GrowthChartBase = ({
 
   // Build chart data merging reference + patient points into a single array
   const chartData = useMemo(() => {
-    // Start with reference data
     const refMap = new Map<number, Record<string, number>>();
     filteredRefData.forEach((ref) => {
       const base: Record<string, number> = {
@@ -209,7 +212,6 @@ export const GrowthChartBase = ({
       refMap.set(ref.month, base);
     });
 
-    // Merge patient points — add patientValue to existing month or insert new entry
     const validPoints = controls
       .filter(
         (c) =>
@@ -232,19 +234,36 @@ export const GrowthChartBase = ({
         existing.controlId = pt.controlId as any;
         existing.patientDate = pt.date as any;
       } else {
-        // Interpolate reference values for this month or just add patient data
+        // Interpolate reference values for fractional months
+        const floorMonth = Math.floor(pt.month);
+        const ceilMonth = Math.ceil(pt.month);
+        const floorData = refMap.get(floorMonth);
+        const ceilData = refMap.get(ceilMonth);
+        
         const entry: Record<string, any> = { month: pt.month, patientValue: pt.value, controlId: pt.controlId, patientDate: pt.date };
+        
+        if (floorData && ceilData && floorMonth !== ceilMonth) {
+          const fraction = pt.month - floorMonth;
+          for (const key of Object.keys(floorData)) {
+            if (key !== 'month' && typeof floorData[key] === 'number' && typeof ceilData[key] === 'number') {
+              entry[key] = floorData[key] + (ceilData[key] - floorData[key]) * fraction;
+            }
+          }
+        } else if (floorData) {
+          for (const key of Object.keys(floorData)) {
+            if (key !== 'month') entry[key] = floorData[key];
+          }
+        }
+        
         refMap.set(pt.month, entry);
       }
     });
 
-    // Sort by month
     return Array.from(refMap.values()).sort((a, b) => a.month - b.month);
   }, [filteredRefData, computeExtraFields, controls, valueField, xDomain]);
 
   const yDomain = useMemo(() => {
     if (yDomainFixed) return yDomainFixed;
-    // Collect all values from all active curve keys
     const allCurveKeys = activeCurves.map((c) => c.key);
     const refValues = chartData.flatMap((d) =>
       allCurveKeys.map((k) => d[k]).filter((v) => v !== undefined)
@@ -307,12 +326,14 @@ export const GrowthChartBase = ({
   }, [xDomain]);
 
   // ── DOT RENDERERS ───────────────────────────────────────────
-  // "on-curve" mode: render letter label at labelMonth position
+  // When zoneLabels are provided, don't render letter labels on curves
   const makeOnCurveDot =
-    (label: string) =>
+    (label: string, hasZones: boolean) =>
     (props: any) => {
       const { cx, cy, payload } = props;
       if (!payload || cx === undefined || cy === undefined) return <g />;
+      // If zone labels are provided, skip on-curve labels entirely
+      if (hasZones) return <g />;
       if (Math.abs(payload.month - effectiveLabelMonth) > 0.5) return <g />;
       return (
         <g>
@@ -332,13 +353,11 @@ export const GrowthChartBase = ({
       );
     };
 
-  // "right-numbers" mode: render numeric label at the LAST data point (right edge)
   const makeRightLabelDot =
     (label: string) =>
     (props: any) => {
       const { cx, cy, payload, index } = props;
       if (!payload || cx === undefined || cy === undefined) return <g />;
-      // Only render on the last data point
       if (index !== chartData.length - 1) return <g />;
       return (
         <g>
@@ -361,8 +380,76 @@ export const GrowthChartBase = ({
     if (labelMode === "right-numbers") {
       return makeRightLabelDot(curve.label);
     }
-    return makeOnCurveDot(curve.label);
+    return makeOnCurveDot(curve.label, !!zoneLabels);
   };
+
+  // ── ZONE LABEL RENDERER (SVG Customized) ────────────────────
+  const ZoneLabelsRenderer = useMemo(() => {
+    if (!zoneLabels || zoneLabels.length === 0) return null;
+    
+    // Find the reference data entry closest to labelMonth for positioning
+    const refEntry = chartData.find(d => d.month === effectiveLabelMonth) 
+      || chartData.reduce((closest, d) => 
+          Math.abs(d.month - effectiveLabelMonth) < Math.abs(closest.month - effectiveLabelMonth) ? d : closest
+        , chartData[0]);
+    
+    if (!refEntry) return null;
+
+    return (props: any) => {
+      const { xAxisMap, yAxisMap } = props;
+      if (!xAxisMap || !yAxisMap) return null;
+      const xAxis = Object.values(xAxisMap)[0] as any;
+      const yAxis = Object.values(yAxisMap)[0] as any;
+      if (!xAxis?.scale || !yAxis?.scale) return null;
+
+      const xPos = xAxis.scale(effectiveLabelMonth);
+
+      return (
+        <g>
+          {zoneLabels.map((zone) => {
+            const upperVal = zone.upperKey === undefined 
+              ? yDomain[1] 
+              : refEntry[zone.upperKey];
+            const lowerVal = zone.lowerKey === undefined 
+              ? yDomain[0] 
+              : refEntry[zone.lowerKey];
+            
+            if (upperVal === undefined || lowerVal === undefined) return null;
+            
+            const midVal = (upperVal + lowerVal) / 2;
+            const yPos = yAxis.scale(midVal);
+            
+            if (yPos === undefined || isNaN(yPos)) return null;
+
+            return (
+              <g key={zone.letter}>
+                <rect
+                  x={xPos - 10}
+                  y={yPos - 9}
+                  width={20}
+                  height={18}
+                  rx={3}
+                  fill="hsl(var(--background))"
+                  fillOpacity={0.85}
+                />
+                <text
+                  x={xPos}
+                  y={yPos + 5}
+                  textAnchor="middle"
+                  fontSize={14}
+                  fontWeight="bold"
+                  fill={lineColor}
+                  style={{ fontFamily: "serif" }}
+                >
+                  {zone.letter}
+                </text>
+              </g>
+            );
+          })}
+        </g>
+      );
+    };
+  }, [zoneLabels, chartData, effectiveLabelMonth, yDomain, lineColor]);
 
   if (loading) {
     return (
@@ -391,7 +478,7 @@ export const GrowthChartBase = ({
                 }}
                 variant="outline"
               >
-                P{latestDiagnosis.percentile} — {latestDiagnosis.dx.diagnosis}
+                Zona {latestDiagnosis.dx.zone} — {latestDiagnosis.dx.diagnosis}
               </Badge>
             )}
             <Button
@@ -553,16 +640,18 @@ export const GrowthChartBase = ({
                       )}
                       <div className="text-muted-foreground space-y-0.5 font-mono">
                         {activeCurves.map((c) => (
-                          <p
-                            key={c.key}
-                            className={
-                              c.isBold
-                                ? "font-bold text-foreground"
-                                : ""
-                            }
-                          >
-                            {c.label}: {data[c.key]?.toFixed(1)} {unit}
-                          </p>
+                          data[c.key] !== undefined ? (
+                            <p
+                              key={c.key}
+                              className={
+                                c.isBold
+                                  ? "font-bold text-foreground"
+                                  : ""
+                              }
+                            >
+                              {c.label}: {data[c.key]?.toFixed(1)} {unit}
+                            </p>
+                          ) : null
                         ))}
                       </div>
                     </div>
@@ -585,7 +674,7 @@ export const GrowthChartBase = ({
                 />
               ))}
 
-              {/* Patient line — uses merged data */}
+              {/* Patient line */}
               <Line
                 type="monotone"
                 dataKey="patientValue"
@@ -631,6 +720,11 @@ export const GrowthChartBase = ({
                 isAnimationActive={false}
               />
 
+              {/* Zone labels A-F rendered between curves */}
+              {ZoneLabelsRenderer && (
+                <Customized component={ZoneLabelsRenderer} />
+              )}
+
               {/* Custom annotations */}
               {annotations?.map((ann, i) => (
                 <ReferenceLine
@@ -668,20 +762,47 @@ export const GrowthChartBase = ({
             />
             Paciente
           </span>
-          {activeCurves.map((c) => (
-            <span
-              key={c.key}
-              className={`flex items-center gap-1 ${c.isBold ? "text-foreground font-bold" : "text-muted-foreground"}`}
-            >
-              <div
-                className="w-5 h-0"
-                style={{
-                  borderBottom: `${c.width}px ${c.dash ? "dashed" : "solid"} ${c.isBold ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))"}`,
-                }}
-              />
-              <span className="font-serif font-bold">{c.label}</span>
-            </span>
-          ))}
+          {zoneLabels ? (
+            /* Zone-based legend */
+            <>
+              {activeCurves.map((c) => (
+                <span
+                  key={c.key}
+                  className={`flex items-center gap-1 ${c.isBold ? "text-foreground font-bold" : "text-muted-foreground"}`}
+                >
+                  <div
+                    className="w-5 h-0"
+                    style={{
+                      borderBottom: `${c.width}px ${c.dash ? "dashed" : "solid"} ${c.isBold ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))"}`,
+                    }}
+                  />
+                  {c.label}
+                </span>
+              ))}
+              <span className="text-muted-foreground">|</span>
+              {zoneLabels.map((z) => (
+                <span key={z.letter} className="text-muted-foreground">
+                  <span className="font-serif font-bold">{z.letter}</span>={z.label}
+                </span>
+              ))}
+            </>
+          ) : (
+            /* Original curve-based legend */
+            activeCurves.map((c) => (
+              <span
+                key={c.key}
+                className={`flex items-center gap-1 ${c.isBold ? "text-foreground font-bold" : "text-muted-foreground"}`}
+              >
+                <div
+                  className="w-5 h-0"
+                  style={{
+                    borderBottom: `${c.width}px ${c.dash ? "dashed" : "solid"} ${c.isBold ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))"}`,
+                  }}
+                />
+                <span className="font-serif font-bold">{c.label}</span>
+              </span>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>

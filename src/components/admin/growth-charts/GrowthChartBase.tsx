@@ -315,12 +315,7 @@ export const GrowthChartBase = ({
 
   const monthTicks = useMemo(() => {
     const [min, max] = xDomain;
-    let interval = xTickInterval || 1;
-    if (!xTickInterval) {
-      const range = max - min;
-      if (range > 36) interval = 6;
-      else if (range > 24) interval = 3;
-    }
+    const interval = xTickInterval || 1;
     const ticks: number[] = [];
     for (let i = min; i <= max; i += interval) ticks.push(i);
     return ticks;
@@ -609,17 +604,21 @@ export const GrowthChartBase = ({
                 type="number"
                 domain={xDomain}
                 ticks={monthTicks}
-                tickFormatter={(v) => `${v}`}
-                tick={{ fontSize: 11, fill: lineColor, fontWeight: 600 }}
+                tickFormatter={(v) => {
+                  if (v === 0) return "0";
+                  const monthInYear = v % 12;
+                  return monthInYear === 0 ? "12" : `${monthInYear}`;
+                }}
+                tick={{ fontSize: 9, fill: lineColor, fontWeight: 600 }}
                 axisLine={{ stroke: lineColor, strokeWidth: 1.5 }}
                 tickLine={{ stroke: lineColor }}
               >
                 <Label
-                  value="Meses"
+                  value="EDAD EN MESES"
                   position="bottom"
                   offset={8}
                   style={{
-                    fontSize: "12px",
+                    fontSize: "11px",
                     fill: lineColor,
                     fontWeight: 700,
                   }}

@@ -263,7 +263,13 @@ export const GrowthChartBase = ({
   }, [filteredRefData, computeExtraFields, controls, valueField, xDomain]);
 
   const yDomain = useMemo(() => {
-    if (yDomainFixed) return yDomainFixed;
+    const fullMax = defaultMaxMonths || 60;
+    const isFullRange = xDomain[1] >= fullMax;
+
+    // Use fixed domain only when showing the full range
+    if (yDomainFixed && isFullRange) return yDomainFixed;
+
+    // When zoomed in, compute Y domain from visible data for correct proportions
     const allCurveKeys = activeCurves.map((c) => c.key);
     const refValues = chartData.flatMap((d) =>
       allCurveKeys.map((k) => d[k]).filter((v) => v !== undefined)
@@ -277,11 +283,12 @@ export const GrowthChartBase = ({
       )
       .map((c) => parseFloat(c[valueField]!));
     const allValues = [...refValues, ...patientValues];
-    if (allValues.length === 0) return [0, 20] as [number, number];
-    const min = Math.floor(Math.min(...allValues) - 1);
-    const max = Math.ceil(Math.max(...allValues) + 1);
-    return [Math.max(0, min), max] as [number, number];
-  }, [chartData, controls, valueField, xDomain, activeCurves, yDomainFixed]);
+    if (allValues.length === 0) return yDomainFixed || ([0, 20] as [number, number]);
+    const step = yTickInterval || 1;
+    const min = Math.floor(Math.min(...allValues) / step) * step;
+    const max = Math.ceil(Math.max(...allValues) / step) * step;
+    return [Math.max(0, min - step), max + step] as [number, number];
+  }, [chartData, controls, valueField, xDomain, activeCurves, yDomainFixed, yTickInterval, defaultMaxMonths]);
 
   const effectiveLabelMonth = labelMonth ?? Math.round(xDomain[1] * 0.75);
 

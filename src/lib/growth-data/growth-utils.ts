@@ -111,8 +111,9 @@ export const getChartColors = (sex: "M" | "F") => {
 };
 
 // Calculate -2SD and -3SD from reference data
-export const calculateSDFromRef = (ref: { p3: number; p50: number }) => {
-  const sd = (ref.p50 - ref.p3) / 1.88;
+// 1 SD ≈ (P97 - P3) / 3.76  (full spread gives visible zone separation)
+export const calculateSDFromRef = (ref: { p3: number; p50: number; p97: number }) => {
+  const sd = (ref.p97 - ref.p3) / 3.76;
   return {
     minus2sd: Math.max(0, ref.p50 - 2 * sd),
     minus3sd: Math.max(0, ref.p50 - 3 * sd),
@@ -142,7 +143,7 @@ export const getNutritionalDiagnosis = (
   referenceData: { p3: number; p15: number; p50: number; p85: number; p97: number },
   type: MeasurementType
 ): NutritionalDiagnosis => {
-  const { minus2sd, minus3sd } = calculateSDFromRef(referenceData);
+  const { minus2sd, minus3sd } = calculateSDFromRef({ p3: referenceData.p3, p50: referenceData.p50, p97: referenceData.p97 });
 
   if (type === "weight") {
     if (value > referenceData.p97) return { diagnosis: "Sobrepeso", severity: "overweight", zone: "A", color: "hsl(0, 84%, 40%)", bgColor: "hsl(0, 84%, 95%)" };

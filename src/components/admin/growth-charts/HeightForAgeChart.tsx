@@ -20,6 +20,7 @@ const HEIGHT_CURVES: CurveDefinition[] = [
 ];
 
 // Compute -2SD and -3SD
+// 1 SD ≈ (P97 - P3) / 3.76  (full spread gives visible zone separation)
 const computeHeightExtra = (ref: {
   p3: number;
   p15: number;
@@ -27,7 +28,7 @@ const computeHeightExtra = (ref: {
   p85: number;
   p97: number;
 }) => {
-  const sd = (ref.p50 - ref.p3) / 1.88;
+  const sd = (ref.p97 - ref.p3) / 3.76;
   return {
     minus2sd: Math.max(0, ref.p50 - 2 * sd),
     minus3sd: Math.max(0, ref.p50 - 3 * sd),

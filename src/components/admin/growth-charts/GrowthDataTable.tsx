@@ -38,7 +38,7 @@ export const GrowthDataTable = ({
     setEditingCell({
       controlId,
       field: "age_months",
-      value: currentAgeMonths !== undefined ? String(Math.round(currentAgeMonths)) : "",
+      value: currentAgeMonths !== undefined ? currentAgeMonths.toFixed(1) : "",
     });
   };
 
@@ -47,10 +47,13 @@ export const GrowthDataTable = ({
     setSavingId(editingCell.controlId);
 
     if (editingCell.field === "age_months") {
-      // Convert months to a control_date
-      const months = parseInt(editingCell.value, 10);
+      // Convert decimal months to a control_date
+      const months = parseFloat(editingCell.value);
       if (!isNaN(months) && patientBirthDate) {
-        const newDate = addMonths(new Date(patientBirthDate), months);
+        const birthDate = new Date(patientBirthDate);
+        const totalDays = Math.round(months * 30.44);
+        const newDate = new Date(birthDate);
+        newDate.setDate(newDate.getDate() + totalDays);
         const dateStr = newDate.toISOString().split("T")[0];
         await onUpdate(editingCell.controlId, "control_date", dateStr);
       }
@@ -110,12 +113,13 @@ export const GrowthDataTable = ({
             type="number"
             min={0}
             max={60}
+            step={0.1}
             value={editingCell.value}
             onChange={(e) => setEditingCell({ ...editingCell, value: e.target.value })}
             onKeyDown={handleKeyDown}
-            className="h-8 w-16 text-sm"
+            className="h-8 w-20 text-sm"
             autoFocus
-            placeholder="meses"
+            placeholder="ej: 3.5"
           />
           <Button size="icon" variant="ghost" className="h-6 w-6"
             onClick={handleSaveEdit} disabled={savingId === control.id}>

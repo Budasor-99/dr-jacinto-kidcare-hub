@@ -73,7 +73,11 @@ export const ClinicalInterpretation = ({
     ].filter(Boolean) as DiagnosisResult[];
   }, [controls, sex]);
 
-  const hasRisk = diagnosisResults.some(r => r.diagnosis.severity !== "normal");
+  const hasRisk = diagnosisResults.some(r => 
+    r.diagnosis.severity !== "normal" && 
+    r.diagnosis.severity !== "normal_high" && 
+    r.diagnosis.severity !== "normal_low"
+  );
 
   return (
     <div className="border rounded-lg p-4 space-y-4 bg-card">
@@ -81,7 +85,6 @@ export const ClinicalInterpretation = ({
         Interpretación Clínica
       </h3>
 
-      {/* Risk alert */}
       {hasRisk && (
         <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/30">
           <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
@@ -91,7 +94,6 @@ export const ClinicalInterpretation = ({
         </div>
       )}
 
-      {/* Diagnosis badges */}
       {diagnosisResults.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {diagnosisResults.map((r) => (
@@ -105,7 +107,7 @@ export const ClinicalInterpretation = ({
                 borderColor: r.diagnosis.color,
               }}
             >
-              {r.label}: P{r.percentile} — {r.diagnosis.diagnosis}
+              {r.label}: P{r.percentile} — Zona {r.diagnosis.zone} ({r.diagnosis.diagnosis})
             </Badge>
           ))}
         </div>

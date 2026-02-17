@@ -32,7 +32,6 @@ const DiagnosisBadge = ({ value, month, refData, type }: {
   const ref = getRefDataForMonth(month, refData);
   if (!ref) return <span className="text-muted-foreground">—</span>;
   const val = parseFloat(value);
-  const pStatus = getPercentileStatus(val, ref);
   const dx = getNutritionalDiagnosis(val, ref, type);
   return (
     <Badge
@@ -40,7 +39,7 @@ const DiagnosisBadge = ({ value, month, refData, type }: {
       className="text-[10px] px-1.5 py-0 font-semibold whitespace-nowrap"
       style={{ backgroundColor: dx.bgColor, color: dx.color, borderColor: dx.color }}
     >
-      P{pStatus.percentile} {dx.diagnosis}
+      {dx.zone} {dx.diagnosis}
     </Badge>
   );
 };

@@ -1,92 +1,110 @@
 
 
-# Plan: Diagnosticos Nutricionales Automaticos basados en Percentiles OMS/MSP
+# Correccion: Zonas A-F del estandar MSP Ecuador
 
-## Objetivo
-Agregar clasificacion nutricional automatica en las graficas de crecimiento, generando diagnosticos clinicos de:
-- **Sobrepeso** (por encima de P85-P97)
-- **Obesidad** (por encima de P97)
-- **Normal** (entre P15 y P85)
-- **Desnutricion Grado 1 / Leve** (entre P3 y P15)
-- **Desnutricion Grado 2 / Moderada** (por debajo de P3, hasta -3DE)
-- **Desnutricion Grado 3 / Severa** (por debajo de -3DE)
+## Problema
 
-Estos diagnosticos se basan en la clasificacion de Gomez/Waterlow adaptada al estandar MSP Ecuador, usando las curvas OMS que ya tenemos implementadas.
+Actualmente las letras A, B, C, D, E, F estan puestas SOBRE las lineas de las curvas (P97, P85, P50, P15, P3, -3SD). Esto es incorrecto segun el Dr. Salazar.
 
-## Donde se mostraran los diagnosticos
-
-1. **En la Interpretacion Clinica** (seccion existente): Los badges actuales que dicen "Normal / Vigilar / Evaluar" se reemplazaran por diagnosticos clinicos reales (ej: "Peso: P12 - Desnutricion Leve").
-
-2. **En la Tabla de Seguimiento** (GrowthTrackingTable): Se agregara una columna "Dx" (Diagnostico) que muestre el diagnostico nutricional por cada control.
-
-3. **En el tooltip del drag-and-drop**: Al arrastrar un punto, ademas del percentil se mostrara el diagnostico correspondiente.
-
-4. **Alerta visual en el encabezado**: Si el ultimo control tiene un diagnostico de riesgo, se mostrara una alerta destacada.
-
-## Clasificacion nutricional propuesta
-
-Basada en percentiles OMS y estandar MSP Ecuador:
+Las letras deben representar las **zonas** (espacios entre curvas), asi:
 
 ```text
-Zona Percentil         | Diagnostico Peso        | Color
------------------------|-------------------------|--------
-> P97                  | Obesidad                | Rojo
-P85 - P97              | Sobrepeso               | Naranja
-P15 - P85              | Normal                  | Verde
-P3 - P15               | Desnutricion Grado 1    | Amarillo
-< P3 (hasta -3DE)      | Desnutricion Grado 2    | Naranja
-< -3DE (curva F)       | Desnutricion Grado 3    | Rojo
-
-Para Talla:
-> P97                  | Talla Alta              | Azul
-P15 - P85              | Normal                  | Verde
-P3 - P15               | Riesgo Talla Baja       | Amarillo
-< P3                   | Talla Baja              | Rojo
-
-Para P. Cefalico:
-> P97                  | Macrocefalia             | Rojo
-P3 - P97               | Normal                  | Verde
-< P3                   | Microcefalia             | Rojo
+        (espacio superior)
+           Zona A  =  Sobrepeso
+  ───── P97 ─────────────────────────
+           Zona B  =  Normal Alto
+  ═════ P50 ═════════════════════════  (linea gruesa, mediana)
+           Zona C  =  Normal Bajo
+  - - - P3 - - - - - - - - - - - - -
+           Zona D  =  Desnutricion Grado 1
+  - - - -2DE - - - - - - - - - - - -
+           Zona E  =  Desnutricion Grado 2
+  ..... -3DE .......................
+           Zona F  =  Desnutricion Grado 3
+        (espacio inferior)
 ```
 
-## Detalles tecnicos
+Las curvas que se dibujan son 5 lineas: **P97, P50, P3, -2DE, -3DE**. Se eliminan P85 y P15 como curvas separadas.
 
-### 1. Nuevo sistema de diagnostico en `growth-utils.ts`
+## Clasificacion corregida
 
-Se creara una funcion `getNutritionalDiagnosis()` que recibe el valor, datos de referencia, y el tipo de medicion (peso/talla/pc) para retornar el diagnostico clinico correcto:
+| Zona | Ubicacion | Diagnostico |
+|------|-----------|-------------|
+| A | Por encima de P97 | Sobrepeso |
+| B | Entre P97 y P50 | Normal Alto |
+| C | Entre P50 y P3 | Normal Bajo |
+| D | Entre P3 y -2DE | Desnutricion Grado 1 |
+| E | Entre -2DE y -3DE | Desnutricion Grado 2 |
+| F | Por debajo de -3DE | Desnutricion Grado 3 |
+
+## Cambios por archivo
+
+### 1. `WeightForAgeChart.tsx`
+
+Reemplazar las 6 curvas actuales (P97, P85, P50, P15, P3, F) por 5 curvas SIN letras en las lineas:
 
 ```text
-Funcion: getNutritionalDiagnosis(value, refData, type)
-  - type: "weight" | "height" | "hc"
-  - Retorna: { diagnosis: string, severity: "normal"|"mild"|"moderate"|"severe"|"overweight"|"obese", color, bgColor }
-  - Para peso: usa -3DE (curva F estimada) para distinguir Grado 2 vs Grado 3
-  - Para talla: diagnosticos especificos de estatura
-  - Para PC: macrocefalia/microcefalia
+Curvas nuevas:
+- p97: linea solida, sin letra
+- p50: linea bold (mediana), sin letra
+- p3: linea discontinua, sin letra
+- minus2sd: linea discontinua (calculada), sin letra
+- minus3sd: linea punteada (calculada), sin letra
 ```
 
-### 2. Actualizacion de `ClinicalInterpretation.tsx`
+Actualizar `computeExtraFields` para calcular `-2DE` y `-3DE`:
+- 1 SD aprox = (P50 - P3) / 1.88
+- -2DE = P50 - 2*SD
+- -3DE = P50 - 3*SD
 
-- Reemplazar los badges genericos por diagnosticos nutricionales especificos
-- Agregar una seccion de "Diagnostico Nutricional" con iconos y colores por severidad
-- Incluir auto-generacion de texto sugerido para la evaluacion basado en los diagnosticos detectados
+### 2. `HeightForAgeChart.tsx`
 
-### 3. Actualizacion de `GrowthTrackingTable.tsx`
+Mismos cambios que peso: 5 curvas sin letras, calculo de -2DE/-3DE.
 
-- Agregar columna "Diagnostico" con badge de diagnostico nutricional por cada control
-- Color-coding segun severidad
+### 3. `GrowthChartBase.tsx`
 
-### 4. Actualizacion del tooltip en `DraggablePoint.tsx`
+Cambios principales:
 
-- Mostrar el diagnostico junto al percentil mientras se arrastra el punto
+- **Agregar soporte para "zone labels"**: Nueva propiedad `zoneLabels` que define las 6 zonas A-F con las dos curvas que las delimitan (superior e inferior).
+- **Renderizar las letras como SVG** en el centro vertical de cada zona, a la posicion horizontal de `labelMonth`. Cada letra tendra un pequeno fondo blanco para legibilidad.
+- **Eliminar los dots de letras** de las curvas (los `makeOnCurveDot` ya no pondran letras).
+- **Actualizar la leyenda** inferior para mostrar las zonas con sus diagnosticos en lugar de las curvas con letras.
+- **Actualizar el tooltip** para mostrar solo las curvas relevantes (P97, P50, P3, -2DE, -3DE) sin letras A-F.
 
-### 5. Alerta en `GrowthCardHeader.tsx`
+### 4. `growth-utils.ts`
 
-- Si el ultimo control tiene diagnostico de riesgo, mostrar alerta visual
+Actualizar `getNutritionalDiagnosis()` para la clasificacion del Dr. Salazar:
+
+**Peso:**
+- Valor > P97 --> Zona A: "Sobrepeso"
+- P50 < Valor <= P97 --> Zona B: "Normal Alto"
+- P3 < Valor <= P50 --> Zona C: "Normal Bajo"
+- -2DE < Valor <= P3 --> Zona D: "Desnutricion Grado 1"
+- -3DE < Valor <= -2DE --> Zona E: "Desnutricion Grado 2"
+- Valor <= -3DE --> Zona F: "Desnutricion Grado 3"
+
+Agregar nuevas severidades: `"normal_high"` y `"normal_low"`.
+
+Se necesita calcular -2DE y -3DE dentro de esta funcion tambien (usando los datos de referencia P50 y P3).
+
+**Talla:** Aplicar misma logica de zonas.
+
+**PC:** Mantener sistema actual (Macrocefalia/Normal/Microcefalia) ya que usa otro esquema de percentiles.
+
+### 5. `ClinicalInterpretation.tsx`
+
+Actualizar los badges para mostrar la zona (A-F) junto al diagnostico. Ej: "Peso: P45 - Zona B (Normal Alto)".
+
+### 6. `GrowthTrackingTable.tsx`
+
+Actualizar los badges de diagnostico para reflejar la nueva clasificacion con zonas.
 
 ## Archivos a modificar
-- `src/lib/growth-data/growth-utils.ts` - Nueva funcion de diagnostico nutricional
-- `src/components/admin/growth-charts/ClinicalInterpretation.tsx` - Badges con diagnosticos reales
-- `src/components/admin/growth-charts/GrowthTrackingTable.tsx` - Columna de diagnostico
-- `src/components/admin/growth-charts/DraggablePoint.tsx` - Tooltip con diagnostico
-- `src/components/admin/growth-charts/GrowthCardHeader.tsx` - Alerta de riesgo
+
+1. `src/components/admin/growth-charts/WeightForAgeChart.tsx` - 5 curvas, calculo -2DE/-3DE
+2. `src/components/admin/growth-charts/HeightForAgeChart.tsx` - 5 curvas, calculo -2DE/-3DE
+3. `src/components/admin/growth-charts/GrowthChartBase.tsx` - Zonas A-F como texto entre curvas, leyenda, tooltip
+4. `src/lib/growth-data/growth-utils.ts` - Clasificacion corregida del Dr. Salazar
+5. `src/components/admin/growth-charts/ClinicalInterpretation.tsx` - Badges con zonas
+6. `src/components/admin/growth-charts/GrowthTrackingTable.tsx` - Badges con zonas
 

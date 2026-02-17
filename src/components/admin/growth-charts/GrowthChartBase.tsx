@@ -403,49 +403,62 @@ export const GrowthChartBase = ({
       if (!xAxis?.scale || !yAxis?.scale) return null;
 
       const xPos = xAxis.scale(effectiveLabelMonth);
+      const MIN_GAP = 22; // minimum pixels between zone labels
+
+      // First pass: compute raw Y positions
+      const rawPositions = zoneLabels.map((zone) => {
+        const upperVal = zone.upperKey === undefined 
+          ? yDomain[1] 
+          : refEntry[zone.upperKey];
+        const lowerVal = zone.lowerKey === undefined 
+          ? yDomain[0] 
+          : refEntry[zone.lowerKey];
+        
+        if (upperVal === undefined || lowerVal === undefined) return null;
+        
+        const midVal = (upperVal + lowerVal) / 2;
+        const yPos = yAxis.scale(midVal);
+        
+        if (yPos === undefined || isNaN(yPos)) return null;
+        return { zone, yPos };
+      }).filter(Boolean) as Array<{ zone: ZoneLabelDefinition; yPos: number }>;
+
+      // Second pass: resolve overlaps (labels are sorted top-to-bottom, yPos increases downward)
+      const adjusted = [...rawPositions];
+      for (let i = 1; i < adjusted.length; i++) {
+        const prev = adjusted[i - 1];
+        const curr = adjusted[i];
+        if (curr.yPos - prev.yPos < MIN_GAP) {
+          curr.yPos = prev.yPos + MIN_GAP;
+        }
+      }
 
       return (
         <g>
-          {zoneLabels.map((zone) => {
-            const upperVal = zone.upperKey === undefined 
-              ? yDomain[1] 
-              : refEntry[zone.upperKey];
-            const lowerVal = zone.lowerKey === undefined 
-              ? yDomain[0] 
-              : refEntry[zone.lowerKey];
-            
-            if (upperVal === undefined || lowerVal === undefined) return null;
-            
-            const midVal = (upperVal + lowerVal) / 2;
-            const yPos = yAxis.scale(midVal);
-            
-            if (yPos === undefined || isNaN(yPos)) return null;
-
-            return (
-              <g key={zone.letter}>
-                <rect
-                  x={xPos - 10}
-                  y={yPos - 9}
-                  width={20}
-                  height={18}
-                  rx={3}
-                  fill="hsl(var(--background))"
-                  fillOpacity={0.85}
-                />
-                <text
-                  x={xPos}
-                  y={yPos + 5}
-                  textAnchor="middle"
-                  fontSize={14}
-                  fontWeight="bold"
-                  fill={lineColor}
-                  style={{ fontFamily: "serif" }}
-                >
-                  {zone.letter}
-                </text>
-              </g>
-            );
-          })}
+          {adjusted.map(({ zone, yPos }) => (
+            <g key={zone.letter}>
+              <rect
+                x={xPos - 10}
+                y={yPos - 9}
+                width={20}
+                height={18}
+                rx={3}
+                fill="hsl(var(--background))"
+                fillOpacity={0.85}
+              />
+              <text
+                x={xPos}
+                y={yPos + 5}
+                textAnchor="middle"
+                fontSize={14}
+                fontWeight="bold"
+                fill={lineColor}
+                style={{ fontFamily: "serif" }}
+              >
+                {zone.letter}
+              </text>
+            </g>
+          ))}
         </g>
       );
     };
@@ -521,11 +534,23 @@ export const GrowthChartBase = ({
                 bottom: 45,
               }}
             >
-              {/* Dense clinical grid */}
+              {/* Dense clinical grid — every month vertically, minor intervals horizontally */}
               <CartesianGrid
                 strokeDasharray="1 3"
                 stroke={gridColor}
-                strokeOpacity={0.5}
+                strokeOpacity={0.4}
+                verticalCoordinatesGenerator={({ xAxis }) => {
+                  if (!xAxis) return [];
+                  const { scale, domain } = xAxis as any;
+                  if (!scale || !domain) return [];
+                  const [minX, maxX] = domain;
+                  const coords: number[] = [];
+                  for (let m = Math.ceil(minX); m <= maxX; m += 1) {
+                    const x = scale(m);
+                    if (x !== undefined) coords.push(x);
+                  }
+                  return coords;
+                }}
                 horizontalCoordinatesGenerator={({ yAxis }) => {
                   if (!yAxis) return [];
                   const { scale, domain } = yAxis as any;

@@ -10,8 +10,6 @@ import { PageTracker } from "@/hooks/usePageTracking";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
-import MisCitas from "./pages/MisCitas";
-import PatientAuth from "./pages/PatientAuth";
 import LandingSEM from "./pages/LandingSEM";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
@@ -31,8 +29,6 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/mis-citas" element={<MisCitas />} />
-              <Route path="/paciente/auth" element={<PatientAuth />} />
               <Route path="/lp" element={<LandingSEM />} />
               <Route path="/privacidad" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />

@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Phone, Menu, X, Calendar, Lock, User, CalendarDays } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { Phone, Menu, X, Calendar, Lock } from "lucide-react";
 import logoImage from "@/assets/logo.png";
-import { usePatient } from "@/hooks/usePatient";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useAuth();
-  const { patient } = usePatient();
 
   const navLinks = [
     { href: "#inicio", label: "Inicio" },
@@ -53,23 +49,6 @@ const Header = () => {
               <span className="hidden xl:inline">099 839 6186</span>
             </a>
             
-            {/* Show "Mis Citas" if user is logged in as patient */}
-            {user && patient ? (
-              <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
-                <Link to="/mis-citas">
-                  <CalendarDays className="w-4 h-4 mr-2" />
-                  Mis Citas
-                </Link>
-              </Button>
-            ) : user ? (
-              <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
-                <Link to="/mis-citas">
-                  <User className="w-4 h-4 mr-2" />
-                  Mi Cuenta
-                </Link>
-              </Button>
-            ) : null}
-            
             <Button asChild className="bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 shadow-lg">
               <a href="#citas">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -112,16 +91,6 @@ const Header = () => {
                   <Phone className="w-4 h-4" />
                   099 839 6186
                 </a>
-                
-                {/* Mobile: Show Mis Citas link */}
-                {user && (
-                  <Button asChild variant="outline" className="w-full border-primary text-primary">
-                    <Link to="/mis-citas" onClick={() => setIsMenuOpen(false)}>
-                      <CalendarDays className="w-4 h-4 mr-2" />
-                      {patient ? "Mis Citas" : "Mi Cuenta"}
-                    </Link>
-                  </Button>
-                )}
                 
                 <Button asChild className="bg-gradient-to-r from-primary to-blue-500 w-full">
                   <a href="#citas" onClick={() => setIsMenuOpen(false)}>

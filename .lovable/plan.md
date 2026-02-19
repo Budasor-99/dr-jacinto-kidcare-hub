@@ -1,42 +1,60 @@
 
-# Integrar Calendly para Agendamiento de Citas
 
-## Resumen
-Reemplazar el formulario de citas actual en la landing page con un widget de Calendly embebido, usando tu link: `https://calendly.com/andresalazarcevallos99/30min`. Esto simplifica el proceso de agendamiento ya que Calendly maneja disponibilidad, confirmaciones y recordatorios automáticamente.
+# Optimizar Panel Admin con Calendly
 
-## Cambios Principales
+## Contexto
+Con la integracion de Calendly, las pestanas "Calendario" y "Lista" del panel admin ya no reciben datos nuevos. Solo la pestana "Pacientes" sigue siendo funcional al 100%.
 
-### 1. Reemplazar el formulario de citas en la Landing Page
-- Eliminar todo el formulario actual (autenticación con Google, campos manuales, lógica de inserción en base de datos)
-- Insertar el widget inline de Calendly directamente en la sección `#citas`
-- Mantener el diseño visual de la sección (gradiente, título, subtítulo, decoraciones)
-- El widget se cargará con el script oficial de Calendly (`assets.calendly.com/assets/external/widget.js`)
+## Cambios Propuestos
 
-### 2. Agregar Calendly también en la página SEM (/lp)
-- Agregar un botón "Agendar Cita" en la página SEM que abre Calendly en modo popup
-- Esto complementa los botones de WhatsApp y llamada existentes
+### 1. Reemplazar pestana "Calendario" con widget de Calendly
+- Eliminar el componente `AppointmentsCalendar` de la pestana
+- Insertar un iframe/widget inline de Calendly que muestre tu agenda directamente
+- Esto te permite ver, gestionar y modificar citas de Calendly sin salir del panel admin
 
-### 3. Sistema existente de citas
-- El panel de administración y la sección "Mis Citas" se mantienen intactos para historial interno y gestión clínica
-- Solo cambia la forma en que los pacientes agendan desde la landing page
+### 2. Eliminar pestana "Lista" de citas
+- Esta vista ya no aporta valor porque las citas nuevas no llegan a la tabla `appointments`
+- Se elimina la pestana y todo el codigo asociado (filtros, tabla, stats cards de citas)
+
+### 3. Simplificar las Stats Cards
+- Eliminar las 4 tarjetas de estadisticas de citas (Total, Pendientes, Confirmadas, Completadas) que ya no reflejan datos reales
+- Opcionalmente reemplazar con stats relevantes como "Total Pacientes" y "Controles este mes"
+
+### 4. Limpiar rutas obsoletas
+- Eliminar la ruta `/mis-citas` y el componente `MisCitas.tsx`
+- Eliminar la ruta `/paciente/auth` y el componente `PatientAuth.tsx`
+- Limpiar las importaciones en `App.tsx`
+
+### 5. Limpiar navegacion
+- Eliminar el enlace "Mis Citas" del header de la landing page si existe
+
+## Resultado Final
+El panel admin tendra dos pestanas:
+1. **Calendario** - Widget de Calendly embebido para gestionar citas
+2. **Pacientes** - Sistema de historias clinicas MSP (sin cambios)
 
 ---
 
-## Detalles Técnicos
+## Detalles Tecnicos
 
-### Archivo: `src/components/landing/AppointmentForm.tsx`
-- Reescribir el componente para renderizar el widget inline de Calendly
-- Usar `useEffect` para cargar el script de Calendly dinámicamente
-- El widget se mostrará dentro de un contenedor con altura fija (~700px)
-- Se eliminarán las dependencias de autenticación, formulario y lógica de base de datos para este componente
-- Se mantienen los elementos decorativos (MedicalCrosses, DotPattern, gradiente)
+### Archivo: `src/pages/Admin.tsx`
+- Eliminar la importacion de `AppointmentsCalendar`
+- Eliminar el state de `appointments`, `filterStatus`, `fetchAppointments`, `updateStatus`
+- Eliminar las stats cards de citas
+- Reemplazar `TabsContent value="calendar"` con un iframe de Calendly apuntando a `https://calendly.com/andresalazarcevallos99/30min`
+- Eliminar `TabsContent value="list"` completamente
+- Mantener `TabsContent value="patients"` intacto
 
-### Archivo: `index.html`
-- Agregar el CSS de Calendly en el `<head>`: `https://assets.calendly.com/assets/external/widget.css`
+### Archivo: `src/App.tsx`
+- Eliminar importaciones de `MisCitas` y `PatientAuth`
+- Eliminar las rutas `/mis-citas` y `/paciente/auth`
 
-### Archivo: `src/vite-env.d.ts`
-- Agregar declaración de tipo para `window.Calendly` para evitar errores de TypeScript
+### Archivos a eliminar (o dejar sin uso)
+- `src/pages/MisCitas.tsx`
+- `src/pages/PatientAuth.tsx`
+- `src/components/patient/RescheduleDialog.tsx`
+- `src/components/admin/AppointmentsCalendar.tsx` (ya no se usa)
 
-### Archivo: `src/components/sem/SEMHero.tsx`
-- Agregar un botón secundario "Agendar Cita Online" que abre Calendly en popup usando `Calendly.initPopupWidget()`
+### Archivo: `src/components/landing/Header.tsx`
+- Verificar y eliminar cualquier enlace a "Mis Citas" o "Portal Paciente"
 

@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, Award, Star, MapPin, Shield, Clock, CheckCircle2, Users, Sparkles } from "lucide-react";
+import { Phone, MessageCircle, Award, Star, MapPin, Shield, Clock, CheckCircle2, Users, Sparkles, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 import logo from "@/assets/logo.png";
@@ -127,7 +127,7 @@ const SEMHero = () => {
             </div>
 
             {/* CTAs - Premium conversion-focused design */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4">
               <Button
                 asChild
                 size="lg"
@@ -151,6 +151,22 @@ const SEMHero = () => {
                   <Phone className="w-5 h-5 mr-2.5" />
                   Llamar: 0998396186
                 </a>
+              </Button>
+            </div>
+
+            {/* Calendly CTA */}
+            <div className="flex justify-center lg:justify-start mb-6">
+              <Button
+                size="lg"
+                className="group relative bg-white text-primary hover:bg-white/90 font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-[1.02] rounded-2xl"
+                onClick={() => {
+                  if (window.Calendly) {
+                    window.Calendly.initPopupWidget({ url: 'https://calendly.com/andresalazarcevallos99/30min' });
+                  }
+                }}
+              >
+                <CalendarDays className="w-5 h-5 mr-2.5" />
+                Agendar Cita Online
               </Button>
             </div>
 

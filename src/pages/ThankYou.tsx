@@ -80,7 +80,8 @@ const ThankYou = () => {
                   <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Horario</p>
-                    <p className="text-muted-foreground text-sm">Lunes a Viernes: 9:00 - 18:00</p>
+                    <p className="text-muted-foreground text-sm">Lun-Vie: 9:00–12:00 y 15:00–20:00</p>
+                    <p className="text-muted-foreground text-sm">Sábados: 9:00–12:00</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">

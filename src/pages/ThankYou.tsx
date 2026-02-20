@@ -10,6 +10,15 @@ import doctorImage from "@/assets/doctor-profile.png";
 const ThankYou = () => {
   useEffect(() => {
     trackEvent("appointment_booked", { page: "thank_you" });
+
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+
+    return () => {
+      document.head.removeChild(meta);
+    };
   }, []);
 
   return (

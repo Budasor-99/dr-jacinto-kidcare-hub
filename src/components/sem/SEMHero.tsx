@@ -45,7 +45,7 @@ const SEMHero = () => {
             </div>
             <div className="hidden md:flex items-center gap-2 text-white/80 text-sm bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
               <Clock className="w-4 h-4" />
-              <span>9AM-7PM</span>
+              <span>9AM-8PM</span>
             </div>
           </div>
         </div>
@@ -64,8 +64,8 @@ const SEMHero = () => {
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
-                className="w-full h-full object-cover"
-              />
+                className="w-full h-full object-cover" />
+
             </div>
             
             {/* Experience Badge - Premium design */}
@@ -94,9 +94,9 @@ const SEMHero = () => {
               <Sparkles className="w-4 h-4 text-yellow-300" />
               <span className="text-sm font-bold tracking-wide">Pediatra de Confianza en Quito</span>
               <div className="flex -space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-yellow-300 text-yellow-300" />
-                ))}
+                {[...Array(5)].map((_, i) =>
+                <Star key={i} className="w-3.5 h-3.5 fill-yellow-300 text-yellow-300" />
+                )}
               </div>
             </div>
             
@@ -107,7 +107,7 @@ const SEMHero = () => {
                   Mejor Pediatra
                 </span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 8C50 2 150 2 198 8" stroke="rgba(255,255,255,0.4)" strokeWidth="3" strokeLinecap="round"/>
+                  <path d="M2 8C50 2 150 2 198 8" stroke="rgba(255,255,255,0.4)" strokeWidth="3" strokeLinecap="round" />
                 </svg>
               </span>
             </h1>
@@ -118,12 +118,12 @@ const SEMHero = () => {
 
             {/* Value propositions - Quick scan */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-7 text-sm">
-              {["Diagnóstico preciso", "Atención personalizada", "Horarios flexibles"].map((item, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-white/95">
+              {["Diagnóstico preciso", "Atención personalizada", "Horarios flexibles"].map((item, i) =>
+              <div key={i} className="flex items-center gap-1.5 text-white/95">
                   <CheckCircle2 className="w-4 h-4 text-green-300" />
                   <span className="font-medium">{item}</span>
                 </div>
-              ))}
+              )}
             </div>
 
             {/* CTAs - Premium conversion-focused design */}
@@ -132,8 +132,8 @@ const SEMHero = () => {
                 asChild
                 size="lg"
                 className="group relative bg-[#25D366] text-white hover:bg-[#1da851] font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(37,211,102,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
-                onClick={() => trackWhatsAppClick('sem_hero')}
-              >
+                onClick={() => trackWhatsAppClick('sem_hero')}>
+
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                   <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <MessageCircle className="w-5 h-5 mr-2.5 relative z-10" />
@@ -145,8 +145,8 @@ const SEMHero = () => {
                 variant="outline"
                 size="lg"
                 className="border-2 border-white/50 text-white hover:bg-white hover:text-primary font-bold text-lg h-[60px] px-8 bg-white/10 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] rounded-2xl"
-                onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_hero')}
-              >
+                onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_hero')}>
+
                 <a href={phoneUrl}>
                   <Phone className="w-5 h-5 mr-2.5" />
                   Llamar: 0998396186
@@ -163,8 +163,8 @@ const SEMHero = () => {
                   if (window.Calendly) {
                     window.Calendly.initPopupWidget({ url: 'https://calendly.com/andresalazarcevallos99/30min' });
                   }
-                }}
-              >
+                }}>
+
                 <CalendarDays className="w-5 h-5 mr-2.5" />
                 Agendar Cita Online
               </Button>
@@ -182,11 +182,11 @@ const SEMHero = () => {
       {/* Bottom wave decoration */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))"/>
+          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))" />
         </svg>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default SEMHero;

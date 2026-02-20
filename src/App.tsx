@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import LandingSEM from "./pages/LandingSEM";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/lp" element={<LandingSEM />} />
+              <Route path="/gracias" element={<ThankYou />} />
               <Route path="/privacidad" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -1,6 +1,6 @@
 import { ArrowLeft, Shield, Lock, Eye, FileText, Users, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import logoImage from "@/assets/logo.png";
+import logoImage from "@/assets/logo.svg";
 
 const PrivacyPolicy = () => {
   const currentYear = new Date().getFullYear();

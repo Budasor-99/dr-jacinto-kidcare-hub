@@ -1,31 +1,22 @@
 
 
-# Agregar meta noindex a la Thank You Page
+# Actualizar Logo en Todo el Sitio
 
 ## Resumen
-Agregar la etiqueta `noindex, nofollow` a la pagina `/gracias`, igual que en la landing SEM (`/lp`). Esto evita que Google indexe la pagina de confirmacion, lo cual es correcto porque:
-- Es una pagina post-conversion, no debe aparecer en resultados de busqueda
-- Permite medir correctamente las conversiones sin trafico organico contaminando los datos
+Reemplazar el logo actual (`logo.png`) con el nuevo logo (`nuevo_logo.png`) en todos los archivos donde se utiliza, incluyendo el favicon.
 
-## Cambio
+## Cambios
 
-### Archivo: `src/pages/ThankYou.tsx`
-- Agregar la misma logica de `noindex` que usa `LandingSEM.tsx` dentro del `useEffect` existente
-- Se creara dinamicamente una etiqueta `<meta name="robots" content="noindex, nofollow">` al montar el componente
-- Se eliminara al desmontar para no afectar otras paginas
+### 1. Copiar el nuevo logo al proyecto
+- Copiar `user-uploads://nuevo_logo.png` a `src/assets/logo.png` (reemplaza el actual)
+- Copiar `user-uploads://nuevo_logo.png` a `public/favicon.png` (reemplaza el favicon)
 
-El patron es identico al de `/lp`:
-```typescript
-useEffect(() => {
-  trackEvent("appointment_booked", { page: "thank_you" });
+### 2. No se necesitan cambios en codigo
+Todos los archivos ya importan desde `@/assets/logo.png`, asi que al reemplazar el archivo, se actualiza automaticamente en:
+- **Header** (`src/components/landing/Header.tsx`)
+- **Footer** (`src/components/landing/Footer.tsx`)
+- **SEMHero** (`src/components/sem/SEMHero.tsx`)
+- **ThankYou** (`src/pages/ThankYou.tsx`)
+- **PrivacyPolicy** (`src/pages/PrivacyPolicy.tsx`)
+- **Favicon** (`index.html` → `public/favicon.png`)
 
-  const meta = document.createElement('meta');
-  meta.name = 'robots';
-  meta.content = 'noindex, nofollow';
-  document.head.appendChild(meta);
-
-  return () => {
-    document.head.removeChild(meta);
-  };
-}, []);
-```

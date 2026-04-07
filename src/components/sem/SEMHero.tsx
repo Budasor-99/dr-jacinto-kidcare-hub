@@ -1,7 +1,7 @@
 import { Phone, MessageCircle, Award, Star, MapPin, Shield, Clock, CheckCircle2, Users, Sparkles, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 import doctorImage from "@/assets/doctor-profile.png";
 
 const WHATSAPP_NUMBER = "593998396186";

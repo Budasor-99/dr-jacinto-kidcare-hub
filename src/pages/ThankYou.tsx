@@ -4,7 +4,7 @@ import { CheckCircle, Phone, MapPin, Clock, CalendarDays, ArrowLeft, MessageCirc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/analytics";
-import logoImage from "@/assets/logo.png";
+import logoImage from "@/assets/logo.svg";
 import doctorImage from "@/assets/doctor-profile.png";
 
 const ThankYou = () => {

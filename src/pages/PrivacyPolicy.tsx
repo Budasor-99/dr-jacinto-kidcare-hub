@@ -232,7 +232,7 @@ const PrivacyPolicy = () => {
                 <p className="font-semibold text-foreground mb-2">Dr. Jacinto Salazar Vargas</p>
                 <p><strong>Dirección:</strong> Rodrigo Muñoz N81-46, Carcelén, Quito</p>
                 <p><strong>Teléfono:</strong> 099 839 6186 / 022 485 286</p>
-                <p><strong>Email:</strong> contacto@drjacintosalazar.com</p>
+                <p><strong>Email:</strong> jacinto_salazar1958@hotmail.com</p>
               </div>
             </div>
           </section>

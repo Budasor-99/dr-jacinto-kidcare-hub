@@ -104,7 +104,7 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-primary mt-0.5" />
                 <p className="text-white/60">
-                  contacto@drjacintosalazar.com
+                  jacinto_salazar1958@hotmail.com
                 </p>
               </li>
               <li className="flex items-start gap-3">

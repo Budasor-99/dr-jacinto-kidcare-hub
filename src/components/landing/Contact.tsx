@@ -20,8 +20,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    details: ["contacto@drjacintosalazar.com"],
-    action: "mailto:contacto@drjacintosalazar.com",
+    details: ["jacinto_salazar1958@hotmail.com"],
+    action: "mailto:jacinto_salazar1958@hotmail.com",
   },
   {
     icon: MapPin,

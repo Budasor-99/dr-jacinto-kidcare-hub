@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Nunito', 'sans-serif'],
         heading: ['Poppins', 'sans-serif'],
+        display: ['"Archivo Black"', 'Poppins', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -116,6 +117,20 @@ export default {
           "50%": { transform: "translate(0, -15px) scale(1)" },
           "75%": { transform: "translate(-10px, -5px) scale(0.98)" },
         },
+        "bubble-rise": {
+          "0%": { transform: "translateY(0) translateX(0) scale(0.8)", opacity: "0" },
+          "10%": { opacity: "0.7" },
+          "90%": { opacity: "0.7" },
+          "100%": { transform: "translateY(-100vh) translateX(20px) scale(1)", opacity: "0" },
+        },
+        "shimmer": {
+          "0%, 100%": { opacity: "0.4" },
+          "50%": { opacity: "1" },
+        },
+        "sway": {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -127,6 +142,9 @@ export default {
         "float-slow": "float-slow 6s ease-in-out infinite",
         "pulse-soft": "pulse-soft 2s ease-in-out infinite",
         "blob-move": "blob-move 8s ease-in-out infinite",
+        "bubble-rise": "bubble-rise 12s linear infinite",
+        "shimmer": "shimmer 3s ease-in-out infinite",
+        "sway": "sway 6s ease-in-out infinite",
       },
     },
   },

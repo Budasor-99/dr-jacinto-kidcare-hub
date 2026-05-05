@@ -2,121 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Archivo+Black&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* Design System for Dr. Jacinto Salazar - Pediatric Landing Page */
-/* Inspired by vibrant blue gradient style with organic blob shapes */
+/* Design System for Dr. Jacinto Salazar - Underwater Pediatric */
+/* Deep teal palette inspired by magical underwater storybook illustration */
 
 @layer base {
   :root {
-    /* Primary Blue - Vibrant Medical Blue */
-    --primary: 220 85% 55%;
-    --primary-foreground: 0 0% 100%;
-    
-    /* Background colors - Clean white base */
-    --background: 210 40% 98%;
-    --foreground: 220 30% 20%;
+    /* === DEEP UNDERWATER PALETTE === */
+    /* Background - deep ocean teal */
+    --background: 190 55% 8%;
+    --foreground: 175 30% 92%;
 
-    /* Card styles */
-    --card: 0 0% 100%;
-    --card-foreground: 220 30% 20%;
+    /* Cards - slightly lighter than bg, semi-transparent feel */
+    --card: 190 50% 12%;
+    --card-foreground: 175 30% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 20%;
+    --popover: 190 50% 14%;
+    --popover-foreground: 175 30% 95%;
 
-    /* Secondary - Soft blue for accents */
-    --secondary: 215 70% 95%;
-    --secondary-foreground: 220 85% 45%;
+    /* Primary - vibrant aqua/turquoise */
+    --primary: 178 75% 48%;
+    --primary-foreground: 190 60% 10%;
 
-    /* Muted tones */
-    --muted: 215 50% 94%;
-    --muted-foreground: 220 20% 50%;
+    /* Secondary - muted teal */
+    --secondary: 188 40% 18%;
+    --secondary-foreground: 175 40% 88%;
 
-    /* Accent - Vibrant blue for CTAs (matching the gradient) */
-    --accent: 220 90% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Muted - slightly desaturated teal */
+    --muted: 190 35% 16%;
+    --muted-foreground: 180 20% 70%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Accent - bright luminous turquoise */
+    --accent: 170 85% 55%;
+    --accent-foreground: 190 60% 10%;
 
-    --border: 215 40% 88%;
-    --input: 215 40% 88%;
-    --ring: 220 85% 55%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.75rem;
+    --border: 185 35% 22%;
+    --input: 185 35% 18%;
+    --ring: 178 75% 55%;
 
-    /* Custom pediatric colors */
-    --pediatric-light-blue: 210 90% 94%;
-    --pediatric-soft-pink: 340 60% 95%;
-    --pediatric-mint: 160 50% 92%;
-    --pediatric-yellow: 45 90% 90%;
-    
-    /* Blob colors for the organic shapes */
-    --blob-primary: 220 85% 55%;
-    --blob-secondary: 210 80% 60%;
-    --blob-tertiary: 200 75% 65%;
-    
-    /* Gradients - Vibrant blue gradient matching the images */
-    --gradient-hero: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(200 80% 60%) 50%, hsl(190 75% 65%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(215 70% 97%) 0%, hsl(210 60% 95%) 100%);
-    --gradient-blob: linear-gradient(135deg, hsl(220 85% 55% / 0.3) 0%, hsl(200 80% 60% / 0.2) 100%);
+    --radius: 1rem;
 
-    /* Shadows - Enhanced for depth */
-    --shadow-soft: 0 4px 20px -4px hsl(220 85% 55% / 0.2);
-    --shadow-card: 0 8px 30px -8px hsl(220 85% 55% / 0.15);
-    --shadow-glow: 0 0 50px hsl(220 85% 55% / 0.25);
+    /* Pediatric accent palette */
+    --pediatric-light-blue: 185 70% 25%;
+    --pediatric-soft-pink: 340 50% 70%;
+    --pediatric-mint: 165 60% 55%;
+    --pediatric-yellow: 50 90% 65%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Blob / decorative colors */
+    --blob-primary: 178 75% 45%;
+    --blob-secondary: 170 70% 50%;
+    --blob-tertiary: 195 60% 35%;
+
+    /* Gradients - deep sea storybook */
+    --gradient-hero: linear-gradient(180deg, hsl(190 60% 12%) 0%, hsl(185 55% 10%) 50%, hsl(192 65% 6%) 100%);
+    --gradient-deep-sea: linear-gradient(180deg, hsl(188 55% 18%) 0%, hsl(192 65% 8%) 100%);
+    --gradient-aqua-glow: linear-gradient(135deg, hsl(178 75% 48%) 0%, hsl(170 85% 55%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(190 50% 12%) 0%, hsl(190 55% 10%) 100%);
+    --gradient-blob: radial-gradient(circle, hsl(178 75% 48% / 0.3) 0%, hsl(170 80% 50% / 0.0) 70%);
+    --gradient-light-ray: linear-gradient(180deg, hsl(170 85% 65% / 0.25) 0%, transparent 100%);
+
+    /* Shadows with aqua glow */
+    --shadow-soft: 0 4px 20px -4px hsl(178 75% 48% / 0.25);
+    --shadow-card: 0 8px 32px -8px hsl(190 80% 5% / 0.6);
+    --shadow-glow: 0 0 60px hsl(170 85% 55% / 0.35);
+    --shadow-aqua: 0 10px 40px -10px hsl(178 75% 48% / 0.5);
+
+    --sidebar-background: 190 55% 10%;
+    --sidebar-foreground: 175 30% 88%;
+    --sidebar-primary: 178 75% 48%;
+    --sidebar-primary-foreground: 190 60% 10%;
+    --sidebar-accent: 188 40% 18%;
+    --sidebar-accent-foreground: 175 30% 92%;
+    --sidebar-border: 185 35% 22%;
+    --sidebar-ring: 178 75% 55%;
   }
 
+  /* The site is dark-first; .dark mirrors :root for compatibility with shadcn */
   .dark {
-    --background: 220 40% 8%;
-    --foreground: 210 40% 95%;
-
-    --card: 220 35% 12%;
-    --card-foreground: 210 40% 95%;
-
-    --popover: 220 35% 12%;
-    --popover-foreground: 210 40% 95%;
-
-    --primary: 220 85% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 30% 18%;
-    --secondary-foreground: 210 40% 90%;
-
-    --muted: 220 30% 18%;
-    --muted-foreground: 220 20% 60%;
-
-    --accent: 220 85% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 220 30% 20%;
-    --input: 220 30% 20%;
-    --ring: 220 85% 60%;
-    
-    --blob-primary: 220 85% 45%;
-    --blob-secondary: 210 80% 50%;
-    --blob-tertiary: 200 75% 55%;
-    
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 190 55% 8%;
+    --foreground: 175 30% 92%;
+    --card: 190 50% 12%;
+    --card-foreground: 175 30% 95%;
+    --popover: 190 50% 14%;
+    --popover-foreground: 175 30% 95%;
+    --primary: 178 75% 48%;
+    --primary-foreground: 190 60% 10%;
+    --secondary: 188 40% 18%;
+    --secondary-foreground: 175 40% 88%;
+    --muted: 190 35% 16%;
+    --muted-foreground: 180 20% 70%;
+    --accent: 170 85% 55%;
+    --accent-foreground: 190 60% 10%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 185 35% 22%;
+    --input: 185 35% 18%;
+    --ring: 178 75% 55%;
+    --sidebar-background: 190 55% 10%;
+    --sidebar-foreground: 175 30% 88%;
+    --sidebar-primary: 178 75% 48%;
+    --sidebar-primary-foreground: 190 60% 10%;
+    --sidebar-accent: 188 40% 18%;
+    --sidebar-accent-foreground: 175 30% 92%;
+    --sidebar-border: 185 35% 22%;
+    --sidebar-ring: 178 75% 55%;
   }
 }
 
@@ -137,22 +130,59 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--primary)) 100%);
   }
-  
+
+  .font-display {
+    font-family: 'Archivo Black', 'Poppins', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
   .bg-gradient-hero {
     background: var(--gradient-hero);
   }
-  
+
+  .bg-gradient-deep-sea {
+    background: var(--gradient-deep-sea);
+  }
+
+  .bg-gradient-aqua {
+    background: var(--gradient-aqua-glow);
+  }
+
   .shadow-soft {
     box-shadow: var(--shadow-soft);
   }
-  
+
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
-  
+
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-aqua {
+    box-shadow: var(--shadow-aqua);
+  }
+
+  /* Glass morphism over dark teal */
+  .glass-card {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--primary) / 0.15);
+  }
+
+  .glass-strong {
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--primary) / 0.2);
+  }
+
+  /* Bioluminescent particle base */
+  .bioluminescent {
+    background: radial-gradient(circle, hsl(var(--accent) / 0.9) 0%, hsl(var(--accent) / 0) 70%);
+    filter: blur(0.5px);
   }
 }

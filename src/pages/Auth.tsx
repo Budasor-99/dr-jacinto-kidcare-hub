@@ -70,22 +70,28 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-card">
+    <div className="min-h-screen bg-gradient-deep-sea flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative bubbles */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-accent/15 rounded-full blur-3xl" />
+
+      <Card className="w-full max-w-md glass-strong border-primary/20 shadow-aqua relative z-10">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Stethoscope className="w-8 h-8 text-primary" />
+          <div className="mx-auto w-16 h-16 bg-gradient-aqua rounded-full flex items-center justify-center mb-4 shadow-aqua">
+            <Stethoscope className="w-8 h-8 text-primary-foreground" />
           </div>
-          <CardTitle className="font-heading text-2xl">Panel del Doctor</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-display text-3xl uppercase text-foreground tracking-tight">
+            <span className="text-gradient">Panel</span> del Doctor
+          </CardTitle>
+          <CardDescription className="text-foreground/70">
             {isLogin ? "Inicia sesión para acceder" : "Crea una cuenta nueva"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary" /> Email
+              <Label htmlFor="email" className="flex items-center gap-2 text-foreground/90">
+                <Mail className="w-4 h-4 text-accent" /> Email
               </Label>
               <Input
                 id="email"
@@ -94,12 +100,12 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-secondary/50 border-0"
+                className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-primary" /> Contraseña
+              <Label htmlFor="password" className="flex items-center gap-2 text-foreground/90">
+                <Lock className="w-4 h-4 text-accent" /> Contraseña
               </Label>
               <Input
                 id="password"
@@ -108,10 +114,14 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-secondary/50 border-0"
+                className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-aqua text-primary-foreground hover:opacity-90 shadow-aqua font-semibold"
+              disabled={isLoading}
+            >
               {isLoading ? "Procesando..." : isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
             </Button>
           </form>
@@ -119,7 +129,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm text-accent hover:underline"
             >
               {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
             </button>

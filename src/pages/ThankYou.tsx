@@ -22,16 +22,20 @@ const ThankYou = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex flex-col">
+    <div className="min-h-screen bg-gradient-deep-sea flex flex-col relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <header className="py-4 px-4 border-b bg-background/80 backdrop-blur-sm">
+      <header className="py-4 px-4 glass-strong border-b border-primary/20 relative z-10">
         <div className="container mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src={logoImage} alt="Dr. Jacinto Salazar" className="w-10 h-10 object-contain" />
-            <span className="font-heading font-bold text-lg text-foreground">Dr. Jacinto Salazar</span>
+            <span className="font-display text-foreground uppercase tracking-tight">Dr. Jacinto Salazar</span>
           </Link>
           <Link to="/">
-            <Button variant="ghost" size="sm" className="gap-1">
+            <Button variant="ghost" size="sm" className="gap-1 text-foreground/80 hover:text-accent hover:bg-primary/10">
               <ArrowLeft className="w-4 h-4" />
               Volver al inicio
             </Button>
@@ -40,64 +44,64 @@ const ThankYou = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
+      <main className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
         <div className="max-w-2xl w-full space-y-8">
           {/* Success Icon & Message */}
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mx-auto">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-aqua mx-auto shadow-aqua">
+              <CheckCircle className="w-12 h-12 text-primary-foreground" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              ¡Cita agendada con éxito!
+            <h1 className="font-display text-4xl md:text-5xl uppercase text-foreground leading-[0.95] tracking-tight">
+              ¡Cita agendada con <span className="text-gradient">éxito!</span>
             </h1>
-            <p className="text-muted-foreground text-lg max-w-md mx-auto">
-              Gracias por confiar en el <strong>Dr. Jacinto Salazar</strong> para el cuidado de su pequeño/a. Recibirá un correo de confirmación en breve.
+            <p className="text-foreground/80 text-lg max-w-md mx-auto">
+              Gracias por confiar en el <strong className="text-foreground">Dr. Jacinto Salazar</strong> para el cuidado de su pequeño/a. Recibirá un correo de confirmación en breve.
             </p>
           </div>
 
           {/* Doctor Card */}
-          <Card className="border-primary/20 shadow-lg">
+          <Card className="glass-strong border-primary/20 shadow-aqua">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-6">
                 <img
                   src={doctorImage}
                   alt="Dr. Jacinto Salazar"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-accent/40 shadow-aqua"
                 />
                 <div>
                   <h2 className="font-heading font-bold text-lg text-foreground">Dr. Jacinto Salazar Vargas</h2>
-                  <p className="text-muted-foreground text-sm">Médico Pediatra · +30 años de experiencia</p>
+                  <p className="text-foreground/70 text-sm">Médico Pediatra · +30 años de experiencia</p>
                 </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-primary/15">
+                  <MapPin className="w-5 h-5 text-accent mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Dirección</p>
-                    <p className="text-muted-foreground text-sm">Rodrigo Muñoz N81-46, Carcelén, Quito</p>
+                    <p className="text-foreground/70 text-sm">Rodrigo Muñoz N81-46, Carcelén, Quito</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <Phone className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-primary/15">
+                  <Phone className="w-5 h-5 text-accent mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Teléfonos</p>
-                    <p className="text-muted-foreground text-sm">099 839 6186 · 022 485 286</p>
+                    <p className="text-foreground/70 text-sm">099 839 6186 · 022 485 286</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-primary/15">
+                  <Clock className="w-5 h-5 text-accent mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Horario</p>
-                    <p className="text-muted-foreground text-sm">Lun-Vie: 9:00–12:00 y 15:00–20:00</p>
-                    <p className="text-muted-foreground text-sm">Sábados: 9:00–12:00</p>
+                    <p className="text-foreground/70 text-sm">Lun-Vie: 9:00–12:00 y 15:00–20:00</p>
+                    <p className="text-foreground/70 text-sm">Sábados: 9:00–12:00</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <CalendarDays className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-background/40 border border-primary/15">
+                  <CalendarDays className="w-5 h-5 text-accent mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Modificar cita</p>
-                    <p className="text-muted-foreground text-sm">Revise el correo de Calendly</p>
+                    <p className="text-foreground/70 text-sm">Revise el correo de Calendly</p>
                   </div>
                 </div>
               </div>
@@ -105,25 +109,25 @@ const ThankYou = () => {
           </Card>
 
           {/* Recommendations */}
-          <Card>
+          <Card className="glass-card border-primary/20">
             <CardContent className="p-6">
               <h3 className="font-heading font-semibold text-foreground mb-3">📋 Recomendaciones para su visita</h3>
-              <ul className="space-y-2 text-muted-foreground text-sm">
+              <ul className="space-y-2 text-foreground/80 text-sm">
                 <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">•</span>
-                  Llegue <strong>10 minutos antes</strong> de su cita para el registro.
+                  <span className="text-accent font-bold">•</span>
+                  Llegue <strong className="text-foreground">10 minutos antes</strong> de su cita para el registro.
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">•</span>
-                  Traiga el <strong>carné de vacunación</strong> y documentos médicos previos del niño/a.
+                  <span className="text-accent font-bold">•</span>
+                  Traiga el <strong className="text-foreground">carné de vacunación</strong> y documentos médicos previos del niño/a.
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">•</span>
-                  Anote cualquier <strong>síntoma o pregunta</strong> que desee consultar.
+                  <span className="text-accent font-bold">•</span>
+                  Anote cualquier <strong className="text-foreground">síntoma o pregunta</strong> que desee consultar.
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">•</span>
-                  Si necesita cancelar, hágalo con <strong>al menos 24 horas</strong> de anticipación.
+                  <span className="text-accent font-bold">•</span>
+                  Si necesita cancelar, hágalo con <strong className="text-foreground">al menos 24 horas</strong> de anticipación.
                 </li>
               </ul>
             </CardContent>
@@ -136,13 +140,13 @@ const ThankYou = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="w-full sm:w-auto gap-2 bg-green-600 hover:bg-green-700 text-white">
+              <Button className="w-full sm:w-auto gap-2 bg-[#25D366] hover:bg-[#1da851] text-white shadow-[0_4px_15px_-3px_rgba(37,211,102,0.4)]">
                 <MessageCircle className="w-4 h-4" />
                 Escribir por WhatsApp
               </Button>
             </a>
             <Link to="/">
-              <Button variant="outline" className="w-full sm:w-auto gap-2">
+              <Button variant="outline" className="w-full sm:w-auto gap-2 border-primary/40 text-foreground hover:bg-primary/10 hover:text-foreground bg-transparent">
                 <ArrowLeft className="w-4 h-4" />
                 Volver al inicio
               </Button>

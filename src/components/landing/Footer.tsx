@@ -6,10 +6,10 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16 relative overflow-hidden">
+    <footer className="bg-gradient-deep-sea text-foreground py-16 relative overflow-hidden border-t border-primary/20">
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
@@ -19,10 +19,10 @@ const Footer = () => {
               <img src={logoImage} alt="Centro Médico Salazar Vargas" className="w-12 h-12 object-contain" />
               <div>
                 <p className="font-heading font-bold text-lg">Dr. Jacinto Salazar</p>
-                <p className="text-white/60 text-sm">Médico Pediatra</p>
+                <p className="text-foreground/70 text-sm">Médico Pediatra</p>
               </div>
             </div>
-            <p className="text-white/60 text-sm mb-4">
+            <p className="text-foreground/70 text-sm mb-4">
               Más de 30 años cuidando la salud de los más pequeños con dedicación y profesionalismo.
             </p>
             <div className="flex gap-3">
@@ -30,7 +30,7 @@ const Footer = () => {
                 href="https://www.facebook.com/profile.php?id=100063639666756"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                className="w-10 h-10 bg-primary/15 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
@@ -39,7 +39,7 @@ const Footer = () => {
                 href="https://www.instagram.com/pediatra.jacintosalazar/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
+                className="w-10 h-10 bg-primary/15 rounded-full flex items-center justify-center hover:bg-accent transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -62,7 +62,7 @@ const Footer = () => {
                 <li key={link.href}>
                   <a 
                     href={link.href} 
-                    className="text-white/60 hover:text-primary transition-colors"
+                    className="text-foreground/70 hover:text-accent transition-colors"
                   >
                     {link.label}
                   </a>
@@ -83,7 +83,7 @@ const Footer = () => {
                 "Urgencias Pediátricas",
                 "Certificados Médicos",
               ].map((service) => (
-                <li key={service} className="text-white/60">
+                <li key={service} className="text-foreground/70">
                   {service}
                 </li>
               ))}
@@ -95,21 +95,21 @@ const Footer = () => {
             <h3 className="font-heading font-bold text-lg mb-4">Contacto</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-primary mt-0.5" />
-                <div className="text-white/60">
+                <Phone className="w-5 h-5 text-accent mt-0.5" />
+                <div className="text-foreground/70">
                   <p>099 839 6186</p>
                   <p>022 485 286</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-primary mt-0.5" />
-                <p className="text-white/60">
+                <Mail className="w-5 h-5 text-accent mt-0.5" />
+                <p className="text-foreground/70">
                   jacinto_salazar1958@hotmail.com
                 </p>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                <p className="text-white/60">
+                <MapPin className="w-5 h-5 text-accent mt-0.5" />
+                <p className="text-foreground/70">
                   Rodrigo Muñoz N81-46<br />
                   Carcelén, Quito
                 </p>
@@ -119,20 +119,20 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8">
+        <div className="border-t border-primary/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-              <p className="text-white/50 text-sm text-center md:text-left">
+              <p className="text-foreground/55 text-sm text-center md:text-left">
                 © {currentYear} Dr. Jacinto Salazar. Todos los derechos reservados.
               </p>
               <Link 
                 to="/privacidad" 
-                className="text-white/50 text-sm hover:text-primary transition-colors"
+                className="text-foreground/55 text-sm hover:text-accent transition-colors"
               >
                 Política de Privacidad
               </Link>
             </div>
-            <p className="text-white/50 text-sm flex items-center gap-1">
+            <p className="text-foreground/55 text-sm flex items-center gap-1">
               Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para el bienestar infantil
             </p>
           </div>

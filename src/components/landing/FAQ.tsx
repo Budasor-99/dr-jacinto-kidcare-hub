@@ -44,22 +44,22 @@ const faqs = [
 
 const FAQ = () => {
   return (
-    <section id="faq" className="py-20 bg-secondary/20 relative overflow-hidden">
+    <section id="faq" className="py-20 bg-background relative overflow-hidden">
       {/* Decorative elements */}
-      <BlobBackground variant="subtle" />
+      <BlobBackground variant="section" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 glass-card text-accent px-4 py-2 rounded-full mb-6">
             <HelpCircle className="w-4 h-4" />
-            <span className="text-sm font-semibold">Preguntas Frecuentes</span>
+            <span className="text-sm font-semibold tracking-wide uppercase">Preguntas Frecuentes</span>
           </div>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl uppercase text-foreground mb-4 leading-[0.95] tracking-tight">
             ¿Tiene alguna
             <span className="text-gradient block">pregunta?</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
             Aquí encontrará respuestas a las preguntas más comunes de nuestros pacientes.
           </p>
         </div>
@@ -68,15 +68,15 @@ const FAQ = () => {
         <div className="max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
+              <AccordionItem
+                key={index}
                 value={`item-${index}`}
-                className="bg-card/80 backdrop-blur-sm rounded-2xl border border-primary/5 shadow-lg px-6 data-[state=open]:shadow-xl transition-all"
+                className="glass-card rounded-2xl border border-primary/20 px-6 data-[state=open]:border-accent/40 data-[state=open]:shadow-aqua transition-all"
               >
-                <AccordionTrigger className="text-left font-heading font-semibold text-foreground hover:no-underline py-6">
+                <AccordionTrigger className="text-left font-heading font-semibold text-foreground hover:text-accent hover:no-underline py-6">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-6">
+                <AccordionContent className="text-foreground/75 pb-6">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -89,9 +89,9 @@ const FAQ = () => {
           <p className="text-muted-foreground mb-4">
             ¿No encontró la respuesta que buscaba?
           </p>
-          <a 
-            href="#contacto" 
-            className="text-primary font-semibold hover:underline"
+          <a
+            href="#contacto"
+            className="text-accent font-semibold hover:underline"
           >
             Contáctenos directamente →
           </a>

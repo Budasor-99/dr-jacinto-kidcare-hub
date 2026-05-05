@@ -11,13 +11,13 @@ const SEMContact = () => {
       <div className="container mx-auto max-w-lg md:max-w-xl lg:max-w-lg relative z-10">
         {/* Compact header */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground font-heading">
-            Visítanos
+          <h2 className="text-3xl md:text-4xl font-display uppercase text-foreground tracking-tight">
+            <span className="text-gradient">Visítanos</span>
           </h2>
-          <p className="text-muted-foreground text-sm mt-1">Estamos en Carcelén, Quito</p>
+          <p className="text-foreground/75 text-sm mt-1">Estamos en Carcelén, Quito</p>
         </div>
-        
-        <Card className="bg-card border-border/50 shadow-md overflow-hidden">
+
+        <Card className="glass-strong border-primary/20 shadow-aqua overflow-hidden">
           <CardContent className="p-0">
             {/* Map first - visual hierarchy */}
             <div className="relative h-40 md:h-48">
@@ -37,7 +37,7 @@ const SEMContact = () => {
                 <Button
                   asChild
                   size="sm"
-                  className="bg-white text-foreground hover:bg-white/90 shadow-lg rounded-full text-xs font-semibold"
+                  className="bg-gradient-aqua text-primary-foreground hover:opacity-90 shadow-aqua rounded-full text-xs font-semibold"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
                     <Navigation className="w-3.5 h-3.5 mr-1.5" />
@@ -51,12 +51,12 @@ const SEMContact = () => {
             {/* Contact info - Compact grid */}
             <div className="p-5 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-aqua flex items-center justify-center flex-shrink-0 shadow-aqua">
+                  <MapPin className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground text-sm">Dirección</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-foreground/75 text-sm">
                     Rodrigo Muñoz N81-46, Carcelén
                   </p>
                 </div>
@@ -64,32 +64,32 @@ const SEMContact = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center flex-shrink-0">
                     <Clock className="w-5 h-5 text-accent" />
                   </div>
                   <div>
                     <p className="font-semibold text-foreground text-sm">Horario</p>
-                    <p className="text-muted-foreground text-xs">L-V: 9AM-7PM</p>
-                    <p className="text-muted-foreground text-xs">Sáb: 9AM-1PM</p>
+                    <p className="text-foreground/70 text-xs">L-V: 9AM-7PM</p>
+                    <p className="text-foreground/70 text-xs">Sáb: 9AM-1PM</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center flex-shrink-0">
                     <Phone className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-semibold text-foreground text-sm">Teléfono</p>
-                    <a 
-                      href="tel:0998396186" 
-                      className="text-primary text-xs font-medium hover:underline block"
+                    <a
+                      href="tel:0998396186"
+                      className="text-accent text-xs font-medium hover:underline block"
                       onClick={() => trackPhoneClick('0998396186', 'sem_contact')}
                     >
                       0998396186
                     </a>
-                    <a 
-                      href="tel:022485286" 
-                      className="text-muted-foreground text-xs hover:underline block"
+                    <a
+                      href="tel:022485286"
+                      className="text-foreground/70 text-xs hover:underline block"
                       onClick={() => trackPhoneClick('022485286', 'sem_contact')}
                     >
                       022485286

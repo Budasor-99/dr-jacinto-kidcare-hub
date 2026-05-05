@@ -17,43 +17,31 @@ const services = [
     icon: Baby,
     title: "Control del Niño Sano",
     description: "Evaluaciones periódicas para asegurar el desarrollo óptimo de su hijo desde el nacimiento.",
-    color: "bg-gradient-to-br from-primary/10 to-blue-400/10",
-    iconColor: "text-primary",
   },
   {
     icon: Syringe,
     title: "Vacunación",
     description: "Programa completo de vacunación según el esquema nacional e internacional.",
-    color: "bg-gradient-to-br from-emerald-100 to-emerald-50",
-    iconColor: "text-emerald-600",
   },
   {
     icon: Stethoscope,
     title: "Consulta General",
     description: "Atención médica integral para todas las afecciones pediátricas comunes.",
-    color: "bg-gradient-to-br from-primary/10 to-blue-300/10",
-    iconColor: "text-primary",
   },
   {
     icon: Activity,
     title: "Seguimiento del Desarrollo",
     description: "Monitoreo continuo del crecimiento físico, cognitivo y emocional.",
-    color: "bg-gradient-to-br from-amber-100 to-amber-50",
-    iconColor: "text-amber-600",
   },
   {
     icon: HeartPulse,
     title: "Urgencias Pediátricas",
     description: "Atención prioritaria para situaciones que requieren cuidado inmediato.",
-    color: "bg-gradient-to-br from-red-100 to-red-50",
-    iconColor: "text-red-500",
   },
   {
     icon: ClipboardList,
     title: "Certificados Médicos",
     description: "Documentación para escuelas, deportes y otras actividades.",
-    color: "bg-gradient-to-br from-purple-100 to-purple-50",
-    iconColor: "text-purple-600",
   },
 ];
 

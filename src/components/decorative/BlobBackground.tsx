@@ -26,8 +26,8 @@ const KelpLeft = ({ className, style }: KelpDecorationProps) => (
   </svg>
 );
 
-const KelpRight = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 200 600" className={className} fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax meet">
+const KelpRight = ({ className, style }: KelpDecorationProps) => (
+  <svg viewBox="0 0 200 600" className={className} style={style} fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax meet">
     <path
       d="M170 600 Q 140 520 150 440 Q 170 360 130 290 Q 90 220 120 140 Q 150 70 110 0 L 70 0 Q 100 80 70 160 Q 40 240 80 320 Q 120 400 90 480 Q 60 560 100 600 Z"
       fill="hsl(var(--primary) / 0.12)"

@@ -10,7 +10,7 @@ import BlobBackground from "@/components/decorative/BlobBackground";
 const faqs = [
   {
     question: "¿Cuáles son los horarios de atención?",
-    answer: "Atendemos de lunes a viernes de 9:00 AM a 1:00 PM y de 3:00 PM a 7:00 PM. Los sábados de 9:00 AM a 1:00 PM. Para urgencias, puede comunicarse al número de emergencia.",
+    answer: "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM. Para urgencias, puede comunicarse al número de emergencia.",
   },
   {
     question: "¿Aceptan seguros médicos?",

@@ -98,14 +98,14 @@ const Contact = () => {
             {/* Contact Cards */}
             <div className="grid sm:grid-cols-2 gap-4">
               {contactInfo.map((item) => (
-                <Card 
-                  key={item.title} 
-                  className="border border-primary/5 bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                <Card
+                  key={item.title}
+                  className="glass-card border-primary/20 hover:border-accent/40 hover:shadow-aqua transition-all duration-300 hover:-translate-y-1"
                 >
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-blue-400/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <item.icon className="w-6 h-6 text-primary" />
+                      <div className="w-12 h-12 bg-gradient-aqua rounded-xl flex items-center justify-center flex-shrink-0 shadow-aqua">
+                        <item.icon className="w-6 h-6 text-primary-foreground" />
                       </div>
                       <div>
                         <h3 className="font-heading font-bold text-foreground mb-1">
@@ -118,12 +118,12 @@ const Contact = () => {
                               href={item.action}
                               target={item.action.startsWith("http") ? "_blank" : undefined}
                               rel={item.action.startsWith("http") ? "noopener noreferrer" : undefined}
-                              className="block text-sm text-muted-foreground hover:text-primary transition-colors"
+                              className="block text-sm text-foreground/75 hover:text-accent transition-colors"
                             >
                               {detail}
                             </a>
                           ) : (
-                            <p key={idx} className="text-sm text-muted-foreground">
+                            <p key={idx} className="text-sm text-foreground/75">
                               {detail}
                             </p>
                           )

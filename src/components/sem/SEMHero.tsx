@@ -2,10 +2,8 @@ import { Phone, MessageCircle, Award, Star, MapPin, Shield, Clock, CheckCircle2,
 import { Button } from "@/components/ui/button";
 import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 import logo from "@/assets/logo.svg";
-import doctorImage from "@/assets/doctor-profile.png";
+import doctorImage from "@/assets/doctor-portrait-sem.png";
 import heroSem from "@/assets/hero-sem.jpg";
-import BlobBackground from "@/components/decorative/BlobBackground";
-import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const WHATSAPP_NUMBER = "593998396186";
 const PHONE_NUMBER = "0998396186";
@@ -17,38 +15,30 @@ const SEMHero = () => {
 
   return (
     <section className="relative min-h-[92vh] overflow-hidden bg-gradient-deep-sea">
-      {/* Underwater illustration background */}
+      {/* Underwater illustration background — subtle */}
       <div className="absolute inset-0">
         <img
           src={heroSem}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background" />
+        {/* Single soft glow accent */}
+        <div className="absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
       </div>
-
-      {/* Decorative bubbles & particles */}
-      <BlobBackground variant="hero" />
-      <MedicalCrosses variant="scattered" />
 
       {/* Header with Logo */}
       <div className="relative z-20 container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <img src={logo} alt="Centro Médico Salazar Vargas" className="h-10 md:h-12 drop-shadow-lg" />
-          <div className="flex items-center gap-3">
-            {/* Live availability indicator */}
-            <div className="hidden sm:flex items-center gap-2 glass-card px-4 py-2 rounded-full">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
-              </span>
-              <span className="text-foreground/90 text-sm font-medium">Disponible hoy</span>
-            </div>
-            <div className="hidden md:flex items-center gap-2 text-foreground/80 text-sm glass-card px-4 py-2 rounded-full">
-              <Clock className="w-4 h-4" />
-              <span>9AM-8PM</span>
-            </div>
+          <div className="hidden sm:flex items-center gap-2 glass-card px-4 py-2 rounded-full">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
+            </span>
+            <span className="text-foreground/90 text-sm font-medium">Disponible hoy · 9AM-8PM</span>
           </div>
         </div>
       </div>
@@ -58,32 +48,23 @@ const SEMHero = () => {
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-5xl mx-auto">
           {/* Doctor Image */}
           <div className="relative flex-shrink-0 animate-fade-in">
-            {/* Animated glow rings */}
-            <div className="absolute inset-0 bg-gradient-aqua rounded-full scale-[1.35] blur-3xl opacity-60 animate-pulse" style={{ animationDuration: "3s" }} />
-            <div className="absolute inset-0 bg-accent/20 rounded-full scale-[1.15] blur-xl" />
+            {/* Subtle single glow */}
+            <div className="absolute inset-0 bg-accent/15 rounded-full scale-110 blur-2xl" />
 
-            <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden ring-4 ring-accent/40 ring-offset-4 ring-offset-background shadow-aqua">
+            <div className="relative w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden ring-1 ring-accent/30 shadow-aqua">
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
                 className="w-full h-full object-cover" />
             </div>
 
-            {/* Experience Badge */}
-            <div className="absolute -bottom-3 -right-3 glass-strong shadow-aqua rounded-2xl px-4 py-2.5 flex items-center gap-2.5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-aqua flex items-center justify-center shadow-aqua">
-                <Award className="w-5 h-5 text-primary-foreground" />
+            {/* Experience Badge — single, refined */}
+            <div className="absolute -bottom-2 -right-2 glass-strong shadow-aqua rounded-2xl px-3.5 py-2 flex items-center gap-2">
+              <Award className="w-4 h-4 text-accent" />
+              <div className="text-left leading-tight">
+                <span className="text-base font-display text-foreground block leading-none">+30 años</span>
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">experiencia</span>
               </div>
-              <div className="text-left">
-                <span className="text-xl font-display text-foreground block leading-none">+30</span>
-                <span className="text-xs text-muted-foreground font-medium">años exp.</span>
-              </div>
-            </div>
-
-            {/* Verified badge */}
-            <div className="absolute -top-1 -left-1 glass-strong shadow-aqua rounded-2xl px-3 py-2 flex items-center gap-1.5">
-              <CheckCircle2 className="w-5 h-5 text-accent" />
-              <span className="text-xs font-bold text-foreground">Verificado</span>
             </div>
           </div>
 

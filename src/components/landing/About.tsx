@@ -1,6 +1,5 @@
 import { Award, GraduationCap, Heart, Users, CheckCircle } from "lucide-react";
-import doctorWithBabyImage from "@/assets/doctor-with-baby.png";
-import aboutIllustration from "@/assets/about-illustration.jpg";
+import aboutIllustration from "@/assets/about-illustration.png";
 import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 

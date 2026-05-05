@@ -33,19 +33,12 @@ const SEMHero = () => {
       <div className="relative z-20 container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <img src={logo} alt="Centro Médico Salazar Vargas" className="h-10 md:h-12 drop-shadow-lg" />
-          <div className="flex items-center gap-3">
-            {/* Live availability indicator */}
-            <div className="hidden sm:flex items-center gap-2 glass-card px-4 py-2 rounded-full">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
-              </span>
-              <span className="text-foreground/90 text-sm font-medium">Disponible hoy</span>
-            </div>
-            <div className="hidden md:flex items-center gap-2 text-foreground/80 text-sm glass-card px-4 py-2 rounded-full">
-              <Clock className="w-4 h-4" />
-              <span>9AM-8PM</span>
-            </div>
+          <div className="hidden sm:flex items-center gap-2 glass-card px-4 py-2 rounded-full">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
+            </span>
+            <span className="text-foreground/90 text-sm font-medium">Disponible hoy · 9AM-8PM</span>
           </div>
         </div>
       </div>

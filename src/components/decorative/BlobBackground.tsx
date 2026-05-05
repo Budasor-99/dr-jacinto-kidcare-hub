@@ -60,7 +60,7 @@ const BlobBackground = ({ variant = "hero", className }: BlobBackgroundProps) =>
 
         {/* Kelp silhouettes on edges */}
         <KelpLeft className="absolute bottom-0 left-0 h-[70%] w-auto opacity-60 origin-bottom animate-sway" />
-        <KelpRight className="absolute bottom-0 right-0 h-[70%] w-auto opacity-60 origin-bottom animate-sway" style={{ animationDelay: "1.5s" } as any} />
+        <KelpRight className="absolute bottom-0 right-0 h-[70%] w-auto opacity-60 origin-bottom animate-sway" style={{ animationDelay: "1.5s" }} />
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { CalendarDays } from "lucide-react";
+import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
-import DotPattern from "@/components/decorative/DotPattern";
 
 const CALENDLY_URL = "https://calendly.com/andresalazarcevallos99/30min";
 
@@ -18,32 +18,29 @@ const AppointmentForm = () => {
   }, []);
 
   return (
-    <section id="citas" className="py-20 bg-gradient-to-r from-primary via-primary/95 to-blue-500 relative overflow-hidden">
+    <section id="citas" className="py-20 bg-gradient-deep-sea relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute inset-0">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-      </div>
-      <MedicalCrosses variant="scattered" className="opacity-30" />
-      <DotPattern className="opacity-20" dotSize={2} gap={40} opacity={0.15} />
-      
+      <BlobBackground variant="section" />
+      <MedicalCrosses variant="scattered" />
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 glass-card text-accent px-4 py-2 rounded-full mb-6">
             <CalendarDays className="w-4 h-4" />
-            <span className="text-sm font-semibold">Agendar Cita</span>
+            <span className="text-sm font-semibold tracking-wide uppercase">Agendar Cita</span>
           </div>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Reserve su cita hoy
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl uppercase text-foreground mb-4 leading-[0.95] tracking-tight">
+            Reserve su
+            <span className="text-gradient block">cita hoy</span>
           </h2>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+          <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
             Seleccione el horario que más le convenga y agende su cita en segundos.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="max-w-3xl mx-auto glass-strong rounded-3xl shadow-aqua overflow-hidden p-2">
           <div
-            className="calendly-inline-widget"
+            className="calendly-inline-widget rounded-2xl overflow-hidden"
             data-url={CALENDLY_URL}
             style={{ minWidth: "320px", height: "700px" }}
           />

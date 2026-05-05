@@ -48,18 +48,21 @@ const SEMHero = () => {
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-5xl mx-auto">
           {/* Doctor Image */}
           <div className="relative flex-shrink-0 animate-fade-in">
-            {/* Subtle single glow */}
-            <div className="absolute inset-0 bg-accent/15 rounded-full scale-110 blur-2xl" />
+            {/* Soft aqua glow */}
+            <div className="absolute -inset-4 bg-accent/20 rounded-3xl blur-3xl" />
+            <div className="absolute -inset-2 bg-primary/15 rounded-3xl blur-2xl" />
 
-            <div className="relative w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden ring-1 ring-accent/30 shadow-aqua">
+            <div className="relative w-56 h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-3xl overflow-hidden ring-1 ring-accent/30 shadow-aqua">
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
                 className="w-full h-full object-cover" />
+              {/* Subtle bottom gradient for badge legibility */}
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/80 to-transparent pointer-events-none" />
             </div>
 
             {/* Experience Badge — single, refined */}
-            <div className="absolute -bottom-2 -right-2 glass-strong shadow-aqua rounded-2xl px-3.5 py-2 flex items-center gap-2">
+            <div className="absolute -bottom-3 -right-3 glass-strong shadow-aqua rounded-2xl px-3.5 py-2 flex items-center gap-2">
               <Award className="w-4 h-4 text-accent" />
               <div className="text-left leading-tight">
                 <span className="text-base font-display text-foreground block leading-none">+30 años</span>

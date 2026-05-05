@@ -6,10 +6,10 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-16 relative overflow-hidden">
+    <footer className="bg-gradient-deep-sea text-foreground py-16 relative overflow-hidden border-t border-primary/20">
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">

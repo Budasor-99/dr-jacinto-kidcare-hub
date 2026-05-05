@@ -80,19 +80,19 @@ const Header = () => {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-foreground/80 hover:text-primary font-medium transition-colors py-2"
+                  className="text-foreground/80 hover:text-accent font-medium transition-colors py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
                 </a>
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-border">
-                <a href="tel:0998396186" className="flex items-center gap-2 text-primary font-semibold">
+                <a href="tel:0998396186" className="flex items-center gap-2 text-accent font-semibold">
                   <Phone className="w-4 h-4" />
                   099 839 6186
                 </a>
-                
-                <Button asChild className="bg-gradient-to-r from-primary to-blue-500 w-full">
+
+                <Button asChild className="bg-gradient-aqua text-primary-foreground hover:opacity-90 w-full font-semibold">
                   <a href="#citas" onClick={() => setIsMenuOpen(false)}>
                     <Calendar className="w-4 h-4 mr-2" />
                     Agendar Cita

@@ -164,15 +164,15 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <Card className="border border-primary/5 bg-card/80 backdrop-blur-sm shadow-xl">
+          <Card className="glass-strong border-primary/20 shadow-aqua">
             <CardContent className="p-8">
-              <h3 className="font-heading text-2xl font-bold text-foreground mb-6">
-                Envíenos un mensaje
+              <h3 className="font-display text-3xl uppercase text-foreground mb-6 tracking-tight">
+                Envíenos un <span className="text-gradient">mensaje</span>
               </h3>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nombre completo</Label>
+                    <Label htmlFor="name" className="text-foreground/90">Nombre completo</Label>
                     <Input
                       id="name"
                       name="name"
@@ -180,11 +180,11 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="bg-secondary/50 border-primary/10"
+                      className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Teléfono</Label>
+                    <Label htmlFor="phone" className="text-foreground/90">Teléfono</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -193,12 +193,12 @@ const Contact = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="bg-secondary/50 border-primary/10"
+                      className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-foreground/90">Email</Label>
                   <Input
                     id="email"
                     name="email"
@@ -207,11 +207,11 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="bg-secondary/50 border-primary/10"
+                    className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="message">Mensaje</Label>
+                  <Label htmlFor="message" className="text-foreground/90">Mensaje</Label>
                   <Textarea
                     id="message"
                     name="message"
@@ -220,13 +220,13 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    className="bg-secondary/50 border-primary/10 resize-none"
+                    className="bg-background/50 border-primary/30 focus-visible:border-accent text-foreground placeholder:text-muted-foreground resize-none"
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  className="w-full bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 shadow-lg"
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full bg-gradient-aqua text-primary-foreground hover:opacity-90 shadow-aqua font-semibold"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

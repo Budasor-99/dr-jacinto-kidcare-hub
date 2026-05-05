@@ -149,7 +149,7 @@ const Contact = () => {
             </Button>
 
             {/* Map */}
-            <div className="rounded-2xl overflow-hidden shadow-xl h-64 border border-primary/10">
+            <div className="rounded-2xl overflow-hidden shadow-aqua h-64 border border-primary/30">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7960547559073!2d-78.47659!3d-0.0876095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d58f39ba1b512f%3A0xeb91b03c774a09e9!2sRodrigo%20Mu%C3%B1oz%20N81-46%2C%20Quito%20170302!5e0!3m2!1ses!2sec!4v1"
                 width="100%"

@@ -27,17 +27,26 @@ const About = () => {
       <BlobBackground variant="section" />
       <MedicalCrosses variant="minimal" />
 
+      {/* Decorative underwater illustration */}
+      <img
+        src={aboutIllustration}
+        alt=""
+        aria-hidden="true"
+        className="absolute left-0 bottom-0 h-full w-1/3 object-cover object-right opacity-25 pointer-events-none hidden lg:block"
+        loading="lazy"
+      />
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Image Side */}
           <div className="relative animate-fade-in">
             <div className="relative mx-auto max-w-md">
               {/* Background decorative shapes */}
-              <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-to-br from-primary/20 to-blue-400/10 rounded-3xl animate-blob-move" />
-              <div className="absolute -bottom-6 -right-6 w-full h-full bg-gradient-to-tr from-blue-400/15 to-primary/10 rounded-3xl" />
-              
+              <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-aqua opacity-30 rounded-3xl animate-blob-move blur-xl" />
+              <div className="absolute -bottom-6 -right-6 w-full h-full bg-accent/20 rounded-3xl blur-xl" />
+
               {/* Main image */}
-              <div className="relative bg-gradient-to-br from-primary to-blue-500 rounded-3xl overflow-hidden shadow-xl">
+              <div className="relative bg-gradient-aqua rounded-3xl overflow-hidden shadow-aqua">
                 <img
                   src={doctorWithBabyImage}
                   alt="Dr. Jacinto Salazar con paciente"
@@ -46,9 +55,9 @@ const About = () => {
               </div>
 
               {/* Experience badge */}
-              <div className="absolute -bottom-6 -right-6 bg-card shadow-xl rounded-2xl p-4 flex items-center gap-3 border border-primary/10">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-heading font-bold text-lg">30+</span>
+              <div className="absolute -bottom-6 -right-6 glass-strong shadow-card rounded-2xl p-4 flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-aqua rounded-full flex items-center justify-center">
+                  <span className="text-primary-foreground font-display text-lg">30+</span>
                 </div>
                 <div>
                   <p className="font-heading font-bold text-foreground">Años</p>
@@ -60,26 +69,27 @@ const About = () => {
 
           {/* Content Side */}
           <div className="animate-slide-in-right">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 glass-card text-accent px-4 py-2 rounded-full mb-6">
               <Heart className="w-4 h-4" />
-              <span className="text-sm font-semibold">Conozca al Doctor</span>
+              <span className="text-sm font-semibold tracking-wide uppercase">Conozca al Doctor</span>
             </div>
 
-            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              Dr. Jacinto Salazar
-              <span className="text-gradient block text-2xl md:text-3xl mt-2">Médico Pediatra</span>
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl uppercase text-foreground mb-6 leading-[0.95] tracking-tight">
+              Dr. Jacinto
+              <span className="text-gradient block">Salazar</span>
+              <span className="block text-base md:text-lg text-muted-foreground font-sans font-normal mt-3 normal-case tracking-normal">Médico Pediatra</span>
             </h2>
 
-            <p className="text-lg text-muted-foreground mb-6">
-              Con más de 30 años dedicados al cuidado de la salud infantil, el Dr. Jacinto Salazar 
-              ha construido una reputación basada en la excelencia médica y el trato humano. 
-              Su filosofía se centra en una atención personalizada donde cada niño y su familia 
+            <p className="text-lg text-foreground/80 mb-6">
+              Con más de 30 años dedicados al cuidado de la salud infantil, el Dr. Jacinto Salazar
+              ha construido una reputación basada en la excelencia médica y el trato humano.
+              Su filosofía se centra en una atención personalizada donde cada niño y su familia
               reciben el tiempo y la dedicación que merecen.
             </p>
 
             <p className="text-muted-foreground mb-8">
-              Graduado de la prestigiosa Universidad Central del Ecuador, el Dr. Salazar se mantiene 
-              en constante actualización para ofrecer los tratamientos más modernos y efectivos 
+              Graduado de la prestigiosa Universidad Central del Ecuador, el Dr. Salazar se mantiene
+              en constante actualización para ofrecer los tratamientos más modernos y efectivos
               a sus pequeños pacientes.
             </p>
 
@@ -88,8 +98,8 @@ const About = () => {
               <h3 className="font-heading font-bold text-lg text-foreground mb-4">Especialidades</h3>
               <div className="grid grid-cols-2 gap-3">
                 {specialties.map((specialty) => (
-                  <div key={specialty} className="flex items-center gap-2 text-muted-foreground">
-                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div key={specialty} className="flex items-center gap-2 text-foreground/80">
+                    <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                     <span>{specialty}</span>
                   </div>
                 ))}
@@ -99,11 +109,11 @@ const About = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {achievements.map((item) => (
-                <div 
+                <div
                   key={item.value}
-                  className="text-center p-4 bg-gradient-to-br from-secondary to-primary/5 rounded-2xl border border-primary/10"
+                  className="text-center p-4 glass-card rounded-2xl hover:border-accent/40 transition-colors"
                 >
-                  <item.icon className="w-6 h-6 text-primary mx-auto mb-2" />
+                  <item.icon className="w-6 h-6 text-accent mx-auto mb-2" />
                   <p className="font-heading font-bold text-foreground text-sm">{item.value}</p>
                 </div>
               ))}

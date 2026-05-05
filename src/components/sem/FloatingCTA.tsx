@@ -14,17 +14,17 @@ const FloatingCTA = () => {
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       {/* Premium gradient fade */}
       <div className="absolute -top-8 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/80 to-transparent" />
-      
-      <div className="bg-background/98 backdrop-blur-xl border-t border-border/30 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.15)] px-4 py-3 safe-area-pb">
+
+      <div className="bg-background/95 backdrop-blur-xl border-t border-primary/20 shadow-aqua px-4 py-3 safe-area-pb">
         {/* Urgency text */}
         <div className="flex items-center justify-center gap-2 mb-2">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          <span className="text-xs font-medium text-muted-foreground">Disponible ahora • Respuesta inmediata</span>
+          <span className="text-xs font-medium text-foreground/80">Disponible ahora • Respuesta inmediata</span>
         </div>
-        
+
         <div className="flex gap-2.5 max-w-sm mx-auto">
           <Button
             asChild
@@ -32,18 +32,18 @@ const FloatingCTA = () => {
             onClick={() => trackWhatsAppClick('sem_floating_cta')}
           >
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="w-4.5 h-4.5 mr-2" />
+              <MessageCircle className="w-4 h-4 mr-2" />
               WhatsApp
             </a>
           </Button>
           <Button
             asChild
             variant="outline"
-            className="flex-1 border-2 border-primary/30 text-primary hover:bg-primary/5 font-semibold h-12 text-sm rounded-xl transition-all duration-200 active:scale-[0.98]"
+            className="flex-1 border-2 border-accent/50 text-accent hover:bg-accent/10 hover:text-accent font-semibold h-12 text-sm rounded-xl transition-all duration-200 active:scale-[0.98] bg-transparent"
             onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_floating_cta')}
           >
             <a href={phoneUrl}>
-              <Phone className="w-4.5 h-4.5 mr-1.5" />
+              <Phone className="w-4 h-4 mr-1.5" />
               Llamar
             </a>
           </Button>

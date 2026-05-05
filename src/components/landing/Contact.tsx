@@ -71,7 +71,7 @@ const Contact = () => {
   const whatsappLink = `https://wa.me/593998396186?text=${whatsappMessage}`;
 
   return (
-    <section id="contacto" className="py-20 bg-background relative overflow-hidden">
+    <section id="contacto" className="py-20 bg-gradient-deep-sea relative overflow-hidden">
       {/* Decorative elements */}
       <BlobBackground variant="section" />
       <MedicalCrosses variant="minimal" />
@@ -79,15 +79,15 @@ const Contact = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 glass-card text-accent px-4 py-2 rounded-full mb-6">
             <Mail className="w-4 h-4" />
-            <span className="text-sm font-semibold">Contacto</span>
+            <span className="text-sm font-semibold tracking-wide uppercase">Contacto</span>
           </div>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl uppercase text-foreground mb-4 leading-[0.95] tracking-tight">
             ¿Listo para
             <span className="text-gradient block">agendar?</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-foreground/80 max-w-2xl mx-auto">
             Contáctenos por el medio que prefiera. Estamos aquí para atenderle.
           </p>
         </div>

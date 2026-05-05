@@ -6,18 +6,22 @@ const PrivacyPolicy = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
+    <div className="min-h-screen bg-gradient-deep-sea relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+      <header className="glass-strong border-b border-primary/20 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <img src={logoImage} alt="Dr. Jacinto Salazar" className="w-10 h-10 object-contain" />
-              <span className="font-heading font-bold text-foreground">Dr. Jacinto Salazar</span>
+              <span className="font-display text-foreground uppercase tracking-tight">Dr. Jacinto Salazar</span>
             </Link>
-            <Link 
-              to="/" 
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-sm text-foreground/75 hover:text-accent transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Volver al inicio
@@ -27,17 +31,17 @@ const PrivacyPolicy = () => {
       </header>
 
       {/* Content */}
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
-        <div className="bg-white rounded-2xl shadow-soft p-8 md:p-12">
+      <main className="container mx-auto px-4 py-12 max-w-4xl relative z-10">
+        <div className="glass-strong border border-primary/20 rounded-3xl shadow-aqua p-8 md:p-12">
           {/* Title */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-              <Shield className="w-8 h-8 text-primary" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-aqua rounded-full mb-4 shadow-aqua">
+              <Shield className="w-8 h-8 text-primary-foreground" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-2">
-              Política de Privacidad
+            <h1 className="font-display text-4xl md:text-5xl uppercase text-foreground mb-2 leading-[0.95] tracking-tight">
+              Política de <span className="text-gradient">Privacidad</span>
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-foreground/70">
               Última actualización: Enero {currentYear}
             </p>
           </div>

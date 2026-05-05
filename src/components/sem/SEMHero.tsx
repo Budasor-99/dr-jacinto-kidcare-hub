@@ -87,8 +87,8 @@ const SEMHero = () => {
             </div>
 
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase text-foreground mb-5 leading-[0.95] tracking-tight">
-              Tu Hijo Merece al{" "}
-              <span className="text-gradient block">Mejor Pediatra</span>
+              La salud de tus hijos{" "}
+              <span className="text-gradient block">en las mejores manos</span>
             </h1>
 
             <p className="text-lg md:text-xl text-foreground/85 mb-6 max-w-lg mx-auto lg:mx-0 leading-relaxed">

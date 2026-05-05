@@ -17,15 +17,15 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md shadow-lg border-b border-primary/5">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-primary/10 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#inicio" className="flex items-center gap-3">
-            <img src={logoImage} alt="Centro Médico Salazar Vargas" className="w-12 h-12 object-contain" />
+            <img src={logoImage} alt="Centro Médico Salazar Vargas" className="w-12 h-12 object-contain brightness-0 invert" />
             <div className="hidden sm:block">
-              <p className="font-heading font-bold text-foreground text-lg leading-tight">Dr. Jacinto Salazar</p>
-              <p className="text-muted-foreground text-sm">Médico Pediatra</p>
+              <p className="font-display text-foreground text-base uppercase leading-tight tracking-wide">Pediatra</p>
+              <p className="text-accent text-sm font-semibold tracking-wider uppercase">Jacinto Salazar</p>
             </div>
           </a>
 
@@ -35,7 +35,7 @@ const Header = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-foreground/80 hover:text-primary font-medium transition-colors"
+                className="text-foreground/80 hover:text-accent font-medium transition-colors"
               >
                 {link.label}
               </a>
@@ -44,18 +44,18 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="tel:0998396186" className="flex items-center gap-2 text-primary font-semibold">
+            <a href="tel:0998396186" className="flex items-center gap-2 text-accent font-semibold">
               <Phone className="w-4 h-4" />
               <span className="hidden xl:inline">099 839 6186</span>
             </a>
-            
-            <Button asChild className="bg-gradient-to-r from-primary to-blue-500 hover:opacity-90 shadow-lg">
+
+            <Button asChild className="bg-gradient-aqua text-primary-foreground hover:opacity-90 shadow-aqua font-semibold">
               <a href="#citas">
                 <Calendar className="w-4 h-4 mr-2" />
                 Agendar Cita
               </a>
             </Button>
-            <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+            <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-accent">
               <Link to="/auth" aria-label="Panel del Doctor">
                 <Lock className="w-4 h-4" />
               </Link>

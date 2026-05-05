@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Nunito', 'sans-serif'],
         heading: ['Poppins', 'sans-serif'],
+        display: ['"Archivo Black"', 'Poppins', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

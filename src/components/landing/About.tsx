@@ -26,14 +26,7 @@ const About = () => {
       <BlobBackground variant="section" />
       <MedicalCrosses variant="minimal" />
 
-      {/* Decorative underwater illustration */}
-      <img
-        src={aboutIllustration}
-        alt=""
-        aria-hidden="true"
-        className="absolute left-0 bottom-0 h-full w-1/3 object-cover object-right opacity-25 pointer-events-none hidden lg:block"
-        loading="lazy"
-      />
+      {/* Decorative crosses only — illustration is now the protagonist */}
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -44,11 +37,11 @@ const About = () => {
               <div className="absolute -top-6 -left-6 w-full h-full bg-gradient-aqua opacity-30 rounded-3xl animate-blob-move blur-xl" />
               <div className="absolute -bottom-6 -right-6 w-full h-full bg-accent/20 rounded-3xl blur-xl" />
 
-              {/* Main image */}
-              <div className="relative bg-gradient-aqua rounded-3xl overflow-hidden shadow-aqua">
+              {/* Main illustration */}
+              <div className="relative rounded-3xl overflow-hidden shadow-aqua border border-primary/20">
                 <img
-                  src={doctorWithBabyImage}
-                  alt="Dr. Jacinto Salazar con paciente"
+                  src={aboutIllustration}
+                  alt="Dr. Jacinto Salazar con paciente pediátrico"
                   className="w-full h-auto object-cover"
                 />
               </div>

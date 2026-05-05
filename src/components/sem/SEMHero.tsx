@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { trackWhatsAppClick, trackPhoneClick } from "@/lib/analytics";
 import logo from "@/assets/logo.svg";
 import doctorImage from "@/assets/doctor-profile.png";
+import heroSem from "@/assets/hero-sem.jpg";
+import BlobBackground from "@/components/decorative/BlobBackground";
+import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
 const WHATSAPP_NUMBER = "593998396186";
 const PHONE_NUMBER = "0998396186";
@@ -13,37 +16,36 @@ const SEMHero = () => {
   const phoneUrl = `tel:${PHONE_NUMBER}`;
 
   return (
-    <section className="relative min-h-[92vh] overflow-hidden">
-      {/* Premium gradient background with multiple layers */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent/80" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/15 via-transparent to-transparent" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-accent/30 via-transparent to-transparent" />
-      
-      {/* Animated decorative orbs */}
-      <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-white/8 blur-3xl animate-pulse" style={{ animationDuration: "4s" }} />
-      <div className="absolute -bottom-48 -left-48 w-[600px] h-[600px] rounded-full bg-accent/25 blur-3xl animate-pulse" style={{ animationDuration: "6s" }} />
-      <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-white/5 blur-2xl animate-pulse" style={{ animationDuration: "5s" }} />
-      <div className="absolute bottom-1/4 left-1/3 w-48 h-48 rounded-full bg-primary/30 blur-2xl animate-pulse" style={{ animationDuration: "3s" }} />
+    <section className="relative min-h-[92vh] overflow-hidden bg-gradient-deep-sea">
+      {/* Underwater illustration background */}
+      <div className="absolute inset-0">
+        <img
+          src={heroSem}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background" />
+      </div>
 
-      {/* Subtle medical cross pattern */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-      }} />
+      {/* Decorative bubbles & particles */}
+      <BlobBackground variant="hero" />
+      <MedicalCrosses variant="scattered" />
 
-      {/* Header with Logo - Enhanced with availability indicator */}
+      {/* Header with Logo */}
       <div className="relative z-20 container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <img src={logo} alt="Centro Médico Salazar Vargas" className="h-10 md:h-12 brightness-0 invert drop-shadow-lg" />
+          <img src={logo} alt="Centro Médico Salazar Vargas" className="h-10 md:h-12 drop-shadow-lg" />
           <div className="flex items-center gap-3">
             {/* Live availability indicator */}
-            <div className="hidden sm:flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+            <div className="hidden sm:flex items-center gap-2 glass-card px-4 py-2 rounded-full">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
               </span>
-              <span className="text-white/90 text-sm font-medium">Disponible hoy</span>
+              <span className="text-foreground/90 text-sm font-medium">Disponible hoy</span>
             </div>
-            <div className="hidden md:flex items-center gap-2 text-white/80 text-sm bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div className="hidden md:flex items-center gap-2 text-foreground/80 text-sm glass-card px-4 py-2 rounded-full">
               <Clock className="w-4 h-4" />
               <span>9AM-8PM</span>
             </div>
@@ -54,88 +56,77 @@ const SEMHero = () => {
       {/* Hero Content */}
       <div className="relative z-10 container mx-auto px-4 pb-20 pt-6 lg:pt-10">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 max-w-5xl mx-auto">
-          {/* Doctor Image - Enhanced with floating elements */}
+          {/* Doctor Image */}
           <div className="relative flex-shrink-0 animate-fade-in">
             {/* Animated glow rings */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-accent/40 rounded-full scale-[1.35] blur-3xl animate-pulse" style={{ animationDuration: "3s" }} />
-            <div className="absolute inset-0 bg-white/15 rounded-full scale-[1.15] blur-xl" />
-            
-            <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden ring-4 ring-white/25 ring-offset-4 ring-offset-primary/30 shadow-[0_25px_80px_-12px_rgba(0,0,0,0.35)]">
+            <div className="absolute inset-0 bg-gradient-aqua rounded-full scale-[1.35] blur-3xl opacity-60 animate-pulse" style={{ animationDuration: "3s" }} />
+            <div className="absolute inset-0 bg-accent/20 rounded-full scale-[1.15] blur-xl" />
+
+            <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full overflow-hidden ring-4 ring-accent/40 ring-offset-4 ring-offset-background shadow-aqua">
               <img
                 src={doctorImage}
                 alt="Dr. Jacinto Salazar"
                 className="w-full h-full object-cover" />
-
             </div>
-            
-            {/* Experience Badge - Premium design */}
-            <div className="absolute -bottom-3 -right-3 bg-white shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] rounded-2xl px-4 py-2.5 flex items-center gap-2.5 border border-primary/5">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary via-primary to-accent flex items-center justify-center shadow-lg">
-                <Award className="w-5 h-5 text-white" />
+
+            {/* Experience Badge */}
+            <div className="absolute -bottom-3 -right-3 glass-strong shadow-aqua rounded-2xl px-4 py-2.5 flex items-center gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-aqua flex items-center justify-center shadow-aqua">
+                <Award className="w-5 h-5 text-primary-foreground" />
               </div>
               <div className="text-left">
-                <span className="text-xl font-bold text-foreground block leading-none">+30</span>
+                <span className="text-xl font-display text-foreground block leading-none">+30</span>
                 <span className="text-xs text-muted-foreground font-medium">años exp.</span>
               </div>
             </div>
 
-            {/* Verified badge - Top left */}
-            <div className="absolute -top-1 -left-1 bg-white shadow-lg rounded-2xl px-3 py-2 flex items-center gap-1.5 border border-primary/5">
-              <CheckCircle2 className="w-5 h-5 text-green-500" />
+            {/* Verified badge */}
+            <div className="absolute -top-1 -left-1 glass-strong shadow-aqua rounded-2xl px-3 py-2 flex items-center gap-1.5">
+              <CheckCircle2 className="w-5 h-5 text-accent" />
               <span className="text-xs font-bold text-foreground">Verificado</span>
             </div>
-
           </div>
 
-          {/* Text Content - Enhanced hierarchy */}
+          {/* Text Content */}
           <div className="text-center lg:text-left flex-1 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            {/* Trust badge with sparkle */}
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md text-white px-5 py-2.5 rounded-full mb-5 border border-white/25 shadow-lg">
-              <Sparkles className="w-4 h-4 text-yellow-300" />
+            {/* Trust badge */}
+            <div className="inline-flex items-center gap-2 glass-card text-foreground px-5 py-2.5 rounded-full mb-5">
+              <Sparkles className="w-4 h-4 text-accent" />
               <span className="text-sm font-bold tracking-wide">Pediatra de Confianza en Quito</span>
               <div className="flex -space-x-1">
                 {[...Array(5)].map((_, i) =>
-                <Star key={i} className="w-3.5 h-3.5 fill-yellow-300 text-yellow-300" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-accent text-accent" />
                 )}
               </div>
             </div>
-            
-            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl xl:text-[3.5rem] font-bold text-white mb-5 leading-[1.08] tracking-tight">
+
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl uppercase text-foreground mb-5 leading-[0.95] tracking-tight">
               Tu Hijo Merece al{" "}
-              <span className="relative inline-block">
-                <span className="bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">
-                  Mejor Pediatra
-                </span>
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 8C50 2 150 2 198 8" stroke="rgba(255,255,255,0.4)" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-              </span>
+              <span className="text-gradient block">Mejor Pediatra</span>
             </h1>
-            
-            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-              <span className="font-bold text-white">Dr. Jacinto Salazar Vargas</span> — Más de 30 años brindando atención pediátrica de excelencia en Carcelén.
+
+            <p className="text-lg md:text-xl text-foreground/85 mb-6 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+              <span className="font-bold text-foreground">Dr. Jacinto Salazar Vargas</span> — Más de 30 años brindando atención pediátrica de excelencia en Carcelén.
             </p>
 
-            {/* Value propositions - Quick scan */}
+            {/* Value propositions */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-7 text-sm">
               {["Diagnóstico preciso", "Atención personalizada", "Horarios flexibles"].map((item, i) =>
-              <div key={i} className="flex items-center gap-1.5 text-white/95">
-                  <CheckCircle2 className="w-4 h-4 text-green-300" />
+                <div key={i} className="flex items-center gap-1.5 text-foreground/90">
+                  <CheckCircle2 className="w-4 h-4 text-accent" />
                   <span className="font-medium">{item}</span>
                 </div>
               )}
             </div>
 
-            {/* CTAs - Premium conversion-focused design */}
+            {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4">
               <Button
                 asChild
                 size="lg"
                 className="group relative bg-[#25D366] text-white hover:bg-[#1da851] font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(37,211,102,0.5)] hover:shadow-[0_20px_60px_-12px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-[1.02] rounded-2xl overflow-hidden"
                 onClick={() => trackWhatsAppClick('sem_hero')}>
-
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <MessageCircle className="w-5 h-5 mr-2.5 relative z-10" />
                   <span className="relative z-10">Agendar por WhatsApp</span>
                 </a>
@@ -144,9 +135,8 @@ const SEMHero = () => {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-2 border-white/50 text-white hover:bg-white hover:text-primary font-bold text-lg h-[60px] px-8 bg-white/10 backdrop-blur-md transition-all duration-300 hover:scale-[1.02] rounded-2xl"
+                className="border-2 border-primary/40 text-foreground hover:bg-primary/10 hover:text-foreground font-bold text-lg h-[60px] px-8 bg-transparent backdrop-blur-md transition-all duration-300 hover:scale-[1.02] rounded-2xl"
                 onClick={() => trackPhoneClick(PHONE_NUMBER, 'sem_hero')}>
-
                 <a href={phoneUrl}>
                   <Phone className="w-5 h-5 mr-2.5" />
                   Llamar: 0998396186
@@ -158,32 +148,24 @@ const SEMHero = () => {
             <div className="flex justify-center lg:justify-start mb-6">
               <Button
                 size="lg"
-                className="group relative bg-white text-primary hover:bg-white/90 font-bold text-lg h-[60px] px-8 shadow-[0_15px_50px_-12px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-[1.02] rounded-2xl"
+                className="group relative bg-gradient-aqua text-primary-foreground hover:opacity-90 font-bold text-lg h-[60px] px-8 shadow-aqua transition-all duration-300 hover:scale-[1.02] rounded-2xl"
                 onClick={() => {
                   if (window.Calendly) {
                     window.Calendly.initPopupWidget({ url: 'https://calendly.com/andresalazarcevallos99/30min' });
                   }
                 }}>
-
                 <CalendarDays className="w-5 h-5 mr-2.5" />
                 Agendar Cita Online
               </Button>
             </div>
 
             {/* Micro-conversion hint */}
-            <p className="text-white/70 text-sm flex items-center justify-center lg:justify-start gap-2">
+            <p className="text-foreground/70 text-sm flex items-center justify-center lg:justify-start gap-2">
               <Clock className="w-4 h-4" />
               <span>Responde en menos de 5 min • Atención personalizada</span>
             </p>
           </div>
         </div>
-      </div>
-
-      {/* Bottom wave decoration */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))" />
-        </svg>
       </div>
     </section>);
 

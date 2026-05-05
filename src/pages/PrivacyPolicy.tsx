@@ -48,7 +48,7 @@ const PrivacyPolicy = () => {
 
           {/* Introduction */}
           <section className="mb-10">
-            <p className="text-foreground/80 leading-relaxed">
+            <p className="text-foreground/85 leading-relaxed">
               En el consultorio del <strong>Dr. Jacinto Salazar Vargas</strong>, nos comprometemos a proteger 
               la privacidad y seguridad de la información personal de nuestros pacientes y usuarios. 
               Esta Política de Privacidad describe cómo recopilamos, usamos, almacenamos y protegemos 
@@ -60,14 +60,14 @@ const PrivacyPolicy = () => {
           {/* Section 1 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <FileText className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 1. Información que Recopilamos
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>Recopilamos los siguientes tipos de información:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>
@@ -92,14 +92,14 @@ const PrivacyPolicy = () => {
           {/* Section 2 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Eye className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <Eye className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 2. Uso de la Información
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>Utilizamos su información personal para:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Brindar atención médica pediátrica de calidad.</li>
@@ -115,14 +115,14 @@ const PrivacyPolicy = () => {
           {/* Section 3 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Lock className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <Lock className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 3. Protección de Datos
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>
                 Implementamos medidas de seguridad técnicas, administrativas y físicas para proteger 
                 su información personal contra acceso no autorizado, pérdida, alteración o destrucción. 
@@ -140,14 +140,14 @@ const PrivacyPolicy = () => {
           {/* Section 4 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <Users className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 4. Compartición de Datos
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>
                 No vendemos, alquilamos ni compartimos su información personal con terceros, excepto en 
                 los siguientes casos:
@@ -164,14 +164,14 @@ const PrivacyPolicy = () => {
           {/* Section 5 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <Shield className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 5. Derechos del Titular
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>
                 De acuerdo con la Ley Orgánica de Protección de Datos Personales de Ecuador, 
                 usted tiene derecho a:
@@ -193,14 +193,14 @@ const PrivacyPolicy = () => {
           {/* Section 6 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <FileText className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 6. Cookies y Tecnologías Similares
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>
                 Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. 
                 Las cookies son pequeños archivos que se almacenan en su dispositivo y nos permiten:
@@ -220,19 +220,19 @@ const PrivacyPolicy = () => {
           {/* Section 7 */}
           <section className="mb-10">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Mail className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <Mail className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 7. Contacto
               </h2>
             </div>
-            <div className="pl-13 space-y-4 text-foreground/80">
+            <div className="pl-13 space-y-4 text-foreground/85">
               <p>
                 Si tiene preguntas sobre esta Política de Privacidad o desea ejercer sus derechos, 
                 puede contactarnos a través de:
               </p>
-              <div className="bg-muted/50 rounded-xl p-6 mt-4">
+              <div className="bg-background/40 border border-primary/20 rounded-xl p-6 mt-4">
                 <p className="font-semibold text-foreground mb-2">Dr. Jacinto Salazar Vargas</p>
                 <p><strong>Dirección:</strong> Rodrigo Muñoz N81-46, Carcelén, Quito</p>
                 <p><strong>Teléfono:</strong> 099 839 6186 / 022 485 286</p>
@@ -244,14 +244,14 @@ const PrivacyPolicy = () => {
           {/* Section 8 */}
           <section className="mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-gradient-aqua rounded-lg flex items-center justify-center shadow-aqua">
+                <FileText className="w-5 h-5 text-primary-foreground" />
               </div>
               <h2 className="font-heading text-xl font-bold text-foreground">
                 8. Modificaciones
               </h2>
             </div>
-            <div className="pl-13 text-foreground/80">
+            <div className="pl-13 text-foreground/85">
               <p>
                 Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento. 
                 Cualquier cambio será publicado en esta página con la fecha de actualización correspondiente. 

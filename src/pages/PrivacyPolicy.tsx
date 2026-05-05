@@ -264,9 +264,9 @@ const PrivacyPolicy = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-8 mt-12">
+      <footer className="border-t border-primary/20 py-8 mt-12 relative z-10">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-white/60 text-sm">
+          <p className="text-foreground/60 text-sm">
             © {currentYear} Dr. Jacinto Salazar. Todos los derechos reservados.
           </p>
         </div>

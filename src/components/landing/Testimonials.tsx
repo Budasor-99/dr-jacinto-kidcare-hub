@@ -68,29 +68,29 @@ const Testimonials = () => {
   };
 
   return (
-    <section id="testimonios" className="py-20 bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden">
+    <section id="testimonios" className="py-24 bg-background relative overflow-hidden">
       {/* Decorative elements */}
       <BlobBackground variant="subtle" />
       <div className="absolute top-20 left-10 opacity-10">
-        <Quote className="w-32 h-32 text-primary" />
+        <Quote className="w-32 h-32 text-accent" />
       </div>
       <div className="absolute bottom-20 right-10 opacity-10">
-        <Quote className="w-24 h-24 text-primary rotate-180" />
+        <Quote className="w-24 h-24 text-accent rotate-180" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
+          <div className="inline-flex items-center gap-2 glass-card text-accent px-4 py-2 rounded-full mb-4">
             <Star className="w-4 h-4 fill-current" />
-            <span className="text-sm font-semibold">Testimonios</span>
+            <span className="text-sm font-semibold uppercase tracking-wide">Testimonios</span>
           </div>
-          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Lo que dicen las
-            <span className="text-gradient block">familias</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl uppercase text-foreground mb-4 leading-[0.95] tracking-tight">
+            Lo que dicen
+            <span className="text-gradient block">las familias</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            La confianza de las familias es nuestro mayor logro. 
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-6">
+            La confianza de las familias es nuestro mayor logro.
             Conoce las experiencias de quienes ya nos eligieron.
           </p>
         </div>

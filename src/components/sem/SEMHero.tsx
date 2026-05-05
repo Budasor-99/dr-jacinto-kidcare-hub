@@ -40,7 +40,7 @@ const SEMHero = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
             </span>
-            <span className="text-foreground/90 text-sm font-medium">Disponible hoy · 9AM-8PM</span>
+            <span className="text-foreground/90 text-sm font-medium">Disponible hoy · 8AM-12PM</span>
           </div>
         </div>
       </div>

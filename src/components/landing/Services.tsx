@@ -106,10 +106,10 @@ const Services = () => {
               </h3>
             </div>
             <p className="text-primary-foreground/95 text-lg mb-2 font-semibold">
-              Lunes a Viernes: 8:00 AM - 12:00 PM | 3:00 PM - 8:00 PM
+              Lunes a Viernes: 8:00 AM - 12:00 PM
             </p>
             <p className="text-primary-foreground/95 text-lg font-semibold">
-              Sábados: 8:00 AM - 12:00 PM
+              Sábados: 9:00 AM - 12:00 PM
             </p>
           </div>
         </div>

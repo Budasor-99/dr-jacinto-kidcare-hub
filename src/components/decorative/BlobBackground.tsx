@@ -2,11 +2,12 @@ import { cn } from "@/lib/utils";
 
 interface KelpDecorationProps {
   className?: string;
+  style?: React.CSSProperties;
 }
 
 /** Stylized kelp/leaf silhouette - left side */
-const KelpLeft = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 200 600" className={className} fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMax meet">
+const KelpLeft = ({ className, style }: KelpDecorationProps) => (
+  <svg viewBox="0 0 200 600" className={className} style={style} fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMax meet">
     <path
       d="M30 600 C 40 500, 80 450, 60 380 C 40 310, 90 270, 70 200 C 50 130, 100 80, 80 0"
       stroke="hsl(var(--primary))"

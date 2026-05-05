@@ -15,18 +15,20 @@ const SEMHero = () => {
 
   return (
     <section className="relative min-h-[92vh] overflow-hidden bg-gradient-deep-sea">
-      {/* Underwater illustration background — subtle */}
+      {/* Underwater illustration background */}
       <div className="absolute inset-0">
         <img
           src={heroSem}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/75 to-background" />
-        {/* Single soft glow accent */}
+        {/* Readability overlay — darker at edges, lighter center for content */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/30 to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-transparent to-background/30" />
+        {/* Soft glow accents */}
         <div className="absolute top-1/4 -right-32 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full bg-accent/8 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full bg-accent/10 blur-3xl pointer-events-none" />
       </div>
 
       {/* Header with Logo */}

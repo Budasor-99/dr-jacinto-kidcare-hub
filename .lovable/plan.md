@@ -1,50 +1,134 @@
-# Completar Rediseño "Underwater Pediatric"
+# Plan de optimización SEO y GEO
 
-En la iteración anterior solo se actualizaron Header, Hero, About, Services y Testimonials. Quedan pendientes varios componentes de la landing principal, toda la landing SEM y las páginas secundarias. Este plan cierra esos huecos sin tocar funcionalidad ni el panel `/admin`.
+## 1. Diagnóstico actual
 
-## 1. Landing principal (`/`) — secciones pendientes
+Lo que **ya tenemos**:
+- `index.html` con `<title>`, `meta description`, Open Graph, Twitter Card, favicon.
+- `robots.txt` permitiendo a buscadores principales.
+- Google Analytics 4 + Meta Pixel + tracking de `page_view` por ruta.
+- `/lp` correctamente marcado como `noindex, nofollow` (campaña SEM).
+- HTML semántico parcial (`<h1>`, `<h2>`, `<section id="...">`).
 
-Aplicar paleta teal oscura, glassmorphism, `font-display` en títulos, gradientes `bg-gradient-aqua` / `bg-gradient-deep-sea`, decoraciones `BlobBackground` + `MedicalCrosses`.
+Lo que **falta** (gaps críticos):
+- **`<html lang="en">`** — debe ser `es-EC`.
+- **Cero datos estructurados (Schema.org / JSON-LD)**. Sin esto Google no entiende que es un consultorio médico, ni horarios, ni reseñas, ni FAQs. Es lo de mayor impacto.
+- Sin **canonical tags** ni meta dinámicos por ruta (`/`, `/privacidad`, `/gracias` comparten todos el mismo título).
+- Sin **sitemap.xml**.
+- Algunas imágenes con `alt=""` vacío que sí aportan contexto.
+- Sin contenido orientado a **GEO** (consultas conversacionales que ChatGPT/Gemini/Perplexity citan).
+- Sin optimización de **Core Web Vitals** verificada (imágenes `.png` pesadas, sin `loading="lazy"` en galería).
+- Sin **breadcrumbs** ni señales locales fuertes (NAP estructurado para Google Business Profile).
 
-- **AppointmentForm.tsx** — fondo deep-sea, tarjeta del formulario en `glass-strong`, inputs con borde teal translúcido, botón con `bg-gradient-aqua`.
-- **Gallery.tsx** — fondo oscuro, marcos de imagen con borde teal y `shadow-aqua`, hover con glow aqua.
-- **FAQ.tsx** — items en `glass-card`, íconos `+/-` en accent teal, título `font-display` mayúsculas.
-- **Contact.tsx** — fondo deep-sea, tarjetas de contacto en glass, íconos en accent.
-- **Footer.tsx** — fondo `bg-background` (ya oscuro), reorganizar bordes y separadores con `border-primary/20`, links hover en accent teal.
+## 2. Objetivos
 
-## 2. Landing SEM (`/lp`) — pendiente completa
+1. Posicionar **"pediatra Carcelén Quito"**, **"pediatra Quito norte"**, **"vacunación pediátrica Quito"** y similares en top 3 de Google local.
+2. Aparecer en el **Local Pack** (mapa de Google) y en **Knowledge Panel**.
+3. Ser **citado por motores generativos** (ChatGPT, Gemini, Perplexity, Google AI Overviews) cuando padres pregunten "¿qué pediatra recomiendan en Carcelén?".
 
-Actualmente usa el gradiente azul medical antiguo. Migrar a la nueva estética manteniendo la conversión alta y los CTAs de WhatsApp/Calendly intactos.
+## 3. Plan de acción — SEO técnico
 
-- **SEMHero.tsx** — reemplazar `bg-gradient-to-br from-primary via-primary/90 to-accent/80` por `bg-gradient-deep-sea` con `hero-sem.jpg` como background image al 60% opacity. Conservar avatar del doctor, badges de "+30 años" y "Verificado", título grande con `font-display`, CTAs WhatsApp verde + Llamar + Calendly tal cual.
-- **TrustBadges.tsx** — fondo oscuro, badges en `glass-card` con íconos en accent teal.
-- **SEMTestimonials.tsx** — tarjetas glass, estrellas en accent dorado/teal.
-- **SEMContact.tsx** — fondo deep-sea, tarjetas glass.
-- **FloatingCTA.tsx** — botón flotante con `bg-gradient-aqua` y `shadow-aqua` (mantener verde WhatsApp para reconocimiento).
+### 3.1 Fundamentos HTML (rápido, alto impacto)
+- `index.html`: `<html lang="es-EC">`.
+- Añadir `<link rel="canonical">` dinámico por ruta.
+- Añadir `theme-color`, `geo.region` (EC-P), `geo.placename` (Quito), `geo.position`.
+- Corregir `alt` descriptivos en todas las imágenes informativas.
 
-## 3. Páginas secundarias
+### 3.2 Meta tags dinámicos por ruta
+Instalar **react-helmet-async** y crear un `<SEO>` reutilizable con título, descripción, canonical y OG por página:
+- `/` → "Pediatra en Carcelén, Quito | Dr. Jacinto Salazar"
+- `/privacidad` → noindex
+- `/gracias` → noindex (ya lo está)
+- `/lp` → noindex (ya lo está)
 
-- **Auth.tsx** (`/auth`) — fondo `bg-gradient-deep-sea` con `BlobBackground`, card central en `glass-strong`, título `font-display`, inputs y botones tematizados.
-- **PrivacyPolicy.tsx** — fondo deep-sea, contenido en contenedor `glass-card`, títulos en `font-display`, links en accent.
-- **ThankYou.tsx** — fondo deep-sea con burbujas/partículas, ícono check con `bg-gradient-aqua`, tarjeta de confirmación en `glass-strong`, CTAs tematizados.
-- **NotFound.tsx** — fondo deep-sea, "404" enorme en `font-display` con `text-gradient`, botón volver con gradient aqua.
+### 3.3 Datos estructurados (JSON-LD) — el mayor diferenciador
+Añadir en `<head>` de `/`:
 
-## 4. Fuera de alcance (no se tocan)
+1. **`Physician` + `MedicalBusiness`** combinado:
+   - Nombre, teléfono, email, dirección postal completa, geo coordinates, horarios (`openingHoursSpecification`), especialidades médicas (`medicalSpecialty: "Pediatrics"`), idioma de atención, área servida (Quito).
+2. **`Person`** para el Dr. Salazar (alma mater Universidad Central, años de experiencia, `jobTitle`).
+3. **`FAQPage`** generado desde el componente `FAQ.tsx` actual (gana rich snippets).
+4. **`BreadcrumbList`** mínimo.
+5. **`AggregateRating`** si tenemos reseñas reales (Google Reviews); si no, omitirlo (políticas de Google).
+6. **`WebSite`** con `SearchAction` (sitelinks search box).
 
-- `/admin` y todos sus componentes (`src/components/admin/**`) — quedan intactos para no romper la operación clínica.
-- Lógica, formularios, validaciones, integraciones (Calendly, Pixel, GA4, Supabase) — solo cambios visuales.
-- Copys, rutas, navegación.
+### 3.4 Sitemap + robots
+- Generar `public/sitemap.xml` estático con `/` y `/privacidad` (excluir `/lp`, `/gracias`, `/admin`, `/auth`).
+- Actualizar `public/robots.txt` añadiendo `Sitemap: https://www.drjacintosalazarvargas.com/sitemap.xml` y `Disallow: /admin`, `/auth`, `/lp`, `/gracias`.
 
-## 5. Detalles técnicos
+### 3.5 Performance (Core Web Vitals)
+- Convertir `.png` grandes (`hero-underwater`, `about-illustration`) a `.webp` y añadir dimensiones `width`/`height` para evitar CLS.
+- `loading="lazy"` y `decoding="async"` en imágenes de Galería/Testimonios.
+- `<link rel="preconnect">` para Calendly, Facebook, Google Tag Manager.
 
-- Solo se editarán clases Tailwind y wrappers visuales. Cero cambios en estado, hooks o handlers.
-- Reutilizar tokens ya definidos en `index.css` y `tailwind.config.ts` (`bg-gradient-deep-sea`, `bg-gradient-aqua`, `glass-card`, `glass-strong`, `shadow-aqua`, `text-gradient`, `font-display`).
-- Reutilizar componentes decorativos existentes: `BlobBackground` (variants `hero` / `section`) y `MedicalCrosses` (variants `scattered` / `minimal`).
-- Mantener contraste WCAG AA: texto principal `text-foreground`, secundario `text-foreground/80`, terciario `text-muted-foreground`.
-- No se generarán nuevas imágenes; se reutilizan las 4 ya creadas (`hero-underwater`, `hero-sem`, `about-illustration` que ya es la del Dr. Salazar, `cta-background`).
+## 4. Plan de acción — GEO (Generative Engine Optimization)
 
-## 6. QA
+Los LLMs citan contenido **claro, factual, estructurado y citable**. Acciones:
 
-Tras los cambios revisar en preview cada ruta: `/`, `/lp`, `/auth`, `/privacidad`, `/gracias`, `/404`. Verificar mobile (390px) y desktop, y confirmar que los CTAs de WhatsApp/Calendly siguen funcionando.
+### 4.1 Contenido tipo "respuesta directa"
+Añadir secciones cortas en formato pregunta-respuesta dentro de `About` y `FAQ` que respondan literalmente a queries conversacionales:
+- "¿Quién es el mejor pediatra en Carcelén Quito?"
+- "¿Dónde queda el consultorio del Dr. Jacinto Salazar?"
+- "¿Cuánto cuesta una consulta pediátrica en Quito norte?"
+- "¿Qué vacunas aplica un pediatra en Ecuador?"
 
-¿Apruebas para que lo implemente?
+### 4.2 Página/sección "About" enriquecida
+Datos verificables con citas:
+- Año de graduación, institución, cédula profesional, registro MSP.
+- Membresías a sociedades médicas (Sociedad Ecuatoriana de Pediatría).
+- Esto da a los LLM "anchors" factuales que pueden citar con confianza.
+
+### 4.3 Consistencia NAP (Name, Address, Phone)
+El NAP debe ser **idéntico** en: web, Google Business Profile, Facebook, Instagram, directorios médicos (DoctorAnytime, Doctoralia Ecuador). Crear un documento de referencia.
+
+### 4.4 Señales E-E-A-T (Experience, Expertise, Authoritativeness, Trust)
+- Bio del doctor con credenciales visibles y schema `Person`.
+- Política de privacidad ya existe ✓.
+- Añadir página `/aviso-medico` con disclaimer (señal de profesionalismo médico que LLMs valoran).
+
+### 4.5 llms.txt (opcional, emergente)
+Crear `public/llms.txt` resumiendo el sitio para crawlers de IA (estándar propuesto por Anthropic/otros, ya adoptado por algunos).
+
+## 5. Plan de acción — Off-site (lo manejas tú, no requiere código)
+
+1. **Google Business Profile** completo y verificado: fotos, horarios, servicios, posts semanales, responder reseñas.
+2. Pedir reseñas a pacientes (objetivo: 30+ reseñas con 4.8★).
+3. Alta en directorios: Doctoralia EC, DoctorAnytime, Páginas Amarillas EC, guía MSP.
+4. Backlinks: Sociedad Ecuatoriana de Pediatría, hospitales donde haya trabajado, blog de salud infantil local.
+
+## 6. Orden de ejecución sugerido (fases)
+
+**Fase 1 — Foundation (1 PR, alto impacto, bajo riesgo):**
+- Fix `lang="es-EC"`, canonical, geo meta, alt text.
+- Añadir react-helmet-async + componente `<SEO>`.
+- JSON-LD `Physician` + `FAQPage` + `BreadcrumbList` + `WebSite`.
+- `sitemap.xml` + `robots.txt` actualizado.
+
+**Fase 2 — Performance:**
+- Conversión imágenes a webp, lazy loading, preconnect.
+
+**Fase 3 — GEO content:**
+- Reescribir copy de About + FAQ con formato citable.
+- Añadir bloque de credenciales verificables.
+- Crear `/aviso-medico` y `llms.txt`.
+
+**Fase 4 — Off-site (sin código):**
+- GBP, reseñas, directorios.
+
+## 7. Detalles técnicos clave
+
+- **react-helmet-async** vs alternativa: lo prefiero a inyectar `useEffect` manualmente porque maneja SSR/hidration correctamente y es estándar.
+- JSON-LD se inyecta como `<script type="application/ld+json">` dentro del `<Helmet>`.
+- Coordenadas Carcelén aprox: `-0.103, -78.479` (a verificar con dirección exacta Rodrigo Muñoz N81-46).
+- Sitemap estático en `public/` es suficiente; no necesitamos generación dinámica con tan pocas rutas.
+- No tocar `/lp`, `/gracias`, `/admin`, `/auth` — su `noindex` es correcto.
+
+## 8. Métricas de éxito (4-12 semanas)
+
+- Google Search Console: impresiones por "pediatra Carcelén" subiendo.
+- Aparición en Local Pack para queries geo-localizadas.
+- Rich results (FAQ, business info) visibles en SERP.
+- Citas en respuestas de Perplexity/ChatGPT al preguntar por pediatras en Quito norte.
+
+---
+
+¿Avanzamos con la **Fase 1** completa en la primera implementación, o prefieres que empiece sólo por JSON-LD y canonical y veamos resultados antes de seguir?

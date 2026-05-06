@@ -6,23 +6,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/analytics";
 import logoImage from "@/assets/logo.svg";
 import doctorImage from "@/assets/doctor-profile.png";
+import SEO from "@/components/SEO";
 
 const ThankYou = () => {
   useEffect(() => {
     trackEvent("appointment_booked", { page: "thank_you" });
-
-    const meta = document.createElement('meta');
-    meta.name = 'robots';
-    meta.content = 'noindex, nofollow';
-    document.head.appendChild(meta);
-
-    return () => {
-      document.head.removeChild(meta);
-    };
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-deep-sea flex flex-col relative overflow-hidden">
+      <SEO
+        title="¡Cita agendada! | Dr. Jacinto Salazar"
+        description="Cita pediátrica confirmada con el Dr. Jacinto Salazar."
+        path="/gracias"
+        noindex
+      />
       {/* Decorative blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />

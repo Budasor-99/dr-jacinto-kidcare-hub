@@ -1,12 +1,18 @@
 import { ArrowLeft, Shield, Lock, Eye, FileText, Users, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoImage from "@/assets/logo.svg";
+import SEO from "@/components/SEO";
 
 const PrivacyPolicy = () => {
   const currentYear = new Date().getFullYear();
 
   return (
     <div className="min-h-screen bg-gradient-deep-sea relative overflow-hidden">
+      <SEO
+        title="Política de Privacidad | Dr. Jacinto Salazar"
+        description="Política de privacidad y tratamiento de datos personales conforme a la LOPDP del Ecuador."
+        path="/privacidad"
+      />
       {/* Decorative blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />

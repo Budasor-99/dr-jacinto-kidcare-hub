@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import BlobBackground from "@/components/decorative/BlobBackground";
 
-const faqs = [
+export const faqs = [
   {
     question: "¿Cuáles son los horarios de atención?",
     answer: "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM. Para urgencias, puede comunicarse al número de emergencia.",

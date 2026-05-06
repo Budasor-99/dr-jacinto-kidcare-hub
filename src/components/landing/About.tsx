@@ -41,7 +41,9 @@ const About = () => {
               <div className="relative rounded-3xl overflow-hidden shadow-aqua border border-primary/20">
                 <img
                   src={aboutIllustration}
-                  alt="Dr. Jacinto Salazar con paciente pediátrico"
+                  alt="Dr. Jacinto Salazar, médico pediatra en Carcelén Quito, atendiendo a paciente pediátrico"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-auto object-cover"
                 />
               </div>

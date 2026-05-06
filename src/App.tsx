@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import LandingSEM from "./pages/LandingSEM";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/lp" element={<LandingSEM />} />
               <Route path="/gracias" element={<ThankYou />} />
               <Route path="/privacidad" element={<PrivacyPolicy />} />
+              <Route path="/aviso-medico" element={<MedicalDisclaimer />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

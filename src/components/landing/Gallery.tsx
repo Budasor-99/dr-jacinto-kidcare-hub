@@ -58,7 +58,9 @@ const Gallery = () => {
               {/* Image */}
               <img
                 src={image.image}
-                alt={image.title}
+                alt={`${image.title} del consultorio del Dr. Jacinto Salazar en Carcelén, Quito`}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
 

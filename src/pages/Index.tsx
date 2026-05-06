@@ -3,15 +3,36 @@ import Hero from "@/components/landing/Hero";
 import Services from "@/components/landing/Services";
 import About from "@/components/landing/About";
 import Testimonials from "@/components/landing/Testimonials";
-import FAQ from "@/components/landing/FAQ";
+import FAQ, { faqs } from "@/components/landing/FAQ";
 import Gallery from "@/components/landing/Gallery";
 import AppointmentForm from "@/components/landing/AppointmentForm";
 import Contact from "@/components/landing/Contact";
 import Footer from "@/components/landing/Footer";
+import SEO from "@/components/SEO";
+import {
+  physicianSchema,
+  personSchema,
+  websiteSchema,
+  faqSchema,
+  breadcrumbSchema,
+} from "@/lib/seo/schemas";
+import { BUSINESS } from "@/lib/seo/businessData";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Pediatra en Carcelén, Quito | Dr. Jacinto Salazar Vargas"
+        description="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, vacunación y atención personalizada. Lun-Vie 8-12, Sáb 9-12."
+        path="/"
+        schemas={[
+          physicianSchema,
+          personSchema,
+          websiteSchema,
+          faqSchema(faqs),
+          breadcrumbSchema([{ name: "Inicio", url: BUSINESS.url + "/" }]),
+        ]}
+      />
       <Header />
       <Hero />
       <Services />

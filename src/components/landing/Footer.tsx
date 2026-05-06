@@ -131,6 +131,12 @@ const Footer = () => {
               >
                 Política de Privacidad
               </Link>
+              <Link 
+                to="/aviso-medico" 
+                className="text-foreground/55 text-sm hover:text-accent transition-colors"
+              >
+                Aviso Médico
+              </Link>
             </div>
             <p className="text-foreground/55 text-sm flex items-center gap-1">
               Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para el bienestar infantil

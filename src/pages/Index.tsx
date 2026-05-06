@@ -9,13 +9,7 @@ import AppointmentForm from "@/components/landing/AppointmentForm";
 import Contact from "@/components/landing/Contact";
 import Footer from "@/components/landing/Footer";
 import SEO from "@/components/SEO";
-import {
-  physicianSchema,
-  personSchema,
-  websiteSchema,
-  faqSchema,
-  breadcrumbSchema,
-} from "@/lib/seo/schemas";
+import { faqSchema, breadcrumbSchema } from "@/lib/seo/schemas";
 import { BUSINESS } from "@/lib/seo/businessData";
 
 const Index = () => {
@@ -26,9 +20,6 @@ const Index = () => {
         description="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, vacunación y atención personalizada. Lun-Vie 8-12, Sáb 9-12."
         path="/"
         schemas={[
-          physicianSchema,
-          personSchema,
-          websiteSchema,
           faqSchema(faqs),
           breadcrumbSchema([{ name: "Inicio", url: BUSINESS.url + "/" }]),
         ]}

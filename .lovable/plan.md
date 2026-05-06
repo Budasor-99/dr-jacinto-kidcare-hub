@@ -1,134 +1,72 @@
-# Plan de optimización SEO y GEO
+## Objetivo
 
-## 1. Diagnóstico actual
+Hacer que los schemas JSON-LD aparezcan en el HTML inicial del sitio (no solo después de que React monta), para que sean detectados por:
+- Validador oficial de Schema.org
+- Bing, DuckDuckGo, Yandex
+- Crawlers de redes sociales (Facebook, LinkedIn, X)
+- LLMs y motores generativos (ChatGPT, Perplexity, Claude)
+- Cualquier herramienta SEO sin JavaScript
 
-Lo que **ya tenemos**:
-- `index.html` con `<title>`, `meta description`, Open Graph, Twitter Card, favicon.
-- `robots.txt` permitiendo a buscadores principales.
-- Google Analytics 4 + Meta Pixel + tracking de `page_view` por ruta.
-- `/lp` correctamente marcado como `noindex, nofollow` (campaña SEM).
-- HTML semántico parcial (`<h1>`, `<h2>`, `<section id="...">`).
+## Diagnóstico actual
 
-Lo que **falta** (gaps críticos):
-- **`<html lang="en">`** — debe ser `es-EC`.
-- **Cero datos estructurados (Schema.org / JSON-LD)**. Sin esto Google no entiende que es un consultorio médico, ni horarios, ni reseñas, ni FAQs. Es lo de mayor impacto.
-- Sin **canonical tags** ni meta dinámicos por ruta (`/`, `/privacidad`, `/gracias` comparten todos el mismo título).
-- Sin **sitemap.xml**.
-- Algunas imágenes con `alt=""` vacío que sí aportan contexto.
-- Sin contenido orientado a **GEO** (consultas conversacionales que ChatGPT/Gemini/Perplexity citan).
-- Sin optimización de **Core Web Vitals** verificada (imágenes `.png` pesadas, sin `loading="lazy"` en galería).
-- Sin **breadcrumbs** ni señales locales fuertes (NAP estructurado para Google Business Profile).
+Los schemas viven en `src/lib/seo/schemas.ts` y se inyectan vía `<SEO />` con `react-helmet-async`. Esto funciona en el DOM en vivo pero **no en el HTML servido inicialmente**, porque Lovable sirve un SPA estático sin SSR.
 
-## 2. Objetivos
+El validador de Schema.org leyó `index.html` directo y no encontró nada.
 
-1. Posicionar **"pediatra Carcelén Quito"**, **"pediatra Quito norte"**, **"vacunación pediátrica Quito"** y similares en top 3 de Google local.
-2. Aparecer en el **Local Pack** (mapa de Google) y en **Knowledge Panel**.
-3. Ser **citado por motores generativos** (ChatGPT, Gemini, Perplexity, Google AI Overviews) cuando padres pregunten "¿qué pediatra recomiendan en Carcelén?".
+## Cambios propuestos
 
-## 3. Plan de acción — SEO técnico
+### 1. Inyectar schemas globales en `index.html`
 
-### 3.1 Fundamentos HTML (rápido, alto impacto)
-- `index.html`: `<html lang="es-EC">`.
-- Añadir `<link rel="canonical">` dinámico por ruta.
-- Añadir `theme-color`, `geo.region` (EC-P), `geo.placename` (Quito), `geo.position`.
-- Corregir `alt` descriptivos en todas las imágenes informativas.
+Añadir directamente en el `<head>` de `index.html` los schemas que aplican a todo el sitio:
 
-### 3.2 Meta tags dinámicos por ruta
-Instalar **react-helmet-async** y crear un `<SEO>` reutilizable con título, descripción, canonical y OG por página:
-- `/` → "Pediatra en Carcelén, Quito | Dr. Jacinto Salazar"
-- `/privacidad` → noindex
-- `/gracias` → noindex (ya lo está)
-- `/lp` → noindex (ya lo está)
+- **Physician / MedicalBusiness / LocalBusiness** (NAP, horarios, geo)
+- **Person** (Dr. Salazar, credenciales, E-E-A-T)
+- **WebSite** (identidad del sitio)
 
-### 3.3 Datos estructurados (JSON-LD) — el mayor diferenciador
-Añadir en `<head>` de `/`:
+Estos son los schemas que Google y los LLMs usan para Knowledge Graph local y autoridad médica. No cambian entre páginas, así que pueden ser estáticos.
 
-1. **`Physician` + `MedicalBusiness`** combinado:
-   - Nombre, teléfono, email, dirección postal completa, geo coordinates, horarios (`openingHoursSpecification`), especialidades médicas (`medicalSpecialty: "Pediatrics"`), idioma de atención, área servida (Quito).
-2. **`Person`** para el Dr. Salazar (alma mater Universidad Central, años de experiencia, `jobTitle`).
-3. **`FAQPage`** generado desde el componente `FAQ.tsx` actual (gana rich snippets).
-4. **`BreadcrumbList`** mínimo.
-5. **`AggregateRating`** si tenemos reseñas reales (Google Reviews); si no, omitirlo (políticas de Google).
-6. **`WebSite`** con `SearchAction` (sitelinks search box).
+Usar valores literales (los mismos de `src/lib/seo/businessData.ts`) para evitar dependencia de JS.
 
-### 3.4 Sitemap + robots
-- Generar `public/sitemap.xml` estático con `/` y `/privacidad` (excluir `/lp`, `/gracias`, `/admin`, `/auth`).
-- Actualizar `public/robots.txt` añadiendo `Sitemap: https://www.drjacintosalazarvargas.com/sitemap.xml` y `Disallow: /admin`, `/auth`, `/lp`, `/gracias`.
+### 2. Mantener schemas dinámicos por ruta en `<SEO />`
 
-### 3.5 Performance (Core Web Vitals)
-- Convertir `.png` grandes (`hero-underwater`, `about-illustration`) a `.webp` y añadir dimensiones `width`/`height` para evitar CLS.
-- `loading="lazy"` y `decoding="async"` en imágenes de Galería/Testimonios.
-- `<link rel="preconnect">` para Calendly, Facebook, Google Tag Manager.
+Los schemas que **sí dependen de la ruta** seguirán inyectándose con react-helmet-async:
 
-## 4. Plan de acción — GEO (Generative Engine Optimization)
+- **FAQPage** (solo en home)
+- **BreadcrumbList** (varía por página)
+- **WebPage** específicos por ruta
 
-Los LLMs citan contenido **claro, factual, estructurado y citable**. Acciones:
+Esto está bien porque Googlebot ejecuta JS y captará estos. Para LLMs, los schemas críticos (Physician/Person) ya estarán estáticos.
 
-### 4.1 Contenido tipo "respuesta directa"
-Añadir secciones cortas en formato pregunta-respuesta dentro de `About` y `FAQ` que respondan literalmente a queries conversacionales:
-- "¿Quién es el mejor pediatra en Carcelén Quito?"
-- "¿Dónde queda el consultorio del Dr. Jacinto Salazar?"
-- "¿Cuánto cuesta una consulta pediátrica en Quito norte?"
-- "¿Qué vacunas aplica un pediatra en Ecuador?"
+### 3. Limpieza en index.html
 
-### 4.2 Página/sección "About" enriquecida
-Datos verificables con citas:
-- Año de graduación, institución, cédula profesional, registro MSP.
-- Membresías a sociedades médicas (Sociedad Ecuatoriana de Pediatría).
-- Esto da a los LLM "anchors" factuales que pueden citar con confianza.
+- Quitar comentario `<!-- TODO: Update og:title -->` ya resuelto
+- Reorganizar `<head>` en bloques comentados: SEO base / Open Graph / Schemas / Tracking
+- Mantener tags geo y canonical actuales
 
-### 4.3 Consistencia NAP (Name, Address, Phone)
-El NAP debe ser **idéntico** en: web, Google Business Profile, Facebook, Instagram, directorios médicos (DoctorAnytime, Doctoralia Ecuador). Crear un documento de referencia.
+### 4. Sincronización futura
 
-### 4.4 Señales E-E-A-T (Experience, Expertise, Authoritativeness, Trust)
-- Bio del doctor con credenciales visibles y schema `Person`.
-- Política de privacidad ya existe ✓.
-- Añadir página `/aviso-medico` con disclaimer (señal de profesionalismo médico que LLMs valoran).
+Los datos del negocio (NAP, horarios) están en **dos lugares ahora**: `businessData.ts` y `index.html`. Documentar en la memory `seo-geo-architecture` que cualquier cambio de NAP debe actualizar **ambos** archivos.
 
-### 4.5 llms.txt (opcional, emergente)
-Crear `public/llms.txt` resumiendo el sitio para crawlers de IA (estándar propuesto por Anthropic/otros, ya adoptado por algunos).
+## Archivos a modificar
 
-## 5. Plan de acción — Off-site (lo manejas tú, no requiere código)
+```text
+index.html                          → añadir 3 bloques <script type="application/ld+json">
+src/lib/seo/businessData.ts         → sin cambios (sigue siendo fuente de verdad)
+src/lib/seo/schemas.ts              → sin cambios (sigue alimentando <SEO />)
+src/components/SEO.tsx              → sin cambios
+src/pages/Index.tsx                 → opcional: quitar physicianSchema/personSchema/websiteSchema del array (ya estarán en index.html), dejar solo faqSchema y breadcrumbSchema para evitar duplicación
+mem://features/seo/seo-geo-architecture → actualizar nota sobre dual-source NAP
+```
 
-1. **Google Business Profile** completo y verificado: fotos, horarios, servicios, posts semanales, responder reseñas.
-2. Pedir reseñas a pacientes (objetivo: 30+ reseñas con 4.8★).
-3. Alta en directorios: Doctoralia EC, DoctorAnytime, Páginas Amarillas EC, guía MSP.
-4. Backlinks: Sociedad Ecuatoriana de Pediatría, hospitales donde haya trabajado, blog de salud infantil local.
+## Verificación post-implementación
 
-## 6. Orden de ejecución sugerido (fases)
+1. Publicar el sitio
+2. Abrir https://validator.schema.org/ con la URL pública → debe detectar Physician, Person, WebSite
+3. Abrir https://search.google.com/test/rich-results → debe detectar todos (incluyendo FAQ dinámico)
+4. Verificar en "Ver código fuente" del navegador (Ctrl+U) que los JSON-LD están presentes antes de que React arranque
 
-**Fase 1 — Foundation (1 PR, alto impacto, bajo riesgo):**
-- Fix `lang="es-EC"`, canonical, geo meta, alt text.
-- Añadir react-helmet-async + componente `<SEO>`.
-- JSON-LD `Physician` + `FAQPage` + `BreadcrumbList` + `WebSite`.
-- `sitemap.xml` + `robots.txt` actualizado.
+## Detalles técnicos
 
-**Fase 2 — Performance:**
-- Conversión imágenes a webp, lazy loading, preconnect.
-
-**Fase 3 — GEO content:**
-- Reescribir copy de About + FAQ con formato citable.
-- Añadir bloque de credenciales verificables.
-- Crear `/aviso-medico` y `llms.txt`.
-
-**Fase 4 — Off-site (sin código):**
-- GBP, reseñas, directorios.
-
-## 7. Detalles técnicos clave
-
-- **react-helmet-async** vs alternativa: lo prefiero a inyectar `useEffect` manualmente porque maneja SSR/hidration correctamente y es estándar.
-- JSON-LD se inyecta como `<script type="application/ld+json">` dentro del `<Helmet>`.
-- Coordenadas Carcelén aprox: `-0.103, -78.479` (a verificar con dirección exacta Rodrigo Muñoz N81-46).
-- Sitemap estático en `public/` es suficiente; no necesitamos generación dinámica con tan pocas rutas.
-- No tocar `/lp`, `/gracias`, `/admin`, `/auth` — su `noindex` es correcto.
-
-## 8. Métricas de éxito (4-12 semanas)
-
-- Google Search Console: impresiones por "pediatra Carcelén" subiendo.
-- Aparición en Local Pack para queries geo-localizadas.
-- Rich results (FAQ, business info) visibles en SERP.
-- Citas en respuestas de Perplexity/ChatGPT al preguntar por pediatras en Quito norte.
-
----
-
-¿Avanzamos con la **Fase 1** completa en la primera implementación, o prefieres que empiece sólo por JSON-LD y canonical y veamos resultados antes de seguir?
+- Schemas estáticos con `@id` consistentes (`#physician`, `#person`, `#website`) para que los dinámicos puedan referenciarlos sin duplicar entidades
+- Mantener `@context: "https://schema.org"` en cada bloque
+- No usar `defer` ni `async` en los `<script type="application/ld+json">` (no aplica, son data)

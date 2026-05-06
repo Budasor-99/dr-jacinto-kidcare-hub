@@ -9,36 +9,44 @@ import BlobBackground from "@/components/decorative/BlobBackground";
 
 export const faqs = [
   {
+    question: "¿Quién es el Dr. Jacinto Salazar?",
+    answer: "El Dr. Jacinto Salazar Vargas es médico pediatra graduado de la Universidad Central del Ecuador, con más de 30 años de experiencia clínica y más de 10,000 pacientes atendidos. Su consultorio está ubicado en Rodrigo Muñoz N81-46, Carcelén, norte de Quito.",
+  },
+  {
+    question: "¿Dónde queda el consultorio del pediatra Jacinto Salazar en Quito?",
+    answer: "El consultorio del Dr. Jacinto Salazar está en Rodrigo Muñoz N81-46, sector Carcelén, al norte de Quito, Ecuador. Para citas y referencias puede llamar al 099 839 6186 o al 022 485 286.",
+  },
+  {
     question: "¿Cuáles son los horarios de atención?",
-    answer: "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM. Para urgencias, puede comunicarse al número de emergencia.",
+    answer: "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM. Para urgencias dentro de horario puede comunicarse al 099 839 6186.",
+  },
+  {
+    question: "¿Cómo puedo agendar una cita con el pediatra?",
+    answer: "Puede agendar su cita por WhatsApp al 099 839 6186, llamando al 022 485 286, o usando el formulario en línea (Calendly) en este sitio web. La confirmación se realiza en pocas horas.",
   },
   {
     question: "¿Aceptan seguros médicos?",
-    answer: "Sí, trabajamos con las principales aseguradoras del país. Le recomendamos verificar la cobertura de su póliza antes de la consulta. También aceptamos pagos en efectivo y tarjeta de crédito/débito.",
+    answer: "Sí, trabajamos con las principales aseguradoras del Ecuador. Le recomendamos verificar la cobertura específica de su póliza antes de la consulta. También aceptamos pagos en efectivo, tarjeta de crédito y débito.",
   },
   {
-    question: "¿Qué debo llevar a la primera consulta?",
-    answer: "Para la primera consulta, por favor traiga el carnet de vacunación del niño, resultados de exámenes previos si los tiene, y una lista de medicamentos que el niño esté tomando actualmente.",
+    question: "¿Qué debo llevar a la primera consulta pediátrica?",
+    answer: "Para la primera consulta traiga: el carné de vacunación del niño, resultados de exámenes médicos previos si los hubiera, y una lista de medicamentos que esté tomando actualmente. También es útil anotar dudas o síntomas de las últimas semanas.",
   },
   {
-    question: "¿Cómo puedo agendar una cita?",
-    answer: "Puede agendar su cita a través de nuestro formulario en línea, llamando al 099 839 6186 o al 022 485 286, o escribiéndonos por WhatsApp. Le confirmaremos su cita en el menor tiempo posible.",
+    question: "¿A qué edad debo llevar a mi bebé al pediatra por primera vez?",
+    answer: "Se recomienda la primera consulta pediátrica dentro de la primera semana después del nacimiento. Posteriormente se programan controles del niño sano según la edad: cada mes el primer año, cada 3 meses hasta los 2 años, y luego controles anuales.",
   },
   {
-    question: "¿Atienden emergencias?",
-    answer: "Sí, atendemos emergencias pediátricas. En caso de urgencia durante horario de consulta, contáctenos inmediatamente. Fuera de horario, le recomendamos acudir al centro de emergencias más cercano.",
+    question: "¿Realizan vacunación infantil en el consultorio?",
+    answer: "Sí, aplicamos todas las vacunas del Esquema Nacional de Inmunización del MSP de Ecuador y vacunas adicionales recomendadas por la Sociedad Ecuatoriana de Pediatría. Llevamos un registro digital del calendario de cada paciente.",
   },
   {
-    question: "¿A qué edad debo llevar a mi bebé a su primera consulta?",
-    answer: "Se recomienda la primera consulta pediátrica dentro de la primera semana después del nacimiento. A partir de ahí, programamos controles regulares según la edad del bebé para monitorear su desarrollo.",
+    question: "¿Atienden urgencias pediátricas?",
+    answer: "Atendemos urgencias pediátricas dentro del horario de consulta (Lun-Vie 8-12, Sáb 9-12). Fuera de horario recomendamos acudir al servicio de emergencias pediátricas más cercano de su zona.",
   },
   {
-    question: "¿Realizan vacunación?",
-    answer: "Sí, aplicamos todas las vacunas del esquema nacional de inmunización y también vacunas adicionales recomendadas. Mantenemos un control riguroso del calendario de vacunación de cada paciente.",
-  },
-  {
-    question: "¿Cuánto dura una consulta?",
-    answer: "Las consultas tienen una duración aproximada de 30 a 45 minutos. Nos tomamos el tiempo necesario para realizar una evaluación completa y responder todas sus preguntas.",
+    question: "¿Cuánto dura una consulta pediátrica?",
+    answer: "Las consultas tienen una duración aproximada de 30 a 45 minutos. Tomamos el tiempo necesario para realizar una evaluación completa, revisar el desarrollo del niño y responder todas las inquietudes de los padres.",
   },
 ];
 

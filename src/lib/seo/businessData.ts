@@ -24,8 +24,10 @@ export const BUSINESS = {
     longitude: -78.479,
   },
   alumniOf: "Universidad Central del Ecuador",
-  medicalSpecialty: "Pediatrics",
-  availableLanguage: ["Spanish"],
+  medicalSpecialty: "Pediatric",
+  availableLanguage: [
+    { "@type": "Language", name: "Spanish", alternateName: "es" },
+  ],
   // Lun-Vie 8-12, Sábados 9-12
   openingHours: [
     {

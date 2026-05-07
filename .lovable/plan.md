@@ -1,72 +1,42 @@
-## Objetivo
+# Corregir validación Schema.org del Physician
 
-Hacer que los schemas JSON-LD aparezcan en el HTML inicial del sitio (no solo después de que React monta), para que sean detectados por:
-- Validador oficial de Schema.org
-- Bing, DuckDuckGo, Yandex
-- Crawlers de redes sociales (Facebook, LinkedIn, X)
-- LLMs y motores generativos (ChatGPT, Perplexity, Claude)
-- Cualquier herramienta SEO sin JavaScript
+El validador detectó dos problemas en el bloque `Physician / MedicalBusiness / LocalBusiness` (en `index.html` y replicado en `src/lib/seo/schemas.ts`):
 
-## Diagnóstico actual
+## 1. Error: `medicalSpecialty` inválido
 
-Los schemas viven en `src/lib/seo/schemas.ts` y se inyectan vía `<SEO />` con `react-helmet-async`. Esto funciona en el DOM en vivo pero **no en el HTML servido inicialmente**, porque Lovable sirve un SPA estático sin SSR.
+- **Actual:** `"Pediatrics"` (string libre, no aceptado).
+- **Causa:** Schema.org exige un valor del enum `MedicalSpecialty`. El valor correcto es `"Pediatric"` (URL: `http://schema.org/Pediatric`).
+- **Solución:** cambiar `medicalSpecialty` a `"Pediatric"` en:
+  - `index.html` (bloque JSON-LD del Physician)
+  - `src/lib/seo/businessData.ts` (`medicalSpecialty: "Pediatric"`)
+  - El schema dinámico en `src/lib/seo/schemas.ts` se actualiza automáticamente al leer de `BUSINESS`.
 
-El validador de Schema.org leyó `index.html` directo y no encontró nada.
+## 2. Advertencia: `availableLanguage` no reconocida en `LocalBusiness`
 
-## Cambios propuestos
-
-### 1. Inyectar schemas globales en `index.html`
-
-Añadir directamente en el `<head>` de `index.html` los schemas que aplican a todo el sitio:
-
-- **Physician / MedicalBusiness / LocalBusiness** (NAP, horarios, geo)
-- **Person** (Dr. Salazar, credenciales, E-E-A-T)
-- **WebSite** (identidad del sitio)
-
-Estos son los schemas que Google y los LLMs usan para Knowledge Graph local y autoridad médica. No cambian entre páginas, así que pueden ser estáticos.
-
-Usar valores literales (los mismos de `src/lib/seo/businessData.ts`) para evitar dependencia de JS.
-
-### 2. Mantener schemas dinámicos por ruta en `<SEO />`
-
-Los schemas que **sí dependen de la ruta** seguirán inyectándose con react-helmet-async:
-
-- **FAQPage** (solo en home)
-- **BreadcrumbList** (varía por página)
-- **WebPage** específicos por ruta
-
-Esto está bien porque Googlebot ejecuta JS y captará estos. Para LLMs, los schemas críticos (Physician/Person) ya estarán estáticos.
-
-### 3. Limpieza en index.html
-
-- Quitar comentario `<!-- TODO: Update og:title -->` ya resuelto
-- Reorganizar `<head>` en bloques comentados: SEO base / Open Graph / Schemas / Tracking
-- Mantener tags geo y canonical actuales
-
-### 4. Sincronización futura
-
-Los datos del negocio (NAP, horarios) están en **dos lugares ahora**: `businessData.ts` y `index.html`. Documentar en la memory `seo-geo-architecture` que cualquier cambio de NAP debe actualizar **ambos** archivos.
+- **Actual:** `"availableLanguage": ["Spanish"]` a nivel raíz.
+- **Causa:** `availableLanguage` es válida en `Physician` pero el validador la evalúa contra el tipo combinado y al ser `LocalBusiness` la marca como no reconocida. Además el formato recomendado es un objeto `Language` con código BCP-47, no un string.
+- **Solución:** reemplazar por:
+  ```json
+  "availableLanguage": [
+    { "@type": "Language", "name": "Spanish", "alternateName": "es" }
+  ]
+  ```
+  Aplicar el cambio en:
+  - `index.html` (bloque Physician)
+  - `src/lib/seo/businessData.ts` (estructura del array) y `src/lib/seo/schemas.ts` para mapear el objeto `Language` correctamente
+  - También en `personSchema` (`knowsLanguage`) por consistencia: usar el mismo formato `{ "@type": "Language", "name": "Spanish", "alternateName": "es" }`
 
 ## Archivos a modificar
 
-```text
-index.html                          → añadir 3 bloques <script type="application/ld+json">
-src/lib/seo/businessData.ts         → sin cambios (sigue siendo fuente de verdad)
-src/lib/seo/schemas.ts              → sin cambios (sigue alimentando <SEO />)
-src/components/SEO.tsx              → sin cambios
-src/pages/Index.tsx                 → opcional: quitar physicianSchema/personSchema/websiteSchema del array (ya estarán en index.html), dejar solo faqSchema y breadcrumbSchema para evitar duplicación
-mem://features/seo/seo-geo-architecture → actualizar nota sobre dual-source NAP
-```
+- `index.html` — bloques JSON-LD estáticos (Physician y Person).
+- `src/lib/seo/businessData.ts` — actualizar `medicalSpecialty` y formato de `availableLanguage`.
+- `src/lib/seo/schemas.ts` — ajustar mapeo si cambia la forma del dato fuente.
 
-## Verificación post-implementación
+## Verificación
 
-1. Publicar el sitio
-2. Abrir https://validator.schema.org/ con la URL pública → debe detectar Physician, Person, WebSite
-3. Abrir https://search.google.com/test/rich-results → debe detectar todos (incluyendo FAQ dinámico)
-4. Verificar en "Ver código fuente" del navegador (Ctrl+U) que los JSON-LD están presentes antes de que React arranque
+Tras aplicar los cambios, volver a validar la URL en `https://validator.schema.org/`. Los dos avisos deben desaparecer y el bloque Physician quedar 100% válido.
 
-## Detalles técnicos
+## Notas
 
-- Schemas estáticos con `@id` consistentes (`#physician`, `#person`, `#website`) para que los dinámicos puedan referenciarlos sin duplicar entidades
-- Mantener `@context: "https://schema.org"` en cada bloque
-- No usar `defer` ni `async` en los `<script type="application/ld+json">` (no aplica, son data)
+- No se altera ninguna otra propiedad ni lógica de la app.
+- Mantener sincronizadas las dos fuentes (HTML estático y `businessData.ts`) según la regla ya documentada en memoria.

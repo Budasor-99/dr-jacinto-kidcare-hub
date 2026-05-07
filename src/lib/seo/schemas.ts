@@ -70,7 +70,7 @@ export const personSchema = {
     "Control del niño sano",
     "Alergias infantiles",
   ],
-  knowsLanguage: ["Spanish"],
+  knowsLanguage: [{ "@type": "Language", name: "Spanish", alternateName: "es" }],
   sameAs: BUSINESS.sameAs,
 };
 

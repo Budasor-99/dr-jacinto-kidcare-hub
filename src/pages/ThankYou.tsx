@@ -117,7 +117,7 @@ const ThankYou = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent font-bold">•</span>
-                  Traiga el <strong className="text-foreground">carné de vacunación</strong> y documentos médicos previos del niño/a.
+                  Traiga los <strong className="text-foreground">documentos médicos previos</strong> del niño/a (exámenes, recetas, controles anteriores).
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent font-bold">•</span>

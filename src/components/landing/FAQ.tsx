@@ -37,8 +37,8 @@ export const faqs = [
     answer: "Se recomienda la primera consulta pediátrica dentro de la primera semana después del nacimiento. Posteriormente se programan controles del niño sano según la edad: cada mes el primer año, cada 3 meses hasta los 2 años, y luego controles anuales.",
   },
   {
-    question: "¿Ofrecen asesoría en nutrición y lactancia?",
-    answer: "Sí. Brindamos asesoría nutricional infantil personalizada: lactancia materna, introducción de alimentos complementarios, planes de alimentación por edad y manejo nutricional en niños con bajo peso, sobrepeso o intolerancias alimentarias.",
+    question: "¿Atienden alergias respiratorias como asma o rinitis?",
+    answer: "Sí. Realizamos diagnóstico, tratamiento y seguimiento de asma, rinitis alérgica y otras condiciones respiratorias pediátricas, incluyendo recomendaciones de control ambiental en el hogar y educación a la familia para reducir crisis.",
   },
   {
     question: "¿Atienden urgencias pediátricas?",

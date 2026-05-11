@@ -17,7 +17,7 @@ const Index = () => {
     <div className="min-h-screen">
       <SEO
         title="Pediatra en Carcelén, Quito | Dr. Jacinto Salazar Vargas"
-        description="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, asesoría nutricional y atención personalizada. Lun-Vie 8-12 y 15-20, Sáb 9-12."
+        description="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, manejo de alergias respiratorias y atención personalizada. Lun-Vie 8-12 y 15-20, Sáb 9-12."
         path="/"
         schemas={[
           faqSchema(faqs),

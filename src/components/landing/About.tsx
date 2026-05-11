@@ -14,7 +14,7 @@ const specialties = [
   "Pediatría General",
   "Neonatología",
   "Desarrollo Infantil",
-  "Asesoría Nutricional",
+  "Alergias Respiratorias",
   "Nutrición Pediátrica",
   "Alergias Infantiles",
 ];

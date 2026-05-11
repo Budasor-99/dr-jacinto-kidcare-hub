@@ -69,7 +69,7 @@ const SEMContact = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-foreground text-sm">Horario</p>
-                    <p className="text-foreground/70 text-xs">L-V: 8AM-12PM</p>
+                    <p className="text-foreground/70 text-xs">L-V: 8AM-12PM y 3PM-8PM</p>
                     <p className="text-foreground/70 text-xs">Sáb: 9AM-12PM</p>
                   </div>
                 </div>

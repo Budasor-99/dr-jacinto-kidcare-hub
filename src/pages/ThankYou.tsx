@@ -91,7 +91,7 @@ const ThankYou = () => {
                   <Clock className="w-5 h-5 text-accent mt-0.5 shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-foreground">Horario</p>
-                    <p className="text-foreground/70 text-sm">Lun-Vie: 8:00–12:00</p>
+                    <p className="text-foreground/70 text-sm">Lun-Vie: 8:00–12:00 y 15:00–20:00</p>
                     <p className="text-foreground/70 text-sm">Sábados: 9:00–12:00</p>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ const ThankYou = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent font-bold">•</span>
-                  Traiga el <strong className="text-foreground">carné de vacunación</strong> y documentos médicos previos del niño/a.
+                  Traiga los <strong className="text-foreground">documentos médicos previos</strong> del niño/a (exámenes, recetas, controles anteriores).
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-accent font-bold">•</span>

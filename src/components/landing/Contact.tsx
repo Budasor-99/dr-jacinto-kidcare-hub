@@ -32,7 +32,7 @@ const contactInfo = [
   {
     icon: Clock,
     title: "Horario",
-    details: ["Lun-Vie: 8AM-12PM", "Sábados: 9AM-12PM"],
+    details: ["Lun-Vie: 8AM-12PM y 3PM-8PM", "Sábados: 9AM-12PM"],
     action: null,
   },
 ];

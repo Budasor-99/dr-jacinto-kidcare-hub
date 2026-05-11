@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pediatra en Carcelén, Quito | Dr. Jacinto Salazar Vargas</title>
-    <meta name="description" content="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, vacunación y atención personalizada. Lun-Vie 8-12, Sáb 9-12.">
+    <meta name="description" content="Pediatra en Carcelén, Quito con +30 años de experiencia. Control del niño sano, asesoría nutricional y atención personalizada. Lun-Vie 8-12 y 15-20, Sáb 9-12.">
     <meta name="author" content="Dr. Jacinto Salazar Vargas" />
     <meta name="theme-color" content="#0F172A" />
     <meta name="geo.region" content="EC-P" />
@@ -28,7 +28,7 @@
       "@type": ["Physician", "MedicalBusiness", "LocalBusiness"],
       "@id": "https://www.drjacintosalazarvargas.com/#physician",
       "name": "Dr. Jacinto Salazar - Pediatra",
-      "description": "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, vacunación, control del niño sano y seguimiento del desarrollo infantil.",
+      "description": "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, control del niño sano, asesoría nutricional y seguimiento del desarrollo infantil.",
       "url": "https://www.drjacintosalazarvargas.com",
       "logo": "https://www.drjacintosalazarvargas.com/favicon.svg",
       "image": "https://storage.googleapis.com/gpt-engineer-file-uploads/e4cW6vF6gYYMoZkBGDeQTn7ZhQB3/social-images/social-1775583867163-WhatsApp_Image_2026-04-07_at_11.39.27_AMsdsd.webp",
@@ -67,6 +67,12 @@
         },
         {
           "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "15:00",
+          "closes": "20:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
           "dayOfWeek": ["Saturday"],
           "opens": "09:00",
           "closes": "12:00"
@@ -99,7 +105,7 @@
       "knowsAbout": [
         "Pediatría",
         "Neonatología",
-        "Vacunación infantil",
+        "Asesoría nutricional infantil",
         "Desarrollo infantil",
         "Nutrición pediátrica",
         "Control del niño sano",
@@ -144,7 +150,7 @@
         {
           "@type": "Question",
           "name": "¿Cuáles son los horarios de atención?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Atendemos de lunes a viernes en jornada matutina de 8:00 AM a 12:00 PM y vespertina de 3:00 PM a 8:00 PM, y los sábados de 9:00 AM a 12:00 PM." }
         },
         {
           "@type": "Question",
@@ -163,8 +169,8 @@
         },
         {
           "@type": "Question",
-          "name": "¿Realizan vacunación infantil en el consultorio?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Sí, aplicamos todas las vacunas del Esquema Nacional de Inmunización del MSP de Ecuador y vacunas adicionales recomendadas por la Sociedad Ecuatoriana de Pediatría." }
+          "name": "¿Ofrecen asesoría nutricional infantil?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Sí. Brindamos asesoría nutricional personalizada: lactancia materna, introducción de alimentos complementarios, planes de alimentación por edad y manejo nutricional en niños con bajo peso, sobrepeso o intolerancias alimentarias." }
         }
       ]
     }
@@ -265,7 +271,7 @@
             <h2>Servicios pediátricos</h2>
             <ul>
               <li>Control del niño sano (0 a 18 años)</li>
-              <li>Vacunación según el Esquema Nacional de Inmunización del MSP de Ecuador</li>
+              <li>Asesoría nutricional infantil y planes de alimentación personalizados</li>
               <li>Seguimiento del crecimiento y desarrollo infantil (curvas OMS)</li>
               <li>Asesoría en nutrición pediátrica y lactancia materna</li>
               <li>Atención y seguimiento de alergias infantiles</li>
@@ -278,12 +284,13 @@
             <h2>Horarios de atención</h2>
             <table>
               <thead>
-                <tr><th scope="col">Día</th><th scope="col">Apertura</th><th scope="col">Cierre</th></tr>
+                <tr><th scope="col">Día</th><th scope="col">Jornada</th><th scope="col">Apertura</th><th scope="col">Cierre</th></tr>
               </thead>
               <tbody>
-                <tr><td>Lunes a Viernes</td><td>08:00</td><td>12:00</td></tr>
-                <tr><td>Sábado</td><td>09:00</td><td>12:00</td></tr>
-                <tr><td>Domingo</td><td colspan="2">Cerrado</td></tr>
+                <tr><td>Lunes a Viernes</td><td>Matutina</td><td>08:00</td><td>12:00</td></tr>
+                <tr><td>Lunes a Viernes</td><td>Vespertina</td><td>15:00</td><td>20:00</td></tr>
+                <tr><td>Sábado</td><td>Matutina</td><td>09:00</td><td>12:00</td></tr>
+                <tr><td>Domingo</td><td colspan="3">Cerrado</td></tr>
               </tbody>
             </table>
           </section>
@@ -310,7 +317,7 @@
             </details>
             <details>
               <summary>¿Cuáles son los horarios de atención?</summary>
-              <p>Lunes a viernes de 8:00 a 12:00 y sábados de 9:00 a 12:00.</p>
+              <p>Lunes a viernes de 8:00 a 12:00 y de 15:00 a 20:00; sábados de 9:00 a 12:00.</p>
             </details>
             <details>
               <summary>¿Cómo agendo una cita?</summary>
@@ -325,8 +332,8 @@
               <p>Dentro de la primera semana después del nacimiento. Después se programan controles periódicos del niño sano.</p>
             </details>
             <details>
-              <summary>¿Realizan vacunación infantil?</summary>
-              <p>Sí, aplicamos todas las vacunas del Esquema Nacional de Inmunización del MSP de Ecuador y las recomendadas por la Sociedad Ecuatoriana de Pediatría.</p>
+              <summary>¿Ofrecen asesoría nutricional infantil?</summary>
+              <p>Sí. Lactancia materna, introducción de alimentos, planes por edad y manejo de bajo peso, sobrepeso o intolerancias alimentarias.</p>
             </details>
           </section>
         </article>

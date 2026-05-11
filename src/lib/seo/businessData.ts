@@ -4,7 +4,7 @@ export const BUSINESS = {
   doctorName: "Dr. Jacinto Salazar Vargas",
   jobTitle: "Médico Pediatra",
   description:
-    "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, vacunación, control del niño sano y seguimiento del desarrollo infantil.",
+    "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, control del niño sano, asesoría nutricional y seguimiento del desarrollo infantil.",
   url: "https://www.drjacintosalazarvargas.com",
   logo: "https://www.drjacintosalazarvargas.com/favicon.svg",
   image:
@@ -34,6 +34,11 @@ export const BUSINESS = {
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       opens: "08:00",
       closes: "12:00",
+    },
+    {
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "15:00",
+      closes: "20:00",
     },
     {
       dayOfWeek: ["Saturday"],

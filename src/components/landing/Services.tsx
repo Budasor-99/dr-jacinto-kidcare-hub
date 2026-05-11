@@ -1,6 +1,6 @@
 import { 
   Baby, 
-  Apple, 
+  Wind, 
   Stethoscope, 
   Activity, 
   HeartPulse, 
@@ -19,9 +19,9 @@ const services = [
     description: "Evaluaciones periódicas para asegurar el desarrollo óptimo de su hijo desde el nacimiento.",
   },
   {
-    icon: Apple,
-    title: "Asesoría Nutricional Infantil",
-    description: "Planes de alimentación y lactancia personalizados según la edad y necesidades de su hijo.",
+    icon: Wind,
+    title: "Manejo de Alergias Respiratorias",
+    description: "Diagnóstico, control ambiental y seguimiento de asma, rinitis alérgica y otras condiciones respiratorias en niños.",
   },
   {
     icon: Stethoscope,

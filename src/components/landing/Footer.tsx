@@ -77,7 +77,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 "Control del Niño Sano",
-                "Asesoría Nutricional Infantil",
+                "Manejo de Alergias Respiratorias",
                 "Consulta General",
                 "Seguimiento del Desarrollo",
                 "Urgencias Pediátricas",

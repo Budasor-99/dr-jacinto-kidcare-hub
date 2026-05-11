@@ -64,7 +64,7 @@ export const personSchema = {
   knowsAbout: [
     "Pediatría",
     "Neonatología",
-    "Asesoría nutricional infantil",
+    "Manejo de alergias respiratorias pediátricas",
     "Desarrollo infantil",
     "Nutrición pediátrica",
     "Control del niño sano",

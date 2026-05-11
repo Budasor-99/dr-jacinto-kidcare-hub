@@ -1,6 +1,6 @@
 import { 
   Baby, 
-  Syringe, 
+  Apple, 
   Stethoscope, 
   Activity, 
   HeartPulse, 
@@ -19,9 +19,9 @@ const services = [
     description: "Evaluaciones periódicas para asegurar el desarrollo óptimo de su hijo desde el nacimiento.",
   },
   {
-    icon: Syringe,
-    title: "Vacunación",
-    description: "Programa completo de vacunación según el esquema nacional e internacional.",
+    icon: Apple,
+    title: "Asesoría Nutricional Infantil",
+    description: "Planes de alimentación y lactancia personalizados según la edad y necesidades de su hijo.",
   },
   {
     icon: Stethoscope,
@@ -106,7 +106,7 @@ const Services = () => {
               </h3>
             </div>
             <p className="text-primary-foreground/95 text-lg mb-2 font-semibold">
-              Lunes a Viernes: 8:00 AM - 12:00 PM
+              Lunes a Viernes: 8:00 AM - 12:00 PM y 3:00 PM - 8:00 PM
             </p>
             <p className="text-primary-foreground/95 text-lg font-semibold">
               Sábados: 9:00 AM - 12:00 PM

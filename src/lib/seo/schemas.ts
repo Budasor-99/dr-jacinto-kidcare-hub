@@ -64,7 +64,7 @@ export const personSchema = {
   knowsAbout: [
     "Pediatría",
     "Neonatología",
-    "Vacunación infantil",
+    "Asesoría nutricional infantil",
     "Desarrollo infantil",
     "Nutrición pediátrica",
     "Control del niño sano",

@@ -18,7 +18,7 @@ export const faqs = [
   },
   {
     question: "¿Cuáles son los horarios de atención?",
-    answer: "Atendemos de lunes a viernes de 8:00 AM a 12:00 PM y los sábados de 9:00 AM a 12:00 PM. Para urgencias dentro de horario puede comunicarse al 099 839 6186.",
+    answer: "Atendemos de lunes a viernes en jornada matutina de 8:00 AM a 12:00 PM y vespertina de 3:00 PM a 8:00 PM, y los sábados de 9:00 AM a 12:00 PM. Para urgencias dentro de horario puede comunicarse al 099 839 6186.",
   },
   {
     question: "¿Cómo puedo agendar una cita con el pediatra?",
@@ -37,12 +37,12 @@ export const faqs = [
     answer: "Se recomienda la primera consulta pediátrica dentro de la primera semana después del nacimiento. Posteriormente se programan controles del niño sano según la edad: cada mes el primer año, cada 3 meses hasta los 2 años, y luego controles anuales.",
   },
   {
-    question: "¿Realizan vacunación infantil en el consultorio?",
-    answer: "Sí, aplicamos todas las vacunas del Esquema Nacional de Inmunización del MSP de Ecuador y vacunas adicionales recomendadas por la Sociedad Ecuatoriana de Pediatría. Llevamos un registro digital del calendario de cada paciente.",
+    question: "¿Ofrecen asesoría en nutrición y lactancia?",
+    answer: "Sí. Brindamos asesoría nutricional infantil personalizada: lactancia materna, introducción de alimentos complementarios, planes de alimentación por edad y manejo nutricional en niños con bajo peso, sobrepeso o intolerancias alimentarias.",
   },
   {
     question: "¿Atienden urgencias pediátricas?",
-    answer: "Atendemos urgencias pediátricas dentro del horario de consulta (Lun-Vie 8-12, Sáb 9-12). Fuera de horario recomendamos acudir al servicio de emergencias pediátricas más cercano de su zona.",
+    answer: "Atendemos urgencias pediátricas dentro del horario de consulta (Lun-Vie 8-12 y 15-20, Sáb 9-12). Fuera de horario recomendamos acudir al servicio de emergencias pediátricas más cercano de su zona.",
   },
   {
     question: "¿Cuánto dura una consulta pediátrica?",

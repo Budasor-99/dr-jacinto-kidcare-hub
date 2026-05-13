@@ -4,7 +4,7 @@ export const BUSINESS = {
   doctorName: "Dr. Jacinto Salazar Vargas",
   jobTitle: "Médico Pediatra",
   description:
-    "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, control del niño sano, manejo de alergias respiratorias y seguimiento del desarrollo infantil.",
+    "Pediatra en Carcelén, Quito con +30 años de experiencia: control del niño sano, alergias respiratorias y desarrollo infantil.",
   url: "https://www.drjacintosalazarvargas.com",
   logo: "https://www.drjacintosalazarvargas.com/favicon.svg",
   image:

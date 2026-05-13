@@ -16,6 +16,8 @@ const Hero = () => {
           src={heroUnderwater}
           alt=""
           aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
         {/* Dark overlay for legibility */}

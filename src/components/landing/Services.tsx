@@ -21,7 +21,7 @@ const services = [
   {
     icon: Wind,
     title: "Manejo de Alergias Respiratorias",
-    description: "Diagnóstico, control ambiental y seguimiento de asma, rinitis alérgica y otras condiciones respiratorias en niños.",
+    description: "Diagnóstico, control ambiental y seguimiento de asma, rinitis alérgica y otras condiciones respiratorias en niños y adolescentes.",
   },
   {
     icon: Stethoscope,

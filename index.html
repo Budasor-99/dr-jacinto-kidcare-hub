@@ -24,7 +24,7 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": ["Physician", "MedicalBusiness", "LocalBusiness"],
+      "@type": ["Physician", "Pediatric", "MedicalBusiness", "LocalBusiness"],
       "@id": "https://www.drjacintosalazarvargas.com/#physician",
       "name": "Dr. Jacinto Salazar - Pediatra",
       "description": "Pediatra con más de 30 años de experiencia en Carcelén, Quito. Atención personalizada, control del niño sano, manejo de alergias respiratorias y seguimiento del desarrollo infantil.",
@@ -33,7 +33,11 @@
       "image": "https://storage.googleapis.com/gpt-engineer-file-uploads/e4cW6vF6gYYMoZkBGDeQTn7ZhQB3/social-images/social-1775583867163-WhatsApp_Image_2026-04-07_at_11.39.27_AMsdsd.webp",
       "telephone": ["+593998396186", "+59322485286"],
       "email": "jacinto_salazar1958@hotmail.com",
-      "medicalSpecialty": "Pediatric",
+      "medicalSpecialty": {
+        "@type": "MedicalSpecialty",
+        "name": "Pediatric",
+        "url": "https://schema.org/Pediatric"
+      },
       "availableLanguage": [
         { "@type": "Language", "name": "Spanish", "alternateName": "es" }
       ],
@@ -113,6 +117,11 @@
       "knowsLanguage": [
         { "@type": "Language", "name": "Spanish", "alternateName": "es" }
       ],
+      "hasOccupation": {
+        "@type": "MedicalOccupation",
+        "name": "Médico Pediatra",
+        "occupationalCategory": "Pediatric"
+      },
       "sameAs": [
         "https://www.facebook.com/profile.php?id=100063639666756",
         "https://www.instagram.com/pediatra.jacintosalazar/"

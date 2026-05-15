@@ -29,6 +29,12 @@
 - Urgencias pediátricas en horario de consulta
 - Certificados médicos escolares
 
+## Categoría Schema.org
+
+- Tipo principal: Physician / Pediatric / MedicalBusiness / LocalBusiness
+- Especialidad médica: Pediatric (https://schema.org/Pediatric)
+- Ocupación: MedicalOccupation, occupationalCategory: Pediatric
+
 ## Sobre el doctor
 
 Dr. Jacinto Salazar Vargas es médico pediatra graduado de la Universidad Central del Ecuador con más de 30 años de experiencia clínica. Ha atendido a más de 10,000 pacientes pediátricos. Su práctica se centra en atención personalizada y un trato humano y cordial con las familias.

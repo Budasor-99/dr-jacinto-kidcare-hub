@@ -4,7 +4,7 @@ const BASE_URL = BUSINESS.url;
 
 export const physicianSchema = {
   "@context": "https://schema.org",
-  "@type": ["Physician", "MedicalBusiness", "LocalBusiness"],
+  "@type": ["Physician", "Pediatric", "MedicalBusiness", "LocalBusiness"],
   "@id": `${BASE_URL}/#physician`,
   name: BUSINESS.name,
   description: BUSINESS.description,
@@ -71,6 +71,11 @@ export const personSchema = {
     "Alergias infantiles",
   ],
   knowsLanguage: [{ "@type": "Language", name: "Spanish", alternateName: "es" }],
+  hasOccupation: {
+    "@type": "MedicalOccupation",
+    name: "Médico Pediatra",
+    occupationalCategory: "Pediatric",
+  },
   sameAs: BUSINESS.sameAs,
 };
 

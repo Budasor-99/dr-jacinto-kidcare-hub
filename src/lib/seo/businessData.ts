@@ -24,7 +24,11 @@ export const BUSINESS = {
     longitude: -78.479,
   },
   alumniOf: "Universidad Central del Ecuador",
-  medicalSpecialty: "Pediatric",
+  medicalSpecialty: {
+    "@type": "MedicalSpecialty",
+    name: "Pediatric",
+    url: "https://schema.org/Pediatric",
+  },
   availableLanguage: [
     { "@type": "Language", name: "Spanish", alternateName: "es" },
   ],

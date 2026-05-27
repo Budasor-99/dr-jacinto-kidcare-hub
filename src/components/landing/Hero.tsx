@@ -12,7 +12,7 @@ const Hero = () => {
       {/* Underwater illustration as full background */}
       <div className="absolute inset-0">
         <img
-          src={heroUnderwater}
+          src="/hero-underwater.jpg"
           alt=""
           aria-hidden="true"
           fetchPriority="high"

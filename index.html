@@ -11,6 +11,22 @@
     <meta name="geo.placename" content="Quito, Carcelén" />
     <meta name="geo.position" content="-0.103;-78.479" />
     <meta name="ICBM" content="-0.103, -78.479" />
+    <!-- Prevent FOUC: instant background and hide static SEO content visually while keeping it accessible to crawlers -->
+    <style>
+      html, body, #root { background-color: #0F172A; }
+      .seo-static-content {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+    </style>
+    <link rel="preload" as="image" href="/hero-underwater.jpg" fetchpriority="high" />
     <link rel="preconnect" href="https://assets.calendly.com" />
     <link rel="preconnect" href="https://connect.facebook.net" />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
@@ -157,20 +173,6 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
   
-  <!-- Meta Pixel Code -->
-  <script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '1252713866126347');
-  fbq('track', 'PageView');
-  </script>
-  <!-- End Meta Pixel Code -->
 
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-M16WB3CEP5"></script>
@@ -181,6 +183,9 @@
     gtag('config', 'G-M16WB3CEP5');
   </script>
   <!-- End Google Analytics 4 -->
+  <!-- Ahrefs Analytics -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="BhvJAYHdCFMcJsokH0/V0w" async></script>
+  <!-- End Ahrefs Analytics -->
   <meta property="og:title" content="Consultorio médico Dr. Jacinto Salazar">
   <meta name="twitter:title" content="Consultorio médico Dr. Jacinto Salazar">
   <meta property="og:description" content="Bienestar integral para tus hijos. Atención pediátrica personalizada y cordial, vigilando su crecimiento en un espacio amigable diseñado para ellos.">
@@ -194,7 +199,8 @@
     /></noscript>
 
     <div id="root">
-      <!-- Static SEO/LLM-readable content (replaced by React on hydration) -->
+      <div class="seo-static-content">
+        <!-- Static SEO/LLM-readable content (replaced by React on hydration) -->
       <header>
         <nav aria-label="Principal">
           <ul>
@@ -304,7 +310,22 @@
           </section>
         </article>
       </main>
+      </div>
     </div>
+    <!-- Meta Pixel Code -->
+    <script defer>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1252713866126347');
+    fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

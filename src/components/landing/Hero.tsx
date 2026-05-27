@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone, MapPin, Star } from "lucide-react";
-import heroUnderwater from "@/assets/hero-underwater.jpg";
 import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 
@@ -13,7 +12,7 @@ const Hero = () => {
       {/* Underwater illustration as full background */}
       <div className="absolute inset-0">
         <img
-          src={heroUnderwater}
+          src="/hero-underwater.jpg"
           alt=""
           aria-hidden="true"
           fetchPriority="high"

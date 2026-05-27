@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone, MapPin, Star } from "lucide-react";
-import heroUnderwater from "@/assets/hero-underwater.jpg";
 import BlobBackground from "@/components/decorative/BlobBackground";
 import MedicalCrosses from "@/components/decorative/MedicalCrosses";
 

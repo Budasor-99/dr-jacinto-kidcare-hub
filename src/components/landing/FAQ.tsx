@@ -41,10 +41,6 @@ export const faqs = [
     answer: "Sí. Realizamos diagnóstico, tratamiento y seguimiento de asma, rinitis alérgica y otras condiciones respiratorias pediátricas, incluyendo recomendaciones de control ambiental en el hogar y educación a la familia para reducir crisis.",
   },
   {
-    question: "¿Atienden urgencias pediátricas?",
-    answer: "Atendemos urgencias pediátricas dentro del horario de consulta (Lun-Vie 8-12 y 15-20, Sáb 9-12). Fuera de horario recomendamos acudir al servicio de emergencias pediátricas más cercano de su zona.",
-  },
-  {
     question: "¿Cuánto dura una consulta pediátrica?",
     answer: "Las consultas tienen una duración aproximada de 30 a 45 minutos. Tomamos el tiempo necesario para realizar una evaluación completa, revisar el desarrollo del niño y responder todas las inquietudes de los padres.",
   },

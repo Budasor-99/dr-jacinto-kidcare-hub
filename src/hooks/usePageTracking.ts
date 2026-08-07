@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackPageView } from '@/lib/analytics';
+import { trackMetaPageView } from '@/lib/metaPixel';
 
 /**
  * Hook that automatically tracks page views on route changes
@@ -12,6 +13,7 @@ export const usePageTracking = () => {
   useEffect(() => {
     // Track page view on route change
     trackPageView(location.pathname + location.search);
+    trackMetaPageView(location.pathname);
   }, [location]);
 };
 

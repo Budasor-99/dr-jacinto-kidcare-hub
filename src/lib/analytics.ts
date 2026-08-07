@@ -1,3 +1,5 @@
+import { trackMetaEvent } from '@/lib/metaPixel';
+
 // Google Analytics 4 Helper Functions
 // Measurement ID: G-M16WB3CEP5
 
@@ -37,6 +39,7 @@ export const trackAppointmentRequest = (params?: {
     event_label: 'appointment_request',
     ...params,
   });
+  trackMetaEvent('Lead');
 };
 
 /**
@@ -49,6 +52,7 @@ export const trackWhatsAppClick = (source?: string) => {
     contact_method: 'whatsapp',
     source,
   });
+  trackMetaEvent('Contact');
 };
 
 /**
@@ -62,4 +66,5 @@ export const trackPhoneClick = (phoneNumber?: string, source?: string) => {
     phone_number: phoneNumber,
     source,
   });
+  trackMetaEvent('Contact');
 };

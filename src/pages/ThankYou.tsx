@@ -4,6 +4,7 @@ import { CheckCircle, Phone, MapPin, Clock, CalendarDays, ArrowLeft, MessageCirc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/analytics";
+import { trackMetaEvent } from "@/lib/metaPixel";
 import logoImage from "@/assets/logo.svg";
 import doctorImage from "@/assets/doctor-profile.png";
 import SEO from "@/components/SEO";
@@ -11,6 +12,7 @@ import SEO from "@/components/SEO";
 const ThankYou = () => {
   useEffect(() => {
     trackEvent("appointment_booked", { page: "thank_you" });
+    trackMetaEvent("Schedule");
   }, []);
 
   return (
